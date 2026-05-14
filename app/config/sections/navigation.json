@@ -1,0 +1,153 @@
+{
+  "mainNavigation": [
+    {
+      "name": "Products",
+      "href": "#",
+      "hasDropdown": true,
+      "isMegaMenu": true,
+      "megaMenuSections": [
+        {
+          "title": "COMPUTE HOSTING",
+          "items": [
+            {
+              "name": "Global Cloud VPS",
+              "description": "High-performance virtual servers",
+              "href": "/vps",
+              "icon": "Server"
+            },
+            {
+              "name": "India DDoS Protection",
+              "description": "Premium OVH Powered Nodes",
+              "href": "/vps",
+              "icon": "Shield"
+            },
+            {
+              "name": "Dedicated Servers",
+              "description": "Powerful bare metal servers",
+              "href": "/dedicated",
+              "icon": "GrServerCluster"
+            }
+          ]
+        },
+        {
+          "title": "GAME HOSTING",
+          "items": [
+            {
+              "name": "Minecraft Hosting",
+              "description": "Play with your friends",
+              "href": "/games?game=minecraft",
+              "icon": "Gamepad2"
+            },
+            {
+              "name": "Bot Hosting",
+              "description": "Reliable hosting for your bots",
+              "href": "/discord",
+              "icon": "FaDiscord"
+            },
+            {
+              "name": "Lavalink Hosting",
+              "description": "High performance audio nodes",
+              "href": "/lavalink",
+              "icon": "Music"
+            }
+          ]
+        },
+        {
+          "title": "SECURITY & NEWS",
+          "items": [
+            {
+              "name": "DDoS Protection",
+              "description": "Advanced DDoS mitigation",
+              "href": "/ddos",
+              "icon": "Shield"
+            },
+            {
+              "name": "Company Blog",
+              "description": "Latest updates and news",
+              "href": "/blogs",
+              "icon": "FileText"
+            },
+            {
+              "name": "Documentation",
+              "description": "Technical guides & docs",
+              "href": "/docs",
+              "icon": "FileText"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Legal",
+      "href": "#",
+      "hasDropdown": true,
+      "dropdownType": "list",
+      "dropdownItems": [
+        {
+          "name": "Terms of Service",
+          "href": "/terms-of-services",
+          "description": "Our service agreement"
+        },
+        {
+          "name": "Privacy Policy",
+          "href": "/privacy-policy",
+          "description": "Data protection policy"
+        }
+      ]
+    },
+    {
+      "name": "Company",
+      "href": "#",
+      "hasDropdown": true,
+      "dropdownType": "list",
+      "dropdownItems": [
+        {
+          "name": "Affiliate Program",
+          "href": "/affiliates",
+          "description": "Earn recurring commission"
+        },
+        {
+          "name": "About Us",
+          "href": "/about",
+          "description": "Learn about VexaNode"
+        },
+        {
+          "name": "Contact",
+          "href": "/contact",
+          "description": "Get in touch with us"
+        }
+      ]
+    },
+    {
+      "name": "Status",
+      "href": "https://status.vexanode.cloud",
+      "hasDropdown": false,
+      "showStatusDot": true
+    }
+  ],
+  "socialLinks": [
+    {
+      "name": "Discord",
+      "href": "#",
+      "icon": "discord"
+    }
+  ],
+  "clientSpace": {
+    "name": "Sign Up",
+    "href": "https://billing.vexanode.cloud/auth/register",
+    "icon": "User",
+    "style": "primary-purple"
+  },
+  "loginLink": {
+    "name": "Log In",
+    "href": "https://billing.vexanode.cloud/auth/login"
+  },
+  "banner": {
+    "show": true,
+    "text": "SUMMER SALE IS LIVE!",
+    "couponCode": "VEXA20",
+    "style": "primary-purple",
+    "backgroundColor": "#1e40af",
+    "fallbackColor": "#1e3a8a"
+  }
+}
