@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Public Lavalink Nodes | Vexanode</title>
+  <meta name="description" content="Use Vexanode's free public Lavalink nodes for your Discord music bots. High uptime, no authentication required, multiple regions available.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root { --bg: #0a0b0f; --surface: #0f1117; --card: #12131a; --border: rgba(255,255,255,0.06); --accent: #3b82f6; --accent2: #60a5fa; --accent-glow: rgba(59,130,246,0.15); --text: #f8fafc; --muted: #94a3b8; --green: #10b981; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    h1, h2, h3, h4, h5, h6, .logo-text { font-family: 'Syne', sans-serif; }
+    .mono { font-family: 'DM Mono', monospace; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    
+    .gradient-text { background: linear-gradient(135deg, #ffffff 0%, var(--accent2) 50%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+    .badge-popular { background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.25); }
+    .badge-free { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .badge-live { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .badge-shield { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+    .badge-budget { background: rgba(100,116,139,0.1); color: #94a3b8; border: 1px solid rgba(100,116,139,0.25); }
+    .pulse-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); } 70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+    
+    .btn { display: inline-flex; justify-content: center; align-items: center; border-radius: 8px; padding: 11px 26px; font-family: 'Syne', sans-serif; font-weight: 500; cursor: pointer; transition: 0.2s ease; border: none; text-align: center; }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(59,130,246,0.4), inset 0 1px 0 rgba(255,255,255,0.2); border: 1px solid rgba(59,130,246,0.8); }
+    .btn-primary:hover { background: var(--accent2); box-shadow: 0 8px 30px rgba(59,130,246,0.6), inset 0 1px 0 rgba(255,255,255,0.3); transform: translateY(-3px) scale(1.02); }
+    .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+    .btn-outline:hover { background: rgba(59,130,246,0.08); }
+    
+    .section { padding: 100px 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .section-title { font-size: 40px; margin-bottom: 16px; text-align: center; }
+    .section-subtitle { text-align: center; color: var(--muted); font-size: 18px; margin-bottom: 60px; max-width: 700px; margin-inline: auto; }
+    
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+    .card:hover { border-color: rgba(59,130,246,0.4); box-shadow: 0 12px 40px rgba(59,130,246,0.12); transform: translateY(-4px); }
+    .animate-on-scroll { opacity: 0; transform: translateY(24px); transition: 0.5s ease; }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+    /* Navbar */
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(10, 11, 15, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid transparent; transition: border-color 0.3s; height: 75px; display: flex; align-items: center; justify-content: center; }
+    .navbar.scrolled { border-bottom: 1px solid var(--border); }
+    .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; padding: 0 24px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; }
+    .logo-v { color: var(--accent); } .logo-n { color: #a0b4ff; }
+    .nav-links { display: flex; gap: 24px; align-items: center; height: 100%; }
+    .nav-item { position: relative; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; height: 100%; display: flex; align-items: center; }
+    .nav-item > a { display: flex; align-items: center; gap: 4px; height: 100%; }
+    .dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 8px; min-width: 260px; opacity: 0; visibility: hidden; transition: all 0.2s; pointer-events: none; }
+    .nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .dropdown-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 8px; border-left: 2px solid transparent; transition: 0.2s; }
+    .dropdown-item:hover { background: #131d30; border-left-color: var(--accent); }
+    .dropdown-icon { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+    .dropdown-text { display: flex; flex-direction: column; gap: 2px; }
+    .dropdown-title { font-weight: 600; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .dropdown-subtitle { font-size: 12px; color: var(--muted); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-discord { color: var(--muted); font-size: 14px; transition: color 0.2s; }
+    .nav-discord:hover { color: var(--text); }
+    .lang-select { display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; }
+    .mobile-menu-btn { display: none; background: transparent; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
+
+    /* V2 Mobile Nav Animations & Deep Dark Blue */
+    .mobile-nav { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: #0a0b0f !important; z-index:9999; overflow-y:auto; padding:0; flex-direction:column; }
+    .mobile-nav.open { display:flex; }
+    .mobile-nav-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+    .mobile-close-btn { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
+    .mobile-nav-list { padding: 24px; list-style: none; display: flex; flex-direction: column; gap: 8px; margin:0; }
+    .mob-item { border-bottom: 1px solid var(--border); }
+    .mob-item > a, .mob-toggle { display: block; padding: 16px 0; font-size: 18px; color: var(--text); font-weight: 500; cursor: pointer; }
+    
+    .mob-drop { display: flex; max-height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; opacity: 0; transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease; flex-direction: column; gap: 12px; padding-left: 16px; }
+    .mob-drop.open { max-height: 500px; opacity: 1; padding-top: 8px; padding-bottom: 16px; }
+    .mob-drop a { color: var(--muted); font-size: 16px; transition: color 0.2s; }
+    .mob-drop a:hover { color: var(--accent); }
+    
+    .mob-toggle { display: flex; justify-content: space-between; align-items: center; }
+    .mob-toggle::after { content: '+'; font-family: 'DM Mono', monospace; font-size: 20px; transition: transform 0.3s; color: var(--accent); }
+    .mob-toggle.active::after { transform: rotate(45deg); }
+    .mob-toggle.no-drop::after { display: none; }
+
+    /* Page Specific */
+    .hero-inner { padding: 140px 24px 60px; max-width: 900px; margin: 0 auto; text-align: center; }
+    .hero-inner h1 { font-size: 56px; line-height: 1.2; margin-bottom: 24px; }
+    .hero-inner p { font-size: 20px; color: var(--muted); margin-bottom: 40px; }
+
+    .node-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 80px; }
+    .node-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; transition: 0.3s; }
+    .node-card:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(59,130,246,0.1); transform: translateY(-4px); }
+    .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .node-header h3 { font-size: 20px; display: flex; align-items: center; gap: 12px; }
+    .status-badge { background: rgba(16,185,129,0.1); color: var(--green); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(16,185,129,0.2); }
+    
+    .code-block { background: var(--bg); border: 1px solid var(--border); padding: 16px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 14px; color: var(--accent2); margin-bottom: 16px; }
+    .detail-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 8px; }
+    .detail-row span:first-child { color: var(--muted); }
+
+    .rules-section { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 40px; margin-bottom: 80px; }
+    .rules-section h2 { color: #ef4444; font-size: 24px; margin-bottom: 16px; }
+    .rules-list { display: flex; flex-direction: column; gap: 16px; }
+    .rules-list li { display: flex; align-items: flex-start; gap: 12px; color: var(--muted); font-size: 15px; }
+    .rules-list li::before { content: "⚠️"; font-size: 18px; }
+
+    /* Footer same */
+    .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 0 30px; margin-top: 60px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1200px; margin: 0 auto 60px; padding: 0 24px; }
+    .footer-col h4 { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 12px; }
+    .footer-col a { color: var(--muted); font-size: 14px; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding: 30px 24px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 14px; }
+
+    @media (max-width: 992px) {
+      .nav-links, .nav-right { display: none; }
+      .mobile-menu-btn { display: block; }
+      .node-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .hero-inner h1 { font-size: 40px; }
+      .node-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="/" class="logo">
+      <img src="/logo.png" alt="Vexanode Logo" style="height: 28px; width: auto; object-fit: contain;">
+      <span class="logo-text"><span class="logo-v">Vexa</span><span class="logo-n">node</span></span>
+    </a>
+    <div class="nav-links">
+      <div class="nav-item">
+        <a>Bot Hosting ▾</a>
+        <div class="dropdown">
+          <a href="/discord-bot-hosting.html" class="dropdown-item"><div class="dropdown-icon" style="background:#7c3aed"></div><div class="dropdown-text"><span class="dropdown-title">Discord Bot Hosting</span><span class="dropdown-subtitle">Premium 24/7 hosting</span></div></a>
+          <a href="/free-bot-hosting.html" class="dropdown-item"><div class="dropdown-icon" style="background:#10b981"></div><div class="dropdown-text"><span class="dropdown-title">Free Bot Hosting <span class="badge badge-free">FREE</span></span><span class="dropdown-subtitle">Zero cost, no sleep</span></div></a>
+          <a href="/telegram-bot-hosting.html" class="dropdown-item"><div class="dropdown-icon" style="background:#3b82f6"></div><div class="dropdown-text"><span class="dropdown-title">Telegram Bot Hosting</span><span class="dropdown-subtitle">Fast & reliable</span></div></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a>Lavalink ▾</a>
+        <div class="dropdown">
+          <a href="/lavalink-hosting.html" class="dropdown-item"><div class="dropdown-icon" style="background:#f59e0b"></div><div class="dropdown-text"><span class="dropdown-title">Managed Lavalink Hosting</span><span class="dropdown-subtitle">High performance nodes</span></div></a>
+          <a href="/self-managed-lavalink.html" class="dropdown-item"><div class="dropdown-icon" style="background:#64748b"></div><div class="dropdown-text"><span class="dropdown-title">Self-Managed <span class="badge badge-budget">BUDGET</span></span><span class="dropdown-subtitle">Raw power, your control</span></div></a>
+          <a href="/public-lavalink.html" class="dropdown-item"><div class="dropdown-icon" style="background:#10b981"></div><div class="dropdown-text"><span class="dropdown-title">Public Nodes <span class="badge badge-live"><span class="pulse-dot"></span>LIVE</span></span><span class="dropdown-subtitle">Free public endpoints</span></div></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a>VPS Hosting ▾</a>
+        <div class="dropdown">
+          <a href="/vps-hosting.html" class="dropdown-item"><div class="dropdown-icon" style="background:#0ea5e9"></div><div class="dropdown-text"><span class="dropdown-title">Global Cloud VPS</span><span class="dropdown-subtitle">High speed compute</span></div></a>
+          <a href="/ddos-protection.html" class="dropdown-item"><div class="dropdown-icon" style="background:#ef4444"></div><div class="dropdown-text"><span class="dropdown-title">India DDoS Protection <span class="badge badge-shield">SHIELD</span></span><span class="dropdown-subtitle">Secure infrastructure</span></div></a>
+        </div>
+      </div>
+      <div class="nav-item"><a href="/ddos-protection.html">DDoS</a></div>
+      <div class="nav-item"><a href="/blog/index.html">Blog</a></div>
+    </div>
+    <div class="nav-right">
+      <a href="https://discord.gg/vexanode" class="nav-discord" target="_blank">discord.gg/vexanode</a>
+      <div class="lang-select">🇮🇳 EN</div>
+      <div class="nav-item" style="padding:0">
+        <button class="btn btn-outline" style="padding: 8px 16px; font-size: 13px;">Client Area ▾</button>
+        <div class="dropdown" style="right:0; left:auto; transform:translateX(0) translateY(10px); min-width: 200px;">
+          <a href="https://billing.vexanode.cloud" class="dropdown-item"><div class="dropdown-text"><span class="dropdown-title">Billing Panel</span></div></a>
+          <a href="https://panel.vexanode.cloud" class="dropdown-item"><div class="dropdown-text"><span class="dropdown-title">Game Panel</span></div></a>
+          <a href="https://vps.vexanode.cloud" class="dropdown-item"><div class="dropdown-text"><span class="dropdown-title">VPS Panel</span></div></a>
+        </div>
+      </div>
+    </div>
+    <button class="mobile-menu-btn">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <img src="/logo.png" alt="Vexanode Logo" style="height: 28px; width: auto; object-fit: contain;">
+    <button class="mobile-close-btn">✕</button>
+  </div>
+  <ul class="mobile-nav-list">
+    <li class="mob-item has-drop">
+      <div class="mob-toggle">Bot Hosting</div>
+      <div class="mob-drop">
+        <a href="/discord-bot-hosting.html">Discord Bot Hosting</a>
+        <a href="/free-bot-hosting.html">Free Bot Hosting</a>
+        <a href="/telegram-bot-hosting.html">Telegram Bot Hosting</a>
+      </div>
+    </li>
+    <li class="mob-item has-drop">
+      <div class="mob-toggle">Lavalink</div>
+      <div class="mob-drop">
+        <a href="/lavalink-hosting.html">Managed Lavalink</a>
+        <a href="/self-managed-lavalink.html">Self-Managed</a>
+        <a href="/public-lavalink.html">Public Nodes</a>
+      </div>
+    </li>
+    <li class="mob-item has-drop">
+      <div class="mob-toggle">VPS Hosting</div>
+      <div class="mob-drop">
+        <a href="/vps-hosting.html">Global Cloud VPS</a>
+        <a href="/ddos-protection.html">India DDoS Protection</a>
+      </div>
+    </li>
+    <li class="mob-item"><a href="/ddos-protection.html">DDoS Protection</a></li>
+    <li class="mob-item"><a href="/blog/index.html">Blog</a></li>
+    <li class="mob-item has-drop">
+      <div class="mob-toggle">Client Area</div>
+      <div class="mob-drop">
+        <a href="https://billing.vexanode.cloud">Billing Panel</a>
+        <a href="https://panel.vexanode.cloud">Game Panel</a>
+        <a href="https://vps.vexanode.cloud">VPS Panel</a>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div class="hero-inner animate-on-scroll">
+  <div class="badge badge-free" style="margin-bottom:24px;">NO CREDIT CARD REQUIRED</div>
+  <h1 class="gradient-text">Free Public Lavalink Nodes</h1>
+  <p>Start developing your Discord music bot instantly. We provide entirely free, public Lavalink endpoints for the community to test and build.</p>
+</div>
+
+<div class="section" style="padding-top:0;">
+  
+  <div class="rules-section animate-on-scroll">
+    <h2>Public Node Fair Usage Rules</h2>
+    <p style="color:var(--muted); margin-bottom:24px;">These nodes are shared resources provided free of charge to the developer community. To keep them online and stable for everyone, strictly adhere to the following:</p>
+    <ul class="rules-list">
+      <li><strong>No 24/7 24/7 Looping:</strong> Do not use these nodes to run permanent 24/7 radio bots or "lofi" streams. These nodes are for standard user-commanded playback only.</li>
+      <li><strong>Connection Limits:</strong> Maximum of 20 concurrent voice connections per Discord Bot Token.</li>
+      <li><strong>Rate Limits Apply:</strong> Search endpoints are heavily rate-limited to prevent YouTube IP bans. Cache your search results on your bot.</li>
+      <li><strong>No SLA:</strong> Public nodes may be restarted, updated, or wiped without prior notice. Do not use for large production bots.</li>
+    </ul>
+    <p style="margin-top:24px; font-size:14px; color:var(--text);">Need a permanent, unrestricted node for your production bot? <a href="/lavalink-hosting.html" style="color:var(--accent); font-weight:600;">Get a Managed Node from ₹35/mo →</a></p>
+  </div>
+
+  <div class="node-grid">
+    <!-- Node 1 -->
+    <div class="node-card animate-on-scroll">
+      <div class="node-header">
+        <h3>🇺🇸 Vexa-US-Free</h3>
+        <div class="status-badge"><span class="pulse-dot"></span> Online</div>
+      </div>
+      <div class="detail-row"><span>Location</span><strong style="color:var(--text);">Ashburn, Virginia</strong></div>
+      <div class="detail-row"><span>Version</span><strong style="color:var(--text);">Lavalink v4.0.5</strong></div>
+      <div class="detail-row"><span>Plugins</span><strong style="color:var(--text);">None</strong></div>
+      
+      <div style="margin-top:24px; margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Host</div>
+      <div class="code-block">us-free.lavalink.vexanode.cloud</div>
+      
+      <div style="display:flex; gap:16px;">
+        <div style="flex:1;">
+          <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Port</div>
+          <div class="code-block">443</div>
+        </div>
+        <div style="flex:1;">
+          <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Secure</div>
+          <div class="code-block" style="color:var(--green);">true</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Password</div>
+      <div class="code-block">vexanode-public</div>
+    </div>
+
+    <!-- Node 2 -->
+    <div class="node-card animate-on-scroll">
+      <div class="node-header">
+        <h3>🇩🇪 Vexa-EU-Free</h3>
+        <div class="status-badge"><span class="pulse-dot"></span> Online</div>
+      </div>
+      <div class="detail-row"><span>Location</span><strong style="color:var(--text);">Frankfurt, Germany</strong></div>
+      <div class="detail-row"><span>Version</span><strong style="color:var(--text);">Lavalink v4.0.5</strong></div>
+      <div class="detail-row"><span>Plugins</span><strong style="color:var(--text);">None</strong></div>
+      
+      <div style="margin-top:24px; margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Host</div>
+      <div class="code-block">eu-free.lavalink.vexanode.cloud</div>
+      
+      <div style="display:flex; gap:16px;">
+        <div style="flex:1;">
+          <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Port</div>
+          <div class="code-block">443</div>
+        </div>
+        <div style="flex:1;">
+          <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Secure</div>
+          <div class="code-block" style="color:var(--green);">true</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Password</div>
+      <div class="code-block">vexanode-public</div>
+    </div>
+
+    <!-- Node 3 -->
+    <div class="node-card animate-on-scroll">
+      <div class="node-header">
+        <h3>🇮🇳 Vexa-IN-Free</h3>
+        <div class="status-badge" style="color:var(--muted); background:rgba(255,255,255,0.05); border-color:var(--border);"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--muted);"></span> Full / Locked</div>
+      </div>
+      <div class="detail-row"><span>Location</span><strong style="color:var(--text);">Mumbai, India</strong></div>
+      <div class="detail-row"><span>Version</span><strong style="color:var(--text);">Lavalink v4.0.5</strong></div>
+      <div class="detail-row"><span>Plugins</span><strong style="color:var(--text);">None</strong></div>
+      
+      <div style="margin-top:24px; margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Host</div>
+      <div class="code-block" style="color:var(--muted); opacity:0.5;">in-free.lavalink.vexanode.cloud</div>
+      
+      <div style="display:flex; gap:16px; opacity:0.5;">
+        <div style="flex:1;">
+          <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Port</div>
+          <div class="code-block">443</div>
+        </div>
+        <div style="flex:1;">
+          <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Secure</div>
+          <div class="code-block">true</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:8px; font-size:12px; font-family:'DM Mono', monospace; color:var(--muted);">Password</div>
+      <div class="code-block" style="color:var(--muted); opacity:0.5;">[REDACTED]</div>
+      <p style="font-size:12px; color:#ef4444; margin-top:8px;">Node at maximum capacity. Try another region.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Hosting</h4>
+      <ul>
+        <li><a href="/discord-bot-hosting.html">Discord Bot Hosting</a></li>
+        <li><a href="/lavalink-hosting.html">Lavalink Hosting</a></li>
+        <li><a href="/ddos-protection.html">India DDoS Protection</a></li>
+        <li><a href="/vps-hosting.html">VPS Hosting</a></li>
+        <li><a href="/free-bot-hosting.html">Free Bot Hosting</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="/public-lavalink.html">Public Lavalink</a></li>
+        <li><a href="/blog/index.html">Blog</a></li>
+        <li><a href="#">Network Status</a></li>
+        <li><a href="#">Infrastructure</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="https://billing.vexanode.cloud">Client Area</a></li>
+        <li><a href="https://discord.gg/vexanode">Discord</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Refund Policy</a></li>
+        <li><a href="#">SLA</a></li>
+        <li><a href="#">Fair Usage Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:support@vexanode.cloud">support@vexanode.cloud</a></li>
+        <li><a href="https://billing.vexanode.cloud">billing.vexanode.cloud</a></li>
+        <li><a href="https://discord.gg/vexanode">discord.gg/vexanode</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <div>© 2026 Vexanode. All rights reserved.</div>
+    <div style="display:flex; align-items:center; gap:8px;"><span class="pulse-dot"></span> All systems operational</div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20); });
+  
+  // Animated Mobile Dropdown V2
+  document.querySelectorAll('.mob-toggle').forEach(toggle => {
+    toggle.innerHTML = toggle.innerHTML.replace(' ▾', '');
+    const drop = toggle.nextElementSibling;
+    if (!drop || !drop.classList.contains('mob-drop')) {
+      toggle.classList.add('no-drop');
+    }
+    
+    toggle.onclick = function() {
+      if(this.classList.contains('no-drop')) return;
+      const isOpen = drop.classList.contains('open');
+      
+      document.querySelectorAll('.mob-drop').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.mob-toggle').forEach(t => t.classList.remove('active'));
+      
+      if (!isOpen) {
+        drop.classList.add('open');
+        this.classList.add('active');
+      }
+    };
+  });
+
+  const newMobileBtn = document.querySelector('.mobile-menu-btn');
+  const newMobileNav = document.getElementById('mobileNav');
+  const newCloseBtn = document.querySelector('.mobile-close-btn');
+  
+  if(newMobileBtn && newMobileNav) {
+    newMobileBtn.onclick = (e) => {
+      e.preventDefault();
+      newMobileNav.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+  }
+  if(newCloseBtn) {
+    newCloseBtn.onclick = () => {
+      newMobileNav.classList.remove('open');
+      document.body.style.overflow = 'auto';
+    };
+  }
+
+  const observer = new IntersectionObserver((entries) => { entries.forEach((entry, index) => { if (entry.isIntersecting) { setTimeout(() => { entry.target.classList.add('visible'); }, (index % 3) * 100); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+  document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+  // Dynamic Pricing Calculator
+  document.querySelectorAll('.pricing-tabs').forEach(tabGroup => {
+    const btns = tabGroup.querySelectorAll('.tab-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Toggle active class
+        btns.forEach(b => b.classList.remove('active', 'btn-primary'));
+        btn.classList.add('active');
+        
+        
+        
+        const multi = parseFloat(btn.getAttribute('data-multi'));
+        const disc = parseFloat(btn.getAttribute('data-disc'));
+        let suffix = '/mo';
+        if(multi === 3) suffix = '/qtr';
+        if(multi === 6) suffix = '/half-yr';
+        if(multi === 12) suffix = '/yr';
+        
+        // Update prices
+        document.querySelectorAll('.dynamic-price').forEach(priceEl => {
+          const basePrice = parseFloat(priceEl.getAttribute('data-base-price'));
+          if(!isNaN(basePrice)) {
+            let newPrice = basePrice;
+            if(basePrice > 0) {
+              newPrice = Math.round(basePrice * multi * disc);
+            }
+            priceEl.innerHTML = `₹${newPrice}<span>${suffix}</span>`;
+          }
+        });
+      });
+    });
+  });
+
+</script>
+</body>
+</html>
