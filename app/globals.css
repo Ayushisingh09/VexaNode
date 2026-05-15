@@ -88,36 +88,6 @@
 
 :root {
   --radius: 0.625rem;
-  --background: rgba(255, 255, 255, 1);
-  --foreground: rgba(37, 37, 37, 1);
-
-  /* Primary Colors - Blue (Brand Theme) */
-  --icon-primary: rgba(59, 130, 246, 1);
-  --color-primary: rgba(52, 52, 52, 1);
-  --color-secondary: rgba(247, 247, 247, 1);
-  --button-primary: rgba(59, 130, 246, 1);
-  --text-button-primary: rgba(255, 255, 255, 1);
-  --card-primary: rgba(255, 255, 255, 1);
-  --text-card-primary: rgba(37, 37, 37, 1);
-  --border-primary: rgba(179, 179, 179, 0.486);
-  --border-secondary: rgba(59, 130, 246, 0.205);
-  --text-secondary: rgba(59, 130, 246, 1);
-  --icon-text-primary: rgba(59, 130, 246, 1);
-  --hover-gradient: radial-gradient(50% 50% at 50% 100%, rgba(59, 130, 246, 0.288) 0%, transparent 100%);
-
-  /* Globe Configuration - Light Mode */
-  --globe-base-color-r: 1.0;
-  --globe-base-color-g: 1.0;
-  --globe-base-color-b: 1.0;
-  --globe-marker-color-r: 0.8;
-  --globe-marker-color-g: 0.2;
-  --globe-marker-color-b: 0.2;
-  --globe-glow-color-r: 1.0;
-  --globe-glow-color-g: 1.0;
-  --globe-glow-color-b: 1.0;
-}
-
-.dark {
   --background: rgba(37, 37, 37, 1);
   --foreground: rgba(251, 251, 251, 1);
 
@@ -275,20 +245,10 @@
 
   .blob-primary {
     background-color: var(--icon-primary);
-    opacity: 0.2;
-  }
-
-  .dark .blob-primary {
-    background-color: var(--icon-primary);
     opacity: 0.1;
   }
 
   .blob-secondary {
-    background-color: var(--icon-primary);
-    opacity: 0.15;
-  }
-
-  .dark .blob-secondary {
     background-color: var(--icon-primary);
     opacity: 0.1;
   }

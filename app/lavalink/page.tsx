@@ -6,6 +6,7 @@ import { ChevronRight, Cpu, Zap, Shield, HardDrive, Music, Check, Headphones, Gl
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { CustomIcons } from "../components/CustomIcons"
+import { useCurrency } from "../contexts/CurrencyContext"
 import LavalinkTest from "../components/LavalinkTest"
 
 const cycles = [
@@ -17,7 +18,7 @@ const cycles = [
 
 const categories = [
   { id: "self-managed", name: "Self Managed", icon: Headphones, desc: "Direct node access for developers" },
-  { id: "managed", name: "Managed Hosting", icon: Sparkles, desc: "Complete setup & expert support" }
+  { id: "managed", name: "Managed Hosting", icon: Sparkles, desc: "Managed Lavalink hosting, fully handled by our team. Setup, config, and uptime included." }
 ]
 
 const plans = {
@@ -26,93 +27,123 @@ const plans = {
       id: "self-starter",
       name: "Starter",
       basePrice: 35,
-      ram: "512MB",
-      players: "50 Limit",
-      sources: "YT+Spotify",
-      region: "IN/US",
+      ram: "512 MB",
+      cpu: "50% CPU",
+      storage: "1 GB Disk",
+      region: "All 4",
       popular: false
     },
     {
       id: "self-basic",
       name: "Basic",
       basePrice: 99,
-      ram: "1GB",
-      players: "100 Limit",
-      sources: "+SoundCloud",
+      ram: "1 GB",
+      cpu: "100% CPU",
+      storage: "2 GB Disk",
+      region: "All 4",
+      popular: false
+    },
+    {
+      id: "self-silver",
+      name: "Silver",
+      basePrice: 129,
+      ram: "2 GB",
+      cpu: "150% CPU",
+      storage: "4 GB Disk",
       region: "All 4",
       popular: true
     },
     {
-      id: "self-pro",
-      name: "Pro",
+      id: "self-gold",
+      name: "Gold",
       basePrice: 199,
-      ram: "2GB",
-      players: "250 Limit",
-      sources: "All 30+",
-      plugins: "Allowed",
+      ram: "4 GB",
+      cpu: "200% CPU",
+      storage: "8 GB Disk",
+      region: "All 4",
       popular: false
     },
     {
-      id: "self-business",
-      name: "Business",
+      id: "self-platinum",
+      name: "Platinum",
+      basePrice: 279,
+      ram: "6 GB",
+      cpu: "250% CPU",
+      storage: "12 GB Disk",
+      region: "All 4",
+      popular: false
+    },
+    {
+      id: "self-diamond",
+      name: "Diamond",
       basePrice: 349,
-      ram: "4GB",
-      players: "500+ Limit",
-      sources: "All + Custom",
-      support: "Priority",
+      ram: "8 GB",
+      cpu: "300% CPU",
+      storage: "16 GB Disk",
+      region: "All 4",
+      popular: false
+    },
+    {
+      id: "self-netherite",
+      name: "Netherite",
+      basePrice: 429,
+      ram: "8 GB",
+      cpu: "300% CPU",
+      storage: "16 GB Disk",
+      region: "All 4",
+      popular: false
+    },
+    {
+      id: "self-obsidian",
+      name: "Obsidian",
+      basePrice: 550,
+      ram: "12 GB",
+      cpu: "400% CPU",
+      storage: "24 GB Disk",
+      region: "All 4",
       popular: false
     }
   ],
   "managed": [
     {
       id: "managed-basic",
-      name: "Lavalink Basic",
-      basePrice: 350,
-      ram: "2 GB DDR4",
-      cpu: "1 Dedicated Core (Intel Xeon Gold)",
-      storage: "5 GB NVMe SSD",
-      network: "1 Gbps · Managed",
+      name: "Basic",
+      basePrice: 140,
+      ram: "2GB DDR4",
+      cpu: "1 Core",
+      storage: "5GB NVMe",
+      network: "1Gbps",
       hardware: "Intel"
     },
     {
       id: "managed-starter",
-      name: "Lavalink Starter",
-      basePrice: 450,
-      ram: "4 GB DDR4",
-      cpu: "2 Dedicated Cores (Intel Xeon Gold)",
-      storage: "8 GB NVMe SSD",
-      network: "1 Gbps · Managed",
+      name: "Starter",
+      basePrice: 190,
+      ram: "4GB DDR4",
+      cpu: "2 Cores",
+      storage: "8GB NVMe",
+      network: "1Gbps",
       hardware: "Intel"
     },
     {
       id: "managed-gold",
-      name: "Lavalink Gold",
-      basePrice: 650,
-      ram: "6 GB DDR4",
-      cpu: "6 Dedicated Cores (AMD EPYC 7502P)",
-      storage: "15 GB NVMe SSD",
-      network: "1 Gbps · Managed",
+      name: "Gold",
+      basePrice: 280,
+      ram: "6GB DDR4",
+      cpu: "6 Cores",
+      storage: "15GB NVMe",
+      network: "1Gbps",
       popular: true,
       hardware: "AMD"
     },
     {
-      id: "managed-api",
-      name: "Lavalink API(s)",
-      basePrice: 900,
-      ram: "API Access Tier",
-      cpu: "Spotify, Gaana, Amazon",
-      storage: "99% Uptime",
-      network: "Low-latency audio APIs",
-      hardware: "AMD"
-    },
-    {
-      id: "managed-config",
-      name: "Lavalink Configuration",
-      basePrice: 1700,
-      ram: "Full setup service",
-      cpu: "application.yml configured",
-      storage: "Bot integration support",
-      network: "Managed setup included",
+      id: "managed-pro",
+      name: "Pro",
+      basePrice: 500,
+      ram: "High-end specs",
+      cpu: "Priority Support",
+      storage: "Custom Audio APIs",
+      network: "Custom Plugins",
       hardware: "AMD"
     }
   ]
@@ -121,6 +152,7 @@ const plans = {
 export default function LavalinkPage() {
   const [selectedCategory, setSelectedCategory] = useState("self-managed")
   const [selectedCycle, setSelectedCycle] = useState("monthly")
+  const { formatPrice } = useCurrency()
 
   const calculatePrice = (base: number) => {
     const cycle = cycles.find(c => c.id === selectedCycle)
@@ -150,10 +182,10 @@ export default function LavalinkPage() {
           <div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 orbitron-font leading-tight">
               Lavalink VPS <br />
-              <span className="relative inline-block text-blue-500">
+              <span className="relative inline-block text-blue-500 pb-2">
                 On Pterodactyl
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M0 5 Q 50 0 100 5" stroke="#3b82f6" strokeWidth="4" fill="none" />
+                <svg className="absolute bottom-0 left-0 w-full h-2" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0 5 Q 50 10 100 5" stroke="#3b82f6" strokeWidth="2" fill="none" />
                 </svg>
               </span>
             </h1>
@@ -296,16 +328,16 @@ export default function LavalinkPage() {
                   {/* Price & Action */}
                   <div className="flex items-center gap-8 ml-auto">
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-white">₹{calculatePrice(plan.basePrice)}<span className="text-sm font-normal text-gray-500">/mo</span></div>
+                      <div className="text-2xl font-bold text-white">{formatPrice(calculatePrice(plan.basePrice))}<span className="text-sm font-normal text-gray-500">/mo</span></div>
                       {selectedCycle !== 'monthly' && (
                         <div className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter">Billed {selectedCycle}</div>
                       )}
                     </div>
                     <a
-                      href="#"
+                      href="https://discord.vexanode.cloud"
                       className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] flex items-center gap-2"
                     >
-                      Order Now
+                      Order via Ticket
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   </div>
@@ -313,6 +345,9 @@ export default function LavalinkPage() {
               ))}
             </AnimatePresence>
           </div>
+          <p className="text-center text-gray-500 text-sm mt-6 italic">
+            * All managed plans are fully handled by our team. Open a ticket or DM us to order.
+          </p>
         </div>
 
         {/* Info Grid */}

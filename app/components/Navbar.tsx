@@ -5,10 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { NavigationConfig, NavigationItem, DropdownItem } from '../types/navigation';
 import { usePathname } from 'next/navigation';
-import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from '../contexts/LanguageContext'
 import LanguageSelector from './LanguageSelector'
+import CurrencySelector from './CurrencySelector'
 import {
   Cloud,
   Server,
@@ -20,11 +20,10 @@ import {
   Menu,
   X,
   ChevronRight,
-  Moon,
-  Sun,
   FileText,
   Shield,
   Check,
+  Database,
 } from 'lucide-react';
 import { FaDiscord, FaServer, FaMusic, FaBook, FaShieldAlt, FaGamepad } from "react-icons/fa";
 import { GrServerCluster } from "react-icons/gr";
@@ -53,12 +52,11 @@ const iconMap: { [key: string]: React.ElementType } = {
   Menu,
   X,
   ChevronRight,
-  Moon,
-  Sun,
   FaDiscord: CustomIcons.Bot,
   GrServerCluster,
   Music: FaMusic,
   FaGamepad,
+  Database,
 };
 
 const getIcon = (iconName?: string) => iconName ? iconMap[iconName] : null;
@@ -78,54 +76,7 @@ const SocialIcons: { [key: string]: React.FC } = {
 };
 
 
-const ThemeToggle = React.memo((): React.ReactElement => {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const handleThemeToggle = useCallback(() => {
-    setTheme(theme === "light" ? "dark" : "light")
-  }, [theme, setTheme])
-
-  const aria = theme === "light"
-    ? "Switch to dark mode"
-    : "Switch to light mode"
-
-  if (!mounted) {
-    return (
-      <Button
-        variant="ghost"
-        size="icon"
-        className="w-8 h-8 text-muted-foreground"
-        aria-label="Toggle theme"
-      >
-        <Sun className="h-4 w-4" />
-      </Button>
-    )
-  }
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={handleThemeToggle}
-      className="w-8 h-8 text-muted-foreground hover:text-primary"
-      aria-label={aria}
-    >
-      {theme === "light" ? (
-        <Moon className="h-4 w-4" />
-      ) : (
-        <Sun className="h-4 w-4" />
-      )}
-    </Button>
-  )
-})
-
-
-ThemeToggle.displayName = 'ThemeToggle'
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -141,7 +92,6 @@ const Navbar: React.FC = () => {
   const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
   const [mobileDropdownStates, setMobileDropdownStates] = useState<{ [key: string]: boolean }>({});
   const pathname = usePathname();
-  const { theme } = useTheme();
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -760,10 +710,22 @@ const Navbar: React.FC = () => {
 
             <div className="hidden md:flex md:items-center flex-1 justify-center">
               {config.mainNavigation.map((item) => renderNavigationItem(item))}
+              <div className="relative group flex items-center h-full">
+                <Link
+                  href="/partners"
+                  className={`px-4 py-8 text-[13px] font-semibold text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-1 relative ${pathname === '/partners' ? 'text-white' : ''}`}
+                >
+                  Partners
+                  <motion.div
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    layoutId="nav-hover-dot"
+                  />
+                </Link>
+              </div>
             </div>
 
             <div className="hidden md:flex md:items-center space-x-4 ml-auto">
-              <ThemeToggle />
+              <CurrencySelector />
               <LanguageSelector />
               
               <Link
@@ -873,16 +835,7 @@ const Navbar: React.FC = () => {
                     <LanguageSelector className="w-32" />
                   </motion.div>
 
-                  <motion.div
-                    className="flex items-center justify-between py-2 mb-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.25 }}
-                  >
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
-                    <ThemeToggle />
-                  </motion.div>
+
 
                   <motion.div
                     className="flex items-center justify-center gap-6 py-2 mb-3"

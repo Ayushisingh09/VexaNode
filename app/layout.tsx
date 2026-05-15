@@ -4,8 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { LayoutWrapper } from "./components/layout-wrapper";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { CurrencyProvider } from "./contexts/CurrencyContext";
 import CookieConsent from "./components/CookieConsent";
-import ThemeSwitcher from "./components/ThemeSwitcher";
 import TopBanner from "./components/TopBanner";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -42,11 +42,8 @@ const quicksand = Quicksand({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  colorScheme: "dark light",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1e40af" },
-    { media: "(prefers-color-scheme: dark)", color: "#1e3a8a" }
-  ],
+  colorScheme: "dark",
+  themeColor: "#1e3a8a",
 }
 
 export const metadata: Metadata = {
@@ -123,13 +120,13 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
     other: [
       {
         rel: 'apple-touch-icon-precomposed',
-        url: '/logo.png',
+        url: '/favicon.png',
       },
     ],
   },
@@ -223,17 +220,18 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${quicksand.variable} antialiased min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white transition-colors duration-300`}
+        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${quicksand.variable} antialiased min-h-screen bg-black text-white`}
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" disableTransitionOnChange>
           <LanguageProvider>
-            <LayoutWrapper>
-              {children}
-              <Analytics />
-            </LayoutWrapper>
-            <CookieConsent />
-            <ThemeSwitcher />
+            <CurrencyProvider>
+              <LayoutWrapper>
+                {children}
+                <Analytics />
+              </LayoutWrapper>
+              <CookieConsent />
+            </CurrencyProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

@@ -19,14 +19,16 @@ export const CustomIcons = {
   ),
   Bot: ({ className }: { className?: string }) => (
     <svg viewBox="0 0 24 24" fill="none" className={className} stroke="currentColor" strokeWidth="1.5">
-      <path d="M12 2V5" strokeLinecap="round" />
-      <path d="M5 8C5 4.13401 8.13401 1 12 1C15.866 1 19 4.13401 19 8V10H5V8Z" fill="currentColor" fillOpacity="0.1" />
-      <rect x="4" y="10" width="16" height="10" rx="3" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M8 14C8 14.5523 8.44772 15 9 15C9.55228 15 10 14.5523 10 14C10 13.4477 9.55228 13 9 13C8.44772 13 8 13.4477 8 14Z" fill="currentColor" />
-      <path d="M14 14C14 14.5523 14.4477 15 15 15C15.5523 15 16 14.5523 16 14C16 13.4477 15.5523 13 15 13C14.4477 13 14 13.4477 14 14Z" fill="currentColor" />
-      <path d="M9 18C9 18 10.5 19 12 19C13.5 19 15 18 15 18" strokeLinecap="round" />
-      <path d="M20 13H22" strokeLinecap="round" />
-      <path d="M2 13H4" strokeLinecap="round" />
+      <rect x="3" y="11" width="18" height="10" rx="2" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.1" />
+      <path d="M12 5V8" strokeLinecap="round" />
+      <path d="M8 2L10 5" strokeLinecap="round" />
+      <path d="M16 2L14 5" strokeLinecap="round" />
+      <circle cx="12" cy="8" r="3" strokeLinecap="round" />
+      <path d="M7 15H8" strokeLinecap="round" strokeWidth="2" />
+      <path d="M16 15H17" strokeLinecap="round" strokeWidth="2" />
+      <path d="M10 18H14" strokeLinecap="round" />
+      <path d="M2 13V15" strokeLinecap="round" />
+      <path d="M22 13V15" strokeLinecap="round" />
     </svg>
   ),
   Minecraft: ({ className }: { className?: string }) => (

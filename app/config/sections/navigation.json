@@ -26,6 +26,12 @@
               "description": "Powerful bare metal servers",
               "href": "/dedicated",
               "icon": "GrServerCluster"
+            },
+            {
+              "name": "Managed Databases",
+              "description": "SQL, MongoDB & Redis hosting",
+              "href": "/databases",
+              "icon": "Database"
             }
           ]
         },
@@ -72,6 +78,12 @@
               "description": "Technical guides & docs",
               "href": "/docs",
               "icon": "FileText"
+            },
+            {
+              "name": "Domain Names",
+              "description": "Register your dream domain",
+              "href": "/domains",
+              "icon": "Globe"
             }
           ]
         }
@@ -105,6 +117,11 @@
           "name": "Affiliate Program",
           "href": "/affiliates",
           "description": "Earn recurring commission"
+        },
+        {
+          "name": "Partners",
+          "href": "/partners",
+          "description": "Our trusted ecosystem"
         },
         {
           "name": "About Us",

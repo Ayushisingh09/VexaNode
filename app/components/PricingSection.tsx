@@ -1,15 +1,20 @@
+"use client"
+
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { CustomIcons } from "./CustomIcons"
+import { useCurrency } from "../contexts/CurrencyContext"
 
 export default function PricingSection() {
+  const { formatPrice } = useCurrency()
+  
   const plans = [
     {
       id: 'database',
       title: "Database Hosting",
       description: "High-performance managed database hosting for MySQL, PostgreSQL, MongoDB & more.",
-      price: "₹99",
+      price: 99,
       icon: CustomIcons.Database,
       iconBg: "bg-[#0a2e2a]",
       buttonText: "Get Database Hosting",
@@ -20,7 +25,7 @@ export default function PricingSection() {
       id: 'vps',
       title: "VPS Hosting",
       description: "Scalable virtual private servers with full root access, SSD storage, and 24/7 support.",
-      price: "₹225",
+      price: 225,
       icon: CustomIcons.VPS,
       iconBg: "bg-[#0a2e1d]",
       buttonText: "Get VPS Hosting",
@@ -32,7 +37,7 @@ export default function PricingSection() {
       id: 'lavalink',
       title: "Lavalink Hosting",
       description: "High performance Lavalink hosting for Discord music bots with low latency and 24/7 uptime.",
-      price: "₹49",
+      price: 49,
       icon: CustomIcons.Lavalink,
       iconBg: "bg-[#2e0a24]",
       buttonText: "Get Lavalink Hosting",
@@ -43,7 +48,7 @@ export default function PricingSection() {
       id: 'discord',
       title: "Discord Bot Hosting",
       description: "Reliable and affordable Discord bot hosting with 24/7 uptime, Node.js support, and easy deployment.",
-      price: "₹52",
+      price: 52,
       icon: CustomIcons.Bot,
       iconBg: "bg-[#132e0a]",
       buttonText: "Get Discord Bot Hosting",
@@ -101,7 +106,7 @@ export default function PricingSection() {
                   <div className="flex flex-col items-center md:items-end">
                     <span className="text-xs text-gray-500 uppercase tracking-wider">Starting at</span>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold text-white">{plan.price}</span>
+                      <span className="text-3xl font-bold text-white">{formatPrice(plan.price)}</span>
                       <span className="text-gray-500 text-sm">/mo</span>
                     </div>
                   </div>
