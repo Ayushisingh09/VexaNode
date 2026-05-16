@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'cdn.discord.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'images-ext-1.discordapp.net',
       },
       {

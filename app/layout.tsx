@@ -5,6 +5,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { LayoutWrapper } from "./components/layout-wrapper";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
+import { AuthProvider } from "./components/AuthProvider";
 import CookieConsent from "./components/CookieConsent";
 import TopBanner from "./components/TopBanner";
 import { Analytics } from "@vercel/analytics/next"
@@ -226,10 +227,12 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" disableTransitionOnChange>
           <LanguageProvider>
             <CurrencyProvider>
-              <LayoutWrapper>
-                {children}
-                <Analytics />
-              </LayoutWrapper>
+              <AuthProvider>
+                <LayoutWrapper>
+                  {children}
+                  <Analytics />
+                </LayoutWrapper>
+              </AuthProvider>
               <CookieConsent />
             </CurrencyProvider>
           </LanguageProvider>

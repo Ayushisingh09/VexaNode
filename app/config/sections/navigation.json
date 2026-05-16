@@ -150,14 +150,14 @@
     }
   ],
   "clientSpace": {
-    "name": "Sign Up",
-    "href": "https://billing.vexanode.cloud/auth/register",
+    "name": "Dashboard",
+    "href": "/login",
     "icon": "User",
     "style": "primary-purple"
   },
   "loginLink": {
     "name": "Log In",
-    "href": "https://billing.vexanode.cloud/auth/login"
+    "href": "/login"
   },
   "banner": {
     "show": true,
