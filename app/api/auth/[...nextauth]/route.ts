@@ -20,6 +20,10 @@ const handler = NextAuth({
       secret: supabaseSecret,
     }),
   } : {}),
+  session: {
+    strategy: "database", // Force database sessions since we have an adapter
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
     async session({ session, user }: any) {
       if (session?.user) {
