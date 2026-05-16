@@ -7,11 +7,12 @@ export function isDate(value: any): value is Date {
 
 export function format(obj: any) {
     if (!obj) return obj;
+    const dateFields = ["expires", "emailVerified"];
     for (const [key, value] of Object.entries(obj)) {
         if (value === null) {
             delete obj[key];
         }
-        if (isDate(value)) {
+        if (dateFields.includes(key) && value) {
             obj[key] = new Date(value);
         }
     }
