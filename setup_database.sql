@@ -78,6 +78,19 @@ CREATE TABLE IF NOT EXISTS public.orders (
   CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS public.tickets (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  subject text,
+  message text,
+  status text DEFAULT 'Open',
+  priority text DEFAULT 'Normal',
+  type text DEFAULT 'Support',
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT tickets_pkey PRIMARY KEY (id),
+  CONSTRAINT tickets_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE
+);
+
 -- ############################################################
 -- PART 3: AUTOMATION TRIGGERS
 -- ############################################################

@@ -74,6 +74,30 @@ export const createOrder = async (orderData: Partial<Order>) => {
   return data[0]
 }
 
+// Tickets
+export async function getTickets(userId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('tickets')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) throw error
+  return data || []
+}
+
+export async function createTicket(ticketData: any) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('tickets')
+    .insert([ticketData])
+    .select()
+  
+  if (error) throw error
+  return data[0]
+}
+
 export const getAllData = async () => {
   const supabase = await createClient()
   const { data: users, error: uError } = await supabase.from('profiles').select('*')

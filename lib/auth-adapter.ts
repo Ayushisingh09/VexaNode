@@ -13,7 +13,7 @@ export function format(obj: any) {
             delete obj[key];
         }
         if (dateFields.includes(key) && value) {
-            obj[key] = new Date(value);
+            obj[key] = new Date(value as any);
         }
     }
     return obj;
