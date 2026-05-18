@@ -15,7 +15,7 @@ export default function HeroSection() {
       {/* Blue Background Glows */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
-      
+
       <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -27,14 +27,14 @@ export default function HeroSection() {
             Experience the <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">universe of speed</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-12">
             <span className="font-bold text-white">VexaNode</span> provides high-performance hosting infrastructure with infinite scalability. Experience the universe of speed and reliability.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
-              href="/games?game=minecraft"
+              href="/discord"
               className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] flex items-center gap-3 group"
             >
               Get Your Server Now
@@ -54,7 +54,7 @@ export default function HeroSection() {
             <div className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mb-4 uppercase">
               Limited Time Offer!
             </div>
-            
+
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity" />
               <div className="relative bg-gray-900/80 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-3 flex items-center gap-3 text-sm text-gray-300">

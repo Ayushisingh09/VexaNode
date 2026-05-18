@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 // Simple in-memory spam queue (Rate limiter)
 const spamQueue = new Map<string, number>()
 const COOLDOWN_MS = 30000 // 30 seconds between requests
 
 export async function POST(req: Request) {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }

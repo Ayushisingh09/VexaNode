@@ -8,6 +8,8 @@ import webhostingConfig from "../../config/sections/webhosting.json"
 import type { WebHostingConfig } from "../../types/webhosting"
 import { CurrencySelector, useCurrency } from "../ui/CurrencySelector"
 import { useLanguage } from "../../contexts/LanguageContext"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 const config = webhostingConfig as WebHostingConfig
 
@@ -17,6 +19,24 @@ export default function WebHostingPricingSection() {
   const [selectedPlanType, setSelectedPlanType] = useState(config.planTypes[0].id)
 
   const currentPlans = config.plans[selectedPlanType] || config.plans[config.planTypes[0].id]
+
+  const router = useRouter()
+  const { data: session } = useSession()
+
+  const handleDeploy = (plan: any) => {
+    localStorage.setItem('vexa_cart_total', plan.price.toString())
+    localStorage.setItem('vexa_cart_items', JSON.stringify([{
+      name: `Web Hosting - ${plan.name}`,
+      description: `${plan.storage} | ${plan.bandwidth} | ${plan.ram}`,
+      price: plan.price
+    }]))
+    
+    if (!session?.user) {
+      router.push('/login')
+    } else {
+      router.push('/dashboard/checkout')
+    }
+  }
 
   return (
     <div className="bg-gray-50 dark:bg-[#0a0b0f] relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -175,15 +195,15 @@ export default function WebHostingPricingSection() {
                       </span>
                       <span className="ml-1 text-gray-500 dark:text-gray-400">{plan.period}</span>
                     </div>
-                    <a
-                      href={plan.orderLink}
+                    <button
+                      onClick={() => handleDeploy(plan)}
                       className="orbitron-font w-full button-primary text-button-primary px-6 py-3 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center gap-2 border border-transparent hover:bg-[var(--hover-gradient)] hover:text-[var(--icon-text-primary)] hover:border-[var(--border-secondary)]"
                     >
                       {t('webHostingPricing.orderNow')}
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </a>
+                    </button>
                   </div>
                 </div>
               </motion.div>

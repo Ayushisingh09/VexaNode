@@ -8,6 +8,8 @@ import Footer from "../components/Footer"
 import Image from "next/image"
 import { CustomIcons } from "../components/CustomIcons"
 import { useCurrency } from "../contexts/CurrencyContext"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 const cycles = [
   { id: "monthly", name: "Monthly", discount: 0 },
@@ -76,12 +78,30 @@ export default function VPSPage() {
   const [selectedCpu, setSelectedCpu] = useState("intel")
   const [selectedCycle, setSelectedCycle] = useState("monthly")
   const { formatPrice, currency } = useCurrency()
+  const router = useRouter()
+  const { data: session } = useSession()
 
   const calculatePrice = (base: number) => {
     const cycle = cycles.find(c => c.id === selectedCycle)
     if (!cycle) return base
     const price = base * (1 - cycle.discount)
     return Math.floor(price)
+  }
+
+  const handleDeploy = (plan: any) => {
+    const price = calculatePrice(plan.basePrice)
+    localStorage.setItem('vexa_cart_total', price.toString())
+    localStorage.setItem('vexa_cart_items', JSON.stringify([{
+      name: `VPS - ${plan.name} (${selectedLocation.toUpperCase()})`,
+      description: `${plan.cores} | ${plan.ram} | ${plan.storage}`,
+      price: price
+    }]))
+    
+    if (!session?.user) {
+      router.push('/login')
+    } else {
+      router.push('/dashboard/checkout')
+    }
   }
 
   const currentPlans = (plans[selectedLocation as keyof typeof plans] as any)[selectedCpu] || []
@@ -229,13 +249,13 @@ export default function VPSPage() {
                       <div className="text-2xl font-bold text-white">{formatPrice(calculatePrice(plan.basePrice))}</div>
                       <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Per Month</div>
                     </div>
-                    <a
-                      href={plan.href}
+                    <button
+                      onClick={() => handleDeploy(plan)}
                       className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-[0_0_30px_rgba(59,130,246,0.2)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-2"
                     >
                       Deploy
                       <ChevronRight className="w-4 h-4" />
-                    </a>
+                    </button>
                   </div>
                 </motion.div>
               ))

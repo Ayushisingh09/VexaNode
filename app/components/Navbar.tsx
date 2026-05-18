@@ -7,6 +7,7 @@ import { NavigationConfig, NavigationItem, DropdownItem } from '../types/navigat
 import { usePathname } from 'next/navigation';
 import { Button } from "@/components/ui/button"
 import { useLanguage } from '../contexts/LanguageContext'
+import { useSession } from 'next-auth/react'
 import LanguageSelector from './LanguageSelector'
 import CurrencySelector from './CurrencySelector'
 import {
@@ -79,6 +80,7 @@ const SocialIcons: { [key: string]: React.FC } = {
 
 
 const Navbar: React.FC = () => {
+  const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showBanner, setShowBanner] = useState(config.banner.show);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -728,12 +730,27 @@ const Navbar: React.FC = () => {
               <CurrencySelector />
               <LanguageSelector />
               
-              <Link
-                href={config.loginLink?.href || "#"}
-                className="text-gray-400 hover:text-white text-sm font-bold transition-colors px-4 py-2"
-              >
-                {config.loginLink?.name || "Log In"}
-              </Link>
+              {session?.user ? (
+                <Link
+                  href="/dashboard/account"
+                  className="flex items-center gap-2 group transition-all duration-300"
+                >
+                  <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 overflow-hidden flex items-center justify-center group-hover:border-blue-500">
+                    {session.user.image ? (
+                      <img src={session.user.image} alt="User" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform" />
+                    )}
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  href={config.loginLink?.href || "#"}
+                  className="text-gray-400 hover:text-white text-sm font-bold transition-colors px-4 py-2"
+                >
+                  {config.loginLink?.name || "Log In"}
+                </Link>
+              )}
 
               <Link
                 href={config.clientSpace.href}

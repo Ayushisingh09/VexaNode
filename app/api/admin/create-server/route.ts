@@ -1,9 +1,26 @@
 import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { getPteroUser, createPteroUser, createPteroServer } from "@/lib/pterodactyl"
+import { adminCreateServerSchema } from "@/lib/validate"
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions) as any
+  const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "")
+
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
-    const { email, username, planName, memory, disk, cpu } = await req.json()
+    const body = await req.json()
+    const result = adminCreateServerSchema.safeParse(body)
+    
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid request data", details: result.error.format() }, { status: 400 })
+    }
+
+    const { email, username, planName, memory, disk, cpu } = result.data
 
     // 1. Check if user exists in Pterodactyl
     let pteroUser = await getPteroUser(email)

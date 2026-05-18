@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { banUser, deleteOrder, updateOrderStatus } from "@/lib/db"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { banUser, deleteOrder, updateOrderStatus, updateTicketStatus } from "@/lib/db"
+import { adminActionSchema } from "@/lib/validate"
 
 export async function POST(req: Request) {
-  const session = await getServerSession() as any
+  const session = await getServerSession(authOptions) as any
   const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "")
 
   if (!isAdmin) {
@@ -11,7 +13,14 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { type, id, status } = await req.json()
+    const body = await req.json()
+    const result = adminActionSchema.safeParse(body)
+    
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid request data", details: result.error.format() }, { status: 400 })
+    }
+
+    const { type, id, status } = result.data
 
     switch (type) {
       case "BAN_USER":
@@ -21,7 +30,10 @@ export async function POST(req: Request) {
         await deleteOrder(id)
         break
       case "UPDATE_ORDER_STATUS":
-        await updateOrderStatus(id, status)
+        if (status) await updateOrderStatus(id, status)
+        break
+      case "UPDATE_TICKET_STATUS":
+        if (status) await updateTicketStatus(id, status)
         break
       default:
         return NextResponse.json({ error: "Invalid action type" }, { status: 400 })

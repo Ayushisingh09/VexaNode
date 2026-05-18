@@ -6,6 +6,8 @@ import { ChevronRight, Cpu, Zap, Shield, HardDrive, Gamepad2, Trophy, Users } fr
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { CustomIcons } from "../components/CustomIcons"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 const cycles = [
   { id: "monthly", name: "Monthly", discount: 0 },
@@ -75,11 +77,30 @@ export default function MinecraftPage() {
   const [selectedCategory, setSelectedCategory] = useState("premium")
   const [selectedCycle, setSelectedCycle] = useState("semi-annually")
 
+  const router = useRouter()
+  const { data: session } = useSession()
+
   const calculatePrice = (base: number) => {
     const cycle = cycles.find(c => c.id === selectedCycle)
     if (!cycle) return base
     const monthlyPrice = base * (1 - cycle.discount)
     return Math.floor(monthlyPrice)
+  }
+
+  const handleDeploy = (plan: any) => {
+    const price = calculatePrice(plan.basePrice)
+    localStorage.setItem('vexa_cart_total', price.toString())
+    localStorage.setItem('vexa_cart_items', JSON.stringify([{
+      name: `Minecraft - ${plan.name}`,
+      description: `${plan.cpu} | ${plan.ram} | ${plan.storage}`,
+      price: price
+    }]))
+    
+    if (!session?.user) {
+      router.push('/login')
+    } else {
+      router.push('/dashboard/checkout')
+    }
   }
 
   return (
@@ -228,13 +249,13 @@ export default function MinecraftPage() {
                         <div className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter text-right">Billed {selectedCycle}</div>
                       )}
                     </div>
-                    <a
-                      href={plan.href}
+                    <button
+                      onClick={() => handleDeploy(plan)}
                       className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] flex items-center gap-2"
                     >
                       Build Server
                       <ChevronRight className="w-4 h-4" />
-                    </a>
+                    </button>
                   </div>
                 </motion.div>
               ))}

@@ -91,6 +91,18 @@ CREATE TABLE IF NOT EXISTS public.tickets (
   CONSTRAINT tickets_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS public.ticket_replies (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  ticket_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  message text NOT NULL,
+  is_admin boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT ticket_replies_pkey PRIMARY KEY (id),
+  CONSTRAINT ticket_replies_ticket_id_fkey FOREIGN KEY (ticket_id) REFERENCES public.tickets(id) ON DELETE CASCADE,
+  CONSTRAINT ticket_replies_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE
+);
+
 -- ############################################################
 -- PART 3: AUTOMATION TRIGGERS
 -- ############################################################

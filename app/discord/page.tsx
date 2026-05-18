@@ -13,6 +13,8 @@ import Footer from "../components/Footer"
 import { CustomIcons } from "../components/CustomIcons"
 import { useCurrency } from "../contexts/CurrencyContext"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 const cycles = [
   { id: "monthly", name: "Monthly", discount: 0 },
@@ -135,6 +137,31 @@ export default function DiscordBotPage() {
   const [logs, setLogs] = useState<string[]>(BOT_LOGS.slice(0, 3))
   const [activeTab, setActiveTab] = useState("all")
   const { formatPrice } = useCurrency()
+  const router = useRouter()
+  const { data: session } = useSession()
+
+  const calculatePrice = (base: number) => {
+    const cycle = cycles.find(c => c.id === selectedCycle)
+    if (!cycle) return base
+    const price = base * (1 - cycle.discount)
+    return Math.floor(price)
+  }
+
+  const handleDeploy = (plan: any) => {
+    const price = calculatePrice(plan.basePrice)
+    localStorage.setItem('vexa_cart_total', price.toString())
+    localStorage.setItem('vexa_cart_items', JSON.stringify([{
+      name: `Discord Bot Hosting - ${plan.name}`,
+      description: `${plan.ram} RAM | ${plan.cpu} CPU | ${plan.disk} Disk`,
+      price: price
+    }]))
+    
+    if (!session?.user) {
+      router.push('/login')
+    } else {
+      router.push('/dashboard/checkout')
+    }
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -145,13 +172,6 @@ export default function DiscordBotPage() {
     }, 3000)
     return () => clearInterval(interval)
   }, [])
-
-  const calculatePrice = (base: number) => {
-    const cycle = cycles.find(c => c.id === selectedCycle)
-    if (!cycle) return base
-    const price = base * (1 - cycle.discount)
-    return Math.floor(price)
-  }
 
   return (
     <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
@@ -313,11 +333,14 @@ export default function DiscordBotPage() {
                 <SpecItem icon={Database} label="MySQL DBs" value={plan.databases} />
               </div>
 
-              <button className={`w-full py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${
-                plan.popular 
-                  ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg' 
-                  : 'bg-white/5 hover:bg-white/10 border border-white/10'
-              }`}>
+              <button 
+                onClick={() => handleDeploy(plan)}
+                className={`w-full py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${
+                  plan.popular 
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg' 
+                    : 'bg-white/5 hover:bg-white/10 border border-white/10'
+                }`}
+              >
                 Deploy Now
                 <ChevronRight className="w-4 h-4" />
               </button>

@@ -98,11 +98,58 @@ export async function createTicket(ticketData: any) {
   return data[0]
 }
 
+export async function getTicketById(ticketId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('tickets')
+    .select('*, users(name, image)')
+    .eq('id', ticketId)
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+export async function getTicketReplies(ticketId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('ticket_replies')
+    .select('*, users(name, image)')
+    .eq('ticket_id', ticketId)
+    .order('created_at', { ascending: true })
+  
+  if (error) throw error
+  return data || []
+}
+
+export async function addTicketReply(replyData: any) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('ticket_replies')
+    .insert([replyData])
+    .select()
+  
+  if (error) throw error
+  return data[0]
+}
+
+export async function updateTicketStatus(ticketId: string, status: string) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('tickets')
+    .update({ status })
+    .eq('id', ticketId)
+  
+  if (error) throw error
+}
+
 export const getAllData = async () => {
   const supabase = await createClient()
   const { data: users, error: uError } = await supabase.from('profiles').select('*')
   const { data: orders, error: oError } = await supabase.from('orders').select('*').order('created_at', { ascending: false })
+  const { data: tickets, error: tError } = await supabase.from('tickets').select('*, users(name, image)').order('created_at', { ascending: false })
   
-  if (uError || oError) throw (uError || oError)
-  return { users, orders }
+  if (uError || oError || tError) throw (uError || oError || tError)
+  
+  return { users, orders, tickets }
 }

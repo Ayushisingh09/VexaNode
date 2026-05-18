@@ -22,6 +22,7 @@ export default function AdminPage() {
   const router = useRouter()
   const [users, setUsers] = useState<any[]>([])
   const [orders, setOrders] = useState<any[]>([])
+  const [tickets, setTickets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchData = async () => {
@@ -30,6 +31,7 @@ export default function AdminPage() {
       const data = await res.json()
       if (data.users) setUsers(data.users)
       if (data.orders) setOrders(data.orders)
+      if (data.tickets) setTickets(data.tickets)
     } catch (error) {
       console.error("Failed to fetch admin data")
     } finally {
@@ -307,6 +309,54 @@ export default function AdminPage() {
              </div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Tickets Section */}
+      <div className="bg-[#0a0b0f] border border-white/10 rounded-[32px] overflow-hidden">
+        <div className="p-8 border-b border-white/5 flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold orbitron-font">Support <span className="text-blue-500">Tickets</span></h3>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Manage user support threads</p>
+          </div>
+          <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[9px] font-black text-blue-500 uppercase tracking-widest">
+            {tickets.filter(t => t.status === "Open").length} Open
+          </span>
+        </div>
+        <div className="divide-y divide-white/5">
+          {tickets.length === 0 && (
+             <div className="text-center py-12">
+               <p className="text-sm text-gray-500">No tickets found</p>
+             </div>
+          )}
+          {tickets.map((ticket) => (
+             <div key={ticket.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors">
+               <div className="flex items-center gap-4">
+                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                   ticket.status === 'Open' ? 'bg-blue-500/10 text-blue-500' : 'bg-emerald-500/10 text-emerald-500'
+                 }`}>
+                   <Ticket className="w-5 h-5" />
+                 </div>
+                 <div>
+                   <h4 className="font-bold text-white text-sm">{ticket.subject}</h4>
+                   <p className="text-xs text-gray-500">From: {ticket.users?.name || 'Unknown'} • {new Date(ticket.created_at).toLocaleDateString()}</p>
+                 </div>
+               </div>
+               <div className="flex items-center gap-3">
+                 <span className={`px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest border ${
+                   ticket.status === 'Open' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+                 }`}>
+                   {ticket.status}
+                 </span>
+                 <button 
+                   onClick={() => router.push(`/dashboard/tickets/${ticket.id}`)}
+                   className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-xs font-bold transition-all border border-white/10"
+                 >
+                   View
+                 </button>
+               </div>
+             </div>
+          ))}
+        </div>
       </div>
     </div>
   )

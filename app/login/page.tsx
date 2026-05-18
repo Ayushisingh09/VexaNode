@@ -13,7 +13,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard")
+      const cart = localStorage.getItem('vexa_cart_items')
+      if (cart && JSON.parse(cart).length > 0) {
+        router.push("/dashboard/checkout")
+      } else {
+        router.push("/dashboard")
+      }
     }
   }, [status, router])
 

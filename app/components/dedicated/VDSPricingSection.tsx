@@ -8,6 +8,8 @@ import dediConfig from "../../config/sections/dedicated.json"
 import type { DediConfig } from "../../types/dedicated"
 import { CurrencySelector, useCurrency } from "../ui/CurrencySelector"
 import { useLanguage } from "../../contexts/LanguageContext"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 const config = dediConfig as DediConfig
 
@@ -23,6 +25,24 @@ export default function VDSPricingSection() {
   const currentLocation = config.locations.find(loc => loc.id === selectedLocation)
   const availableCPUs = currentLocation?.availableCpus || []
   const currentPlans = config.plans[selectedCPU] || config.plans[config.planTypes[0].id]
+
+  const router = useRouter()
+  const { data: session } = useSession()
+
+  const handleDeploy = (plan: any) => {
+    localStorage.setItem('vexa_cart_total', plan.price.toString())
+    localStorage.setItem('vexa_cart_items', JSON.stringify([{
+      name: `Dedicated Server - ${plan.name}`,
+      description: `${plan.cpu} | ${plan.ram} | ${plan.storage}`,
+      price: plan.price
+    }]))
+    
+    if (!session?.user) {
+      router.push('/login')
+    } else {
+      router.push('/dashboard/checkout')
+    }
+  }
 
   const handleCPUSelection = (cpuId: string) => {
     setSelectedCPU(cpuId)
@@ -263,15 +283,15 @@ export default function VDSPricingSection() {
                         </span>
                         <span className="ml-1 text-gray-500 dark:text-gray-400">{plan.period}</span>
                       </div>
-                      <a
-                        href={plan.orderLink}
+                      <button
+                        onClick={() => handleDeploy(plan)}
                         className="orbitron-font w-full button-primary text-button-primary px-6 py-3 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center gap-2 border border-transparent hover:bg-[var(--hover-gradient)] hover:text-[var(--icon-text-primary)] hover:border-[var(--border-secondary)]"
                       >
                         {t('common.orderNow')}
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </motion.div>
