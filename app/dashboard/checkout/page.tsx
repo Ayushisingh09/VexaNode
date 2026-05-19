@@ -74,12 +74,23 @@ export default function CheckoutPage() {
     setClassificationError(null)
 
     try {
+      // Perform client-side OCR first
+      let ocrText = ""
+      try {
+        const { recognize } = await import("tesseract.js")
+        const ret = await recognize(imgData, 'eng')
+        ocrText = ret.data.text
+      } catch (ocrErr) {
+        console.error("Client-side OCR processing error:", ocrErr)
+      }
+
       const res = await fetch("/api/verify-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           image: imgData, 
-          amount: cartTotal.toString() 
+          amount: cartTotal.toString(),
+          ocrText: ocrText
         })
       })
 

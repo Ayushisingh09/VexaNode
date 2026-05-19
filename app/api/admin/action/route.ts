@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { banUser, deleteOrder, updateOrderStatus, updateTicketStatus } from "@/lib/db"
+import { banUser, deleteOrder, updateOrderStatus, updateTicketStatus, unbanUser } from "@/lib/db"
 import { adminActionSchema } from "@/lib/validate"
 
 export async function POST(req: Request) {
@@ -25,6 +25,9 @@ export async function POST(req: Request) {
     switch (type) {
       case "BAN_USER":
         await banUser(id)
+        break
+      case "UNBAN_USER":
+        await unbanUser(id)
         break
       case "DELETE_ORDER":
         await deleteOrder(id)

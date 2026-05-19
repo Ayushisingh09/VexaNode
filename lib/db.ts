@@ -33,6 +33,15 @@ export const banUser = async (id: string) => {
   if (error) throw error
 }
 
+export const unbanUser = async (id: string) => {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('profiles')
+    .update({ status: 'Active' })
+    .eq('id', id)
+  if (error) throw error
+}
+
 export const deleteOrder = async (id: string) => {
   const supabase = await createClient()
   const { error } = await supabase

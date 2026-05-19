@@ -18,10 +18,45 @@ import {
   Layers,
   Search,
   Filter,
-  ArrowRight
+  ArrowRight,
+  Globe,
+  Activity
 } from "lucide-react"
 import Link from "next/link"
 import { useCurrency } from "../../contexts/CurrencyContext"
+
+const locations = [
+  { id: "us-n-virginia", name: "N. Virginia", country: "USA", flag: "🇺🇸" },
+  { id: "us-ohio", name: "Ohio", country: "USA", flag: "🇺🇸" },
+  { id: "us-n-california", name: "N. California", country: "USA", flag: "🇺🇸" },
+  { id: "us-oregon", name: "Oregon", country: "USA", flag: "🇺🇸" },
+  { id: "brazil-sao-paulo", name: "São Paulo", country: "Brazil", flag: "🇧🇷" },
+  { id: "ireland", name: "Ireland", country: "Ireland", flag: "🇮🇪" },
+  { id: "germany-frankfurt", name: "Frankfurt", country: "Germany", flag: "🇩🇪" },
+  { id: "uk-london", name: "London", country: "UK", flag: "🇬🇧" },
+  { id: "france-paris", name: "Paris", country: "France", flag: "🇫🇷" },
+  { id: "sweden-stockholm", name: "Stockholm", country: "Sweden", flag: "🇸🇪" },
+  { id: "italy-milan", name: "Milan", country: "Italy", flag: "🇮🇹" },
+  { id: "spain", name: "Spain", country: "Spain", flag: "🇪🇸" },
+  { id: "me-bahrain", name: "Bahrain", country: "Middle East", flag: "🌍" },
+  { id: "me-uae", name: "UAE", country: "Middle East", flag: "🌍" },
+  { id: "sa-cape-town", name: "Cape Town", country: "South Africa", flag: "🇿🇦" },
+  { id: "india-mumbai", name: "Mumbai", country: "India", flag: "🇮🇳" },
+  { id: "india-hyderabad", name: "Hyderabad", country: "India", flag: "🇮🇳" },
+  { id: "singapore", name: "Singapore", country: "Singapore", flag: "🇸🇬" },
+  { id: "japan-tokyo", name: "Tokyo", country: "Japan", flag: "🇯🇵" },
+  { id: "japan-osaka", name: "Osaka", country: "Japan", flag: "🇯🇵" },
+  { id: "korea-seoul", name: "Seoul", country: "South Korea", flag: "🇰🇷" },
+  { id: "australia-sydney", name: "Sydney", country: "Australia", flag: "🇦🇺" },
+  { id: "canada-montreal", name: "Montreal", country: "Canada", flag: "🇨🇦" },
+  { id: "canada-calgary", name: "Calgary", country: "Canada", flag: "🇨🇦" }
+];
+
+const cpuTypes = [
+  { id: "std", name: "Standard", desc: "Intel Xeon E5" },
+  { id: "pre", name: "Premium", desc: "Intel Xeon Platinum" },
+  { id: "per", name: "Performance", desc: "AMD EPYC" }
+];
 
 const categories = [
   { id: "vps", name: "VPS Hosting", icon: Cpu },
@@ -40,9 +75,30 @@ const plans: any = {
     { id: "diamond", name: "Diamond", desc: "Extreme performance for huge bots.", price: 349, cpu: "300%", ram: "8 GB", ssd: "16 GB", popular: false },
   ],
   vps: [
-    { id: "in-std-01", name: "Standard01 (IN)", desc: "India Standard VPS", price: 699, cpu: "4 Cores", ram: "8 GB", ssd: "120 GB", popular: true },
-    { id: "us-std-01", name: "Standard01 (US)", desc: "USA Standard VPS", price: 249, cpu: "2 Cores", ram: "2 GB", ssd: "30 GB", popular: false },
-    { id: "de-std-01", name: "Standard01 (DE)", desc: "Germany Standard VPS", price: 249, cpu: "2 Cores", ram: "2 GB", ssd: "30 GB", popular: false },
+    { id: "std-1", name: "Standard Plan 1", desc: "1 Core / 1GB RAM / 15GB NVMe", price: 99, cpu: "1 Core", ram: "1GB RAM", ssd: "15GB NVMe", popular: false },
+    { id: "std-2", name: "Standard Plan 2", desc: "2 Core / 1GB RAM / 20GB NVMe", price: 149, cpu: "2 Core", ram: "1GB RAM", ssd: "20GB NVMe", popular: false },
+    { id: "std-3", name: "Standard Plan 3", desc: "1 Core / 2GB RAM / 30GB NVMe", price: 179, cpu: "1 Core", ram: "2GB RAM", ssd: "30GB NVMe", popular: false },
+    { id: "std-4", name: "Standard Plan 4", desc: "2 Core / 4GB RAM / 60GB NVMe", price: 299, cpu: "2 Core", ram: "4GB RAM", ssd: "60GB NVMe", popular: true },
+    { id: "std-5", name: "Standard Plan 5", desc: "2 Core / 8GB RAM / 100GB NVMe", price: 549, cpu: "2 Core", ram: "8GB RAM", ssd: "100GB NVMe", popular: false },
+    { id: "std-6", name: "Standard Plan 6", desc: "4 Core / 16GB RAM / 160GB NVMe", price: 999, cpu: "4 Core", ram: "16GB RAM", ssd: "160GB NVMe", popular: false },
+    { id: "std-7", name: "Standard Plan 7", desc: "8 Core / 32GB RAM / 250GB NVMe", price: 1799, cpu: "8 Core", ram: "32GB RAM", ssd: "250GB NVMe", popular: false },
+    { id: "std-8", name: "Standard Plan 8", desc: "16 Core / 64GB RAM / 400GB NVMe", price: 3299, cpu: "16 Core", ram: "64GB RAM", ssd: "400GB NVMe", popular: false },
+    { id: "pre-1", name: "Premium Plan 1", desc: "1 Core / 1GB RAM / 20GB NVMe", price: 149, cpu: "1 Core", ram: "1GB RAM", ssd: "20GB NVMe", popular: false },
+    { id: "pre-2", name: "Premium Plan 2", desc: "2 Core / 1GB RAM / 25GB NVMe", price: 199, cpu: "2 Core", ram: "1GB RAM", ssd: "25GB NVMe", popular: false },
+    { id: "pre-3", name: "Premium Plan 3", desc: "1 Core / 2GB RAM / 40GB NVMe", price: 249, cpu: "1 Core", ram: "2GB RAM", ssd: "40GB NVMe", popular: false },
+    { id: "pre-4", name: "Premium Plan 4", desc: "2 Core / 4GB RAM / 80GB NVMe", price: 399, cpu: "2 Core", ram: "4GB RAM", ssd: "80GB NVMe", popular: false },
+    { id: "pre-5", name: "Premium Plan 5", desc: "2 Core / 8GB RAM / 120GB NVMe", price: 749, cpu: "2 Core", ram: "8GB RAM", ssd: "120GB NVMe", popular: false },
+    { id: "pre-6", name: "Premium Plan 6", desc: "4 Core / 16GB RAM / 200GB NVMe", price: 1399, cpu: "4 Core", ram: "16GB RAM", ssd: "200GB NVMe", popular: false },
+    { id: "pre-7", name: "Premium Plan 7", desc: "8 Core / 32GB RAM / 300GB NVMe", price: 2499, cpu: "8 Core", ram: "32GB RAM", ssd: "300GB NVMe", popular: false },
+    { id: "pre-8", name: "Premium Plan 8", desc: "16 Core / 64GB RAM / 500GB NVMe", price: 4499, cpu: "16 Core", ram: "64GB RAM", ssd: "500GB NVMe", popular: false },
+    { id: "per-1", name: "Performance Plan 1", desc: "1 Core / 1GB RAM / 25GB NVMe", price: 199, cpu: "1 Core", ram: "1GB RAM", ssd: "25GB NVMe", popular: false },
+    { id: "per-2", name: "Performance Plan 2", desc: "2 Core / 1GB RAM / 30GB NVMe", price: 279, cpu: "2 Core", ram: "1GB RAM", ssd: "30GB NVMe", popular: false },
+    { id: "per-3", name: "Performance Plan 3", desc: "1 Core / 2GB RAM / 50GB NVMe", price: 349, cpu: "1 Core", ram: "2GB RAM", ssd: "50GB NVMe", popular: false },
+    { id: "per-4", name: "Performance Plan 4", desc: "2 Core / 4GB RAM / 100GB NVMe", price: 549, cpu: "2 Core", ram: "4GB RAM", ssd: "100GB NVMe", popular: false },
+    { id: "per-5", name: "Performance Plan 5", desc: "2 Core / 8GB RAM / 150GB NVMe", price: 999, cpu: "2 Core", ram: "8GB RAM", ssd: "150GB NVMe", popular: false },
+    { id: "per-6", name: "Performance Plan 6", desc: "4 Core / 16GB RAM / 250GB NVMe", price: 1899, cpu: "4 Core", ram: "16GB RAM", ssd: "250GB NVMe", popular: false },
+    { id: "per-7", name: "Performance Plan 7", desc: "8 Core / 32GB RAM / 400GB NVMe", price: 3499, cpu: "8 Core", ram: "32GB RAM", ssd: "400GB NVMe", popular: false },
+    { id: "per-8", name: "Performance Plan 8", desc: "16 Core / 64GB RAM / 600GB NVMe", price: 6299, cpu: "16 Core", ram: "64GB RAM", ssd: "600GB NVMe", popular: false }
   ],
   lavalink: [
     { id: "self-starter", name: "Starter", desc: "Self-managed audio node.", price: 35, cpu: "50%", ram: "512 MB", ssd: "1 GB", popular: false },
@@ -56,10 +112,12 @@ const plans: any = {
 
 export default function OrderPage() {
   const { formatPrice, currency, setCurrency } = useCurrency()
-  const [selectedCategory, setSelectedCategory] = useState("bot")
+  const [selectedCategory, setSelectedCategory] = useState("vps")
   const [cart, setCart] = useState<any[]>([])
   const [coupon, setCoupon] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [vpsLocation, setVpsLocation] = useState("india-mumbai")
+  const [vpsTier, setVpsTier] = useState("std")
 
   const addToCart = (plan: any) => {
     setCart(prev => {
@@ -77,10 +135,27 @@ export default function OrderPage() {
 
   const cartTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
 
-  const filteredPlans = plans[selectedCategory].filter((plan: any) => 
+  let filteredPlans = plans[selectedCategory].filter((plan: any) => 
     plan.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     plan.desc.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  if (selectedCategory === "vps") {
+    filteredPlans = filteredPlans.filter((plan: any) => plan.id.startsWith(vpsTier))
+  }
+
+  const handleAddToCart = (plan: any) => {
+    let finalPlan = { ...plan }
+    if (selectedCategory === "vps") {
+      const loc = locations.find(l => l.id === vpsLocation)
+      finalPlan = {
+        ...finalPlan,
+        id: `${plan.id}-${vpsLocation}`,
+        name: `${plan.name} (${loc?.flag} ${loc?.country} - ${loc?.name})`
+      }
+    }
+    addToCart(finalPlan)
+  }
 
   return (
     <div className="space-y-10 pb-20">
@@ -147,6 +222,49 @@ export default function OrderPage() {
         </div>
       </div>
 
+      {/* VPS Filters */}
+      {selectedCategory === "vps" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4">
+          <div className="bg-white/5 border border-white/5 p-5 rounded-2xl flex flex-col justify-center">
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2"><Globe className="w-4 h-4 text-blue-500" /> Deployment Location</h4>
+            <div className="relative">
+              <select
+                value={vpsLocation}
+                onChange={(e) => setVpsLocation(e.target.value)}
+                className="w-full appearance-none bg-black/40 border border-white/10 text-white py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-semibold hover:border-white/20 cursor-pointer"
+              >
+                {locations.map((loc) => (
+                  <option key={loc.id} value={loc.id} className="bg-[#0a0b0f] text-white">
+                    {loc.flag} {loc.country} - {loc.name}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
+                <ChevronRight className="w-4 h-4 rotate-90" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white/5 border border-white/5 p-5 rounded-2xl flex flex-col justify-center">
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2"><Cpu className="w-4 h-4 text-blue-500" /> Processor Architecture</h4>
+            <div className="flex flex-wrap gap-2">
+              {cpuTypes.map((cpu) => (
+                <button
+                  key={cpu.id}
+                  onClick={() => setVpsTier(cpu.id)}
+                  className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                    vpsTier === cpu.id
+                      ? "bg-blue-600/20 border border-blue-500 text-blue-400 shadow-lg shadow-blue-500/10"
+                      : "bg-black/20 border border-white/10 text-gray-500 hover:border-white/20"
+                  }`}
+                >
+                  {cpu.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-10 items-start">
         {/* Plans Grid */}
         <div className="xl:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -209,7 +327,7 @@ export default function OrderPage() {
                   </div>
 
                   <button 
-                    onClick={() => addToCart(plan)}
+                    onClick={() => handleAddToCart(plan)}
                     className={`w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                       plan.popular 
                         ? "bg-blue-600 hover:bg-blue-500 text-white shadow-xl shadow-blue-500/20" 

@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Server, Cpu, MemoryStick, HardDrive, ChevronLeft, ChevronRight } from "lucide-react"
+import { Server, Cpu, MemoryStick, HardDrive, ChevronLeft, ChevronRight, Activity, Globe } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
 import vpsConfig from "../../config/sections/vps.json"
@@ -119,42 +119,50 @@ export default function VPSPricingSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-4"
         >
-          <div className="flex flex-col lg:flex-row gap-6 justify-left items-left">
-            <div className="flex flex-col items-left">
+          <div className="flex flex-col lg:flex-row gap-6 justify-left items-start">
+            <div className="flex flex-col items-left w-full lg:w-72">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3.5">{t('vps.step1')}</h3>
-              <div className="flex flex-wrap gap-2">
-                {config.locations.map((location) => {
-                  const hasAvailableCpus = location.availableCpus.length > 0
-                  const isSelected = selectedLocation === location.id
-                  
-                  return (
-                    <button
-                      key={location.id}
-                      onClick={() => handleLocationSelection(location.id)}
-                      disabled={!hasAvailableCpus}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-tl-2xl rounded-br-2xl font-medium transition-all duration-300 ${
-                        isSelected
-                          ? "button-primary border-primary text-button-primary shadow-lg"
-                          : hasAvailableCpus
-                          ? "bg-gray-200 dark:bg-gray-800/20 border border-secondary text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700/30 hover:border-secondary"
-                          : "bg-gray-100 dark:bg-gray-800/10 border button-primary text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50"
-                      }`}
-                    >
-                      <Image
-                        src={location.flag || "/placeholder.svg"}
-                        alt={`${location.name} flag`}
-                        width={24}
-                        height={24}
-                        className={`object-cover ${!hasAvailableCpus ? 'opacity-50' : ''}`}
-                      />
-                      <span className="text-sm font-medium">{location.displayName}</span>
-                    </button>
-                  )
-                })}
+              
+              {/* Location Dropdown */}
+              <div className="relative">
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => handleLocationSelection(e.target.value)}
+                  className="w-full appearance-none bg-gray-50 dark:bg-[#0d0f1a] border border-secondary text-gray-900 dark:text-gray-100 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent transition-all shadow-sm font-medium"
+                >
+                  {config.locations.map((location) => {
+                    const hasAvailableCpus = location.availableCpus.length > 0;
+                    return (
+                      <option key={location.id} value={location.id} disabled={!hasAvailableCpus}>
+                        {location.displayName} {!hasAvailableCpus ? "(Unavailable)" : ""}
+                      </option>
+                    );
+                  })}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
+              
+              {currentLocation && (
+                <div className="mt-3 flex items-center gap-2">
+                  <Image
+                    src={currentLocation.flag || "/placeholder.svg"}
+                    alt={`${currentLocation.name} flag`}
+                    width={20}
+                    height={20}
+                    className="object-cover rounded-sm"
+                  />
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Selected: {currentLocation.name}
+                  </span>
+                </div>
+              )}
             </div>
 
-            <div className="flex flex-col items-left">
+            <div className="flex flex-col items-left flex-1">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('vps.step2')}</h3>
               <div className="flex flex-wrap gap-2">
                 {config.planTypes.map((cpu) => {
@@ -189,6 +197,33 @@ export default function VPSPricingSection() {
             </div>
           </div>
         </motion.div>
+        
+        {/* Features Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-8"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 py-6 rounded-2xl bg-gray-50 dark:bg-gray-900/30 border border-secondary">
+            {[
+              "Full Root Access",
+              "NVMe SSD Storage",
+              "Dedicated IPv4",
+              "24/7 Support",
+              "KVM Virtualization",
+              "Instant Deployment",
+              "99.9% Uptime SLA"
+            ].map((feature, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{feature}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('vps.step3')}</h3>
 
         <motion.div
@@ -219,13 +254,13 @@ export default function VPSPricingSection() {
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 flex-1">
-                  <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 flex-1">
+                  <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30 col-span-2 lg:col-span-1">
                     <div className="flex items-center gap-2">
                       <Cpu className="w-4 h-4 icon-primary" />
                       <div className="text-xs text-gray-500 dark:text-gray-400">{plan.cpuDetail}</div>
                     </div>
-                    <div className="text-md font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                    <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
                       {plan.cpu}
                     </div>
                   </div>
@@ -234,7 +269,7 @@ export default function VPSPricingSection() {
                       <MemoryStick className="w-4 h-4 icon-primary" />
                       <div className="text-xs text-gray-500 dark:text-gray-400">{plan.ramDetail}</div>
                     </div>
-                    <div className="text-md font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                    <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
                       {plan.ram}
                     </div>
                   </div>
@@ -243,10 +278,32 @@ export default function VPSPricingSection() {
                       <HardDrive className="w-4 h-4 icon-primary" />
                       <div className="text-xs text-gray-500 dark:text-gray-400">{plan.storageDetail}</div>
                     </div>
-                    <div className="text-md font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                    <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
                       {plan.storage}
                     </div>
                   </div>
+                  {plan.bandwidth && (
+                    <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 icon-primary" />
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{plan.bandwidthDetail || "Bandwidth"}</div>
+                      </div>
+                      <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                        {plan.bandwidth}
+                      </div>
+                    </div>
+                  )}
+                  {plan.ipv4 && (
+                    <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-4 h-4 icon-primary" />
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{plan.ipv4Detail || "IPv4"}</div>
+                      </div>
+                      <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                        {plan.ipv4}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4">

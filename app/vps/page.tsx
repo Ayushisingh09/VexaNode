@@ -2,11 +2,10 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, Cpu, Zap, Shield, Check, Server, HardDrive, LayoutGrid, Globe, Rocket } from "lucide-react"
+import { ChevronRight, Cpu, Zap, Shield, Check, Server, HardDrive, Globe, Activity } from "lucide-react"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import Image from "next/image"
-import { CustomIcons } from "../components/CustomIcons"
 import { useCurrency } from "../contexts/CurrencyContext"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -19,63 +18,85 @@ const cycles = [
 ]
 
 const locations = [
-  { id: "india", name: "India", flag: "🇮🇳" },
-  { id: "usa", name: "USA", flag: "🇺🇸" },
-  { id: "germany", name: "Germany", flag: "🇩🇪" }
-]
+  { id: "us-n-virginia", name: "N. Virginia", country: "USA", flag: "🇺🇸" },
+  { id: "us-ohio", name: "Ohio", country: "USA", flag: "🇺🇸" },
+  { id: "us-n-california", name: "N. California", country: "USA", flag: "🇺🇸" },
+  { id: "us-oregon", name: "Oregon", country: "USA", flag: "🇺🇸" },
+  { id: "brazil-sao-paulo", name: "São Paulo", country: "Brazil", flag: "🇧🇷" },
+  { id: "ireland", name: "Ireland", country: "Ireland", flag: "🇮🇪" },
+  { id: "germany-frankfurt", name: "Frankfurt", country: "Germany", flag: "🇩🇪" },
+  { id: "uk-london", name: "London", country: "UK", flag: "🇬🇧" },
+  { id: "france-paris", name: "Paris", country: "France", flag: "🇫🇷" },
+  { id: "sweden-stockholm", name: "Stockholm", country: "Sweden", flag: "🇸🇪" },
+  { id: "italy-milan", name: "Milan", country: "Italy", flag: "🇮🇹" },
+  { id: "spain", name: "Spain", country: "Spain", flag: "🇪🇸" },
+  { id: "me-bahrain", name: "Bahrain", country: "Middle East", flag: "🌍" },
+  { id: "me-uae", name: "UAE", country: "Middle East", flag: "🌍" },
+  { id: "sa-cape-town", name: "Cape Town", country: "South Africa", flag: "🇿🇦" },
+  { id: "india-mumbai", name: "Mumbai", country: "India", flag: "🇮🇳" },
+  { id: "india-hyderabad", name: "Hyderabad", country: "India", flag: "🇮🇳" },
+  { id: "singapore", name: "Singapore", country: "Singapore", flag: "🇸🇬" },
+  { id: "japan-tokyo", name: "Tokyo", country: "Japan", flag: "🇯🇵" },
+  { id: "japan-osaka", name: "Osaka", country: "Japan", flag: "🇯🇵" },
+  { id: "korea-seoul", name: "Seoul", country: "South Korea", flag: "🇰🇷" },
+  { id: "australia-sydney", name: "Sydney", country: "Australia", flag: "🇦🇺" },
+  { id: "canada-montreal", name: "Montreal", country: "Canada", flag: "🇨🇦" },
+  { id: "canada-calgary", name: "Calgary", country: "Canada", flag: "🇨🇦" }
+];
 
 const cpuTypes = [
-  { id: "intel", name: "Intel Xeon", icon: Cpu },
-  { id: "ryzen", name: "AMD Ryzen 9", icon: Cpu },
-  { id: "epyc", name: "AMD EPYC", icon: Cpu }
+  { id: "standard", name: "Standard", desc: "Intel Xeon E5", image: "/cpu/intel.png" },
+  { id: "premium", name: "Premium", desc: "Intel Xeon Platinum", image: "/cpu/intel.png" },
+  { id: "performance", name: "Performance", desc: "AMD EPYC", image: "/cpu/ryzen9.png" }
 ]
 
-const plans = {
-  india: {
-    intel: [
-      { id: "in-std-01", name: "Standard01", cores: "4 Cores", ram: "8 GB DDR4", storage: "120 GB SSD", basePrice: 699, href: "https://billing.vexanode.cloud/checkout/config/1" },
-      { id: "in-std-02", name: "Standard02", cores: "5 Cores", ram: "12 GB DDR4", storage: "160 GB SSD", basePrice: 999, href: "https://billing.vexanode.cloud/checkout/config/2" },
-      { id: "in-std-03", name: "Standard03", cores: "6 Cores", ram: "16 GB DDR4", storage: "210 GB SSD", basePrice: 1299, href: "https://billing.vexanode.cloud/checkout/config/3" },
-      { id: "in-std-04", name: "Standard04", cores: "7 Cores", ram: "24 GB DDR4", storage: "250 GB SSD", basePrice: 1899, href: "https://billing.vexanode.cloud/checkout/config/4" },
-      { id: "in-std-05", name: "Standard05", cores: "8 Cores", ram: "32 GB DDR4", storage: "300 GB SSD", basePrice: 2499, href: "https://billing.vexanode.cloud/checkout/config/5" }
-    ],
-    ryzen: [
-      { id: "in-ryzen-01", name: "Ryzen Ultra 8GB", cores: "2 Dedicated", ram: "DDR5 8 GB", storage: "NVMe 80 GB", basePrice: 1700, href: "https://billing.vexanode.cloud/checkout/config/6" },
-      { id: "in-ryzen-02", name: "Ryzen Ultra 16GB", cores: "4 Dedicated", ram: "DDR5 16 GB", storage: "NVMe 100 GB", basePrice: 3100, href: "https://billing.vexanode.cloud/checkout/config/7" }
-    ],
-    epyc: [
-      { id: "in-epyc-01", name: "EPYC Scale 16GB", cores: "4 Dedicated", ram: "DDR4 16 GB", storage: "SSD 120 GB", basePrice: 1100, href: "https://billing.vexanode.cloud/checkout/config/8" }
-    ]
-  },
-  usa: {
-    intel: [
-      { id: "us-std-01", name: "Standard01", cores: "2 Cores", ram: "2 GB DDR4", storage: "30 GB NVMe", basePrice: 249, href: "https://billing.vexanode.cloud/checkout/config/9" },
-      { id: "us-std-02", name: "Standard02", cores: "3 Cores", ram: "4 GB DDR4", storage: "70 GB NVMe", basePrice: 399, href: "https://billing.vexanode.cloud/checkout/config/10" },
-      { id: "us-std-03", name: "Standard03", cores: "4 Cores", ram: "8 GB DDR4", storage: "120 GB NVMe", basePrice: 749, href: "https://billing.vexanode.cloud/checkout/config/11" },
-      { id: "us-std-04", name: "Standard04", cores: "5 Cores", ram: "12 GB DDR4", storage: "160 GB NVMe", basePrice: 1099, href: "https://billing.vexanode.cloud/checkout/config/12" },
-      { id: "us-std-05", name: "Standard05", cores: "6 Cores", ram: "16 GB DDR4", storage: "210 GB NVMe", basePrice: 1399, href: "https://billing.vexanode.cloud/checkout/config/13" }
-    ],
-    ryzen: [],
-    epyc: []
-  },
-  germany: {
-    intel: [
-      { id: "de-std-01", name: "Standard01", cores: "2 Cores", ram: "2 GB DDR4", storage: "30 GB NVMe", basePrice: 249, href: "https://billing.vexanode.cloud/checkout/config/17" },
-      { id: "de-std-02", name: "Standard02", cores: "4 Cores", ram: "8 GB DDR4", storage: "120 GB NVMe", basePrice: 749, href: "https://billing.vexanode.cloud/checkout/config/18" }
-    ],
-    ryzen: [
-      { id: "de-ryzen-01", name: "Ryzen Perf 8GB", cores: "4 vCores", ram: "8 GB DDR4", storage: "100 GB NVMe", basePrice: 499, href: "https://billing.vexanode.cloud/checkout/config/19" },
-      { id: "de-ryzen-02", name: "Ryzen Perf 16GB", cores: "6 vCores", ram: "16 GB DDR4", storage: "200 GB NVMe", basePrice: 999, href: "https://billing.vexanode.cloud/checkout/config/20" }
-    ],
-    epyc: [
-      { id: "de-epyc-01", name: "EPYC Global 16GB", cores: "6 Cores", ram: "16 GB DDR4", storage: "210 GB NVMe", basePrice: 1349, href: "https://billing.vexanode.cloud/checkout/config/21" }
-    ]
-  }
-}
+const plansData = {
+  standard: [
+    { id: "std1", name: "Plan 1", ram: "1GB RAM", cores: "1 Core", storage: "15GB NVMe", bandwidth: "500GB BW", ipv4: "1 IPv4", basePrice: 99 },
+    { id: "std2", name: "Plan 2", ram: "1GB RAM", cores: "2 Core", storage: "20GB NVMe", bandwidth: "1TB BW", ipv4: "1 IPv4", basePrice: 149 },
+    { id: "std3", name: "Plan 3", ram: "2GB RAM", cores: "1 Core", storage: "30GB NVMe", bandwidth: "1TB BW", ipv4: "1 IPv4", basePrice: 179 },
+    { id: "std4", name: "Plan 4", ram: "4GB RAM", cores: "2 Core", storage: "60GB NVMe", bandwidth: "2TB BW", ipv4: "1 IPv4", basePrice: 299 },
+    { id: "std5", name: "Plan 5", ram: "8GB RAM", cores: "2 Core", storage: "100GB NVMe", bandwidth: "2TB BW", ipv4: "1 IPv4", basePrice: 549 },
+    { id: "std6", name: "Plan 6", ram: "16GB RAM", cores: "4 Core", storage: "160GB NVMe", bandwidth: "3TB BW", ipv4: "1 IPv4", basePrice: 999 },
+    { id: "std7", name: "Plan 7", ram: "32GB RAM", cores: "8 Core", storage: "250GB NVMe", bandwidth: "4TB BW", ipv4: "1 IPv4", basePrice: 1799 },
+    { id: "std8", name: "Plan 8", ram: "64GB RAM", cores: "16 Core", storage: "400GB NVMe", bandwidth: "6TB BW", ipv4: "1 IPv4", basePrice: 3299 }
+  ],
+  premium: [
+    { id: "pre1", name: "Plan 1", ram: "1GB RAM", cores: "1 Core", storage: "20GB NVMe", bandwidth: "1TB BW", ipv4: "1 IPv4", basePrice: 149 },
+    { id: "pre2", name: "Plan 2", ram: "1GB RAM", cores: "2 Core", storage: "25GB NVMe", bandwidth: "1TB BW", ipv4: "1 IPv4", basePrice: 199 },
+    { id: "pre3", name: "Plan 3", ram: "2GB RAM", cores: "1 Core", storage: "40GB NVMe", bandwidth: "1TB BW", ipv4: "1 IPv4", basePrice: 249 },
+    { id: "pre4", name: "Plan 4", ram: "4GB RAM", cores: "2 Core", storage: "80GB NVMe", bandwidth: "2TB BW", ipv4: "1 IPv4", basePrice: 399 },
+    { id: "pre5", name: "Plan 5", ram: "8GB RAM", cores: "2 Core", storage: "120GB NVMe", bandwidth: "3TB BW", ipv4: "1 IPv4", basePrice: 749 },
+    { id: "pre6", name: "Plan 6", ram: "16GB RAM", cores: "4 Core", storage: "200GB NVMe", bandwidth: "4TB BW", ipv4: "1 IPv4", basePrice: 1399 },
+    { id: "pre7", name: "Plan 7", ram: "32GB RAM", cores: "8 Core", storage: "300GB NVMe", bandwidth: "5TB BW", ipv4: "1 IPv4", basePrice: 2499 },
+    { id: "pre8", name: "Plan 8", ram: "64GB RAM", cores: "16 Core", storage: "500GB NVMe", bandwidth: "8TB BW", ipv4: "1 IPv4", basePrice: 4499 }
+  ],
+  performance: [
+    { id: "per1", name: "Plan 1", ram: "1GB RAM", cores: "1 Core", storage: "25GB NVMe", bandwidth: "1TB BW", ipv4: "1 IPv4", basePrice: 199 },
+    { id: "per2", name: "Plan 2", ram: "1GB RAM", cores: "2 Core", storage: "30GB NVMe", bandwidth: "2TB BW", ipv4: "1 IPv4", basePrice: 279 },
+    { id: "per3", name: "Plan 3", ram: "2GB RAM", cores: "1 Core", storage: "50GB NVMe", bandwidth: "2TB BW", ipv4: "1 IPv4", basePrice: 349 },
+    { id: "per4", name: "Plan 4", ram: "4GB RAM", cores: "2 Core", storage: "100GB NVMe", bandwidth: "3TB BW", ipv4: "1 IPv4", basePrice: 549 },
+    { id: "per5", name: "Plan 5", ram: "8GB RAM", cores: "2 Core", storage: "150GB NVMe", bandwidth: "4TB BW", ipv4: "1 IPv4", basePrice: 999 },
+    { id: "per6", name: "Plan 6", ram: "16GB RAM", cores: "4 Core", storage: "250GB NVMe", bandwidth: "5TB BW", ipv4: "1 IPv4", basePrice: 1899 },
+    { id: "per7", name: "Plan 7", ram: "32GB RAM", cores: "8 Core", storage: "400GB NVMe", bandwidth: "6TB BW", ipv4: "1 IPv4", basePrice: 3499 },
+    { id: "per8", name: "Plan 8", ram: "64GB RAM", cores: "16 Core", storage: "600GB NVMe", bandwidth: "8TB BW", ipv4: "1 IPv4", basePrice: 6299 }
+  ]
+};
+
+const vpsFeatures = [
+  "Full Root Access",
+  "NVMe SSD Storage",
+  "Dedicated IPv4",
+  "24/7 Support",
+  "KVM Virtualization",
+  "Instant Deployment",
+  "99.9% Uptime SLA"
+];
 
 export default function VPSPage() {
-  const [selectedLocation, setSelectedLocation] = useState("india")
-  const [selectedCpu, setSelectedCpu] = useState("intel")
+  const [selectedLocation, setSelectedLocation] = useState("india-mumbai")
+  const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false)
+  const [selectedCpu, setSelectedCpu] = useState("standard")
   const [selectedCycle, setSelectedCycle] = useState("monthly")
   const { formatPrice, currency } = useCurrency()
   const router = useRouter()
@@ -92,8 +113,8 @@ export default function VPSPage() {
     const price = calculatePrice(plan.basePrice)
     localStorage.setItem('vexa_cart_total', price.toString())
     localStorage.setItem('vexa_cart_items', JSON.stringify([{
-      name: `VPS - ${plan.name} (${selectedLocation.toUpperCase()})`,
-      description: `${plan.cores} | ${plan.ram} | ${plan.storage}`,
+      name: `VPS - ${selectedCpu.toUpperCase()} ${plan.name} (${selectedLocation.toUpperCase()})`,
+      description: `${plan.cores} | ${plan.ram} | ${plan.storage} | ${plan.bandwidth} | ${plan.ipv4}`,
       price: price
     }]))
     
@@ -104,7 +125,8 @@ export default function VPSPage() {
     }
   }
 
-  const currentPlans = (plans[selectedLocation as keyof typeof plans] as any)[selectedCpu] || []
+  const currentPlans = plansData[selectedCpu as keyof typeof plansData] || []
+  const currentLocObj = locations.find(loc => loc.id === selectedLocation)
 
   return (
     <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
@@ -155,7 +177,7 @@ export default function VPSPage() {
                 >
                   <span className="text-sm font-bold">{cycle.name}</span>
                   {cycle.discount > 0 && (
-                    <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Save {Math.round(cycle.discount * 100)}%</span>
+                    <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full ml-4">Save {Math.round(cycle.discount * 100)}%</span>
                   )}
                 </button>
               ))}
@@ -164,28 +186,60 @@ export default function VPSPage() {
         </div>
 
         {/* Configuration Selectors */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white/5 border border-white/10 rounded-[40px] p-8">
             <h3 className="text-sm font-bold text-gray-400 mb-6 uppercase tracking-widest flex items-center gap-2">
               <Globe className="w-4 h-4 text-blue-500" />
               1. Deployment Location
             </h3>
-            <div className="grid grid-cols-3 gap-3">
-              {locations.map((loc) => (
-                <button
-                  key={loc.id}
-                  onClick={() => setSelectedLocation(loc.id)}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-3xl border transition-all ${
-                    selectedLocation === loc.id
-                      ? "bg-blue-600/10 border-blue-500 text-white"
-                      : "bg-black/20 border-white/5 text-gray-500 hover:border-white/10"
-                  }`}
-                >
-                  <span className="text-2xl">{loc.flag}</span>
-                  <span className="text-[10px] font-bold uppercase">{loc.name}</span>
-                </button>
-              ))}
+            
+            {/* Custom Sleek Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
+                className="w-full flex items-center justify-between bg-black/40 border border-white/10 text-white py-4 px-5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-semibold hover:border-white/20"
+              >
+                {currentLocObj ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{currentLocObj.flag}</span>
+                    <span className="text-lg">{currentLocObj.country} - {currentLocObj.name}</span>
+                  </div>
+                ) : (
+                  <span>Select Location</span>
+                )}
+                <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isLocationDropdownOpen ? "-rotate-90" : "rotate-90"}`} />
+              </button>
+
+              <AnimatePresence>
+                {isLocationDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-[#0a0b0f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[300px] overflow-y-auto custom-scrollbar"
+                  >
+                    {locations.map((loc) => (
+                      <button
+                        key={loc.id}
+                        onClick={() => {
+                          setSelectedLocation(loc.id)
+                          setIsLocationDropdownOpen(false)
+                        }}
+                        className={`w-full flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-all text-left ${
+                          selectedLocation === loc.id ? "bg-blue-600/10 text-blue-500" : "text-gray-300"
+                        }`}
+                      >
+                        <span className="text-2xl">{loc.flag}</span>
+                        <span className="font-medium">{loc.country} - {loc.name}</span>
+                        {selectedLocation === loc.id && <Check className="w-4 h-4 ml-auto" />}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+            
+
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-[40px] p-8">
@@ -193,7 +247,7 @@ export default function VPSPage() {
               <Cpu className="w-4 h-4 text-blue-500" />
               2. Processor Architecture
             </h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {cpuTypes.map((cpu) => (
                 <button
                   key={cpu.id}
@@ -204,17 +258,37 @@ export default function VPSPage() {
                       : "bg-black/20 border-white/5 text-gray-500 hover:border-white/10"
                   }`}
                 >
-                  <cpu.icon className="w-5 h-5 mb-1" />
-                  <span className="text-[10px] font-bold uppercase whitespace-nowrap">{cpu.name}</span>
+                  <Image src={cpu.image} alt={cpu.name} width={32} height={32} className={`mb-1 object-contain ${selectedCpu !== cpu.id && "opacity-50 grayscale"}`} />
+                  <span className="text-xs font-bold uppercase">{cpu.name}</span>
+                  <span className="text-[10px] text-gray-500 text-center">{cpu.desc}</span>
                 </button>
               ))}
             </div>
           </div>
         </div>
 
+        {/* Global Features List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4 px-6 py-8 rounded-[32px] bg-blue-600/5 border border-blue-500/20">
+            {vpsFeatures.map((feature, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-blue-400" />
+                </div>
+                <span className="text-sm font-semibold text-gray-300">{feature}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Plans List */}
-        <div className="space-y-4 mb-24">
-          <AnimatePresence mode="wait">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+          <AnimatePresence mode="popLayout">
             {currentPlans.length > 0 ? (
               currentPlans.map((plan: any, idx: number) => (
                 <motion.div
@@ -223,63 +297,65 @@ export default function VPSPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="group bg-white/5 hover:bg-white/[0.08] border border-white/10 hover:border-blue-500/30 rounded-[32px] p-6 flex flex-col lg:flex-row items-center gap-8 transition-all duration-300"
+                  className="relative bg-white/5 hover:bg-[#111424] border border-white/10 hover:border-blue-500/50 rounded-[32px] p-6 transition-all flex flex-col group overflow-hidden"
                 >
-                  <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center border border-blue-500/20 flex-shrink-0 group-hover:scale-110 transition-transform">
-                    {selectedCpu === 'intel' ? <CustomIcons.Intel className="w-10 h-10 text-blue-500" /> : <CustomIcons.AMD className="w-10 h-10 text-red-500" />}
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
-                  <div className="flex-1 text-center lg:text-left">
-                    <h4 className="text-xl font-bold mb-1 group-hover:text-blue-400 transition-colors">{plan.name}</h4>
-                    <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-4">
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <Cpu className="w-3.5 h-3.5 text-blue-500" /> {plan.cores}
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h4 className="text-xl font-bold mb-1 text-white group-hover:text-blue-400 transition-colors">{plan.name}</h4>
+                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{selectedCpu} Processor</p>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <Zap className="w-3.5 h-3.5 text-blue-500" /> {plan.ram}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <HardDrive className="w-3.5 h-3.5 text-blue-500" /> {plan.storage}
+                      <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/10 group-hover:border-blue-500/30 transition-all">
+                        <Image src={cpuTypes.find(c => c.id === selectedCpu)?.image || ""} alt="CPU" width={30} height={30} className="object-contain" />
                       </div>
                     </div>
-                  </div>
+                    
+                    <div className="space-y-4 mb-8 flex-1">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-400 flex items-center gap-2"><Cpu className="w-4 h-4 text-blue-500" /> CPU</span>
+                        <span className="font-bold text-white">{plan.cores}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-400 flex items-center gap-2"><Zap className="w-4 h-4 text-blue-500" /> RAM</span>
+                        <span className="font-bold text-white">{plan.ram}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-400 flex items-center gap-2"><HardDrive className="w-4 h-4 text-blue-500" /> Storage</span>
+                        <span className="font-bold text-white">{plan.storage}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-400 flex items-center gap-2"><Activity className="w-4 h-4 text-blue-500" /> Bandwidth</span>
+                        <span className="font-bold text-white">{plan.bandwidth}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-400 flex items-center gap-2"><Globe className="w-4 h-4 text-blue-500" /> Network</span>
+                        <span className="font-bold text-white">{plan.ipv4}</span>
+                      </div>
+                    </div>
 
-                  <div className="flex items-center gap-8">
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-white">{formatPrice(calculatePrice(plan.basePrice))}</div>
-                      <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Per Month</div>
+                    <div className="border-t border-white/10 pt-6 mt-auto">
+                      <div className="mb-6 flex items-end">
+                        <span className="text-3xl font-bold text-white leading-none">{formatPrice(calculatePrice(plan.basePrice))}</span>
+                        <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest ml-2 mb-1">/ Month</span>
+                      </div>
+                      <button
+                        onClick={() => handleDeploy(plan)}
+                        className="w-full bg-white/5 hover:bg-blue-600 border border-white/10 hover:border-transparent text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                      >
+                        Order Now <ChevronRight className="w-4 h-4" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleDeploy(plan)}
-                      className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-[0_0_30px_rgba(59,130,246,0.2)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center gap-2"
-                    >
-                      Deploy
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
                   </div>
                 </motion.div>
               ))
             ) : (
-              <div className="text-center py-24 bg-white/5 rounded-[40px] border border-dashed border-white/10">
+              <div className="col-span-full text-center py-24 bg-white/5 rounded-[40px] border border-dashed border-white/10">
                 <p className="text-gray-500 italic">No plans available for this specific configuration yet.</p>
               </div>
             )}
           </AnimatePresence>
-        </div>
-
-        {/* Why VexaNode VPS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { title: "Pure NVMe Storage", desc: "Experience 10x faster I/O compared to traditional SSDs with our Gen4 NVMe arrays.", icon: HardDrive },
-            { title: "DDoS Mitigation", desc: "12Tbps+ path-based mitigation included for free on all nodes worldwide.", icon: Shield },
-            { title: "KVM Virtualization", desc: "True hardware isolation with KVM ensures your resources are always available.", icon: Server }
-          ].map((f, i) => (
-            <div key={i} className="p-8 rounded-[40px] bg-white/5 border border-white/10 group hover:border-blue-500/20 transition-all">
-              <f.icon className="w-10 h-10 text-blue-500 mb-6 group-hover:scale-110 transition-transform" />
-              <h4 className="text-xl font-bold mb-3 orbitron-font">{f.title}</h4>
-              <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
         </div>
       </main>
 

@@ -92,9 +92,11 @@ const Navbar: React.FC = () => {
   });
   const [showPopup, setShowPopup] = useState(false);
   const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
+  const [navbarHeight, setNavbarHeight] = useState(60);
   const [mobileDropdownStates, setMobileDropdownStates] = useState<{ [key: string]: boolean }>({});
   const pathname = usePathname();
   const { t } = useLanguage();
+  const navRef = React.useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,6 +108,9 @@ const Navbar: React.FC = () => {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      if (navRef.current) {
+        setNavbarHeight(navRef.current.getBoundingClientRect().bottom);
+      }
     };
     handleResize();
 
@@ -117,6 +122,12 @@ const Navbar: React.FC = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    if (navRef.current) {
+      setNavbarHeight(navRef.current.getBoundingClientRect().bottom);
+    }
+  }, [isScrolled, showBanner]);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
@@ -194,7 +205,7 @@ const Navbar: React.FC = () => {
 
     return (
       <div className={`absolute top-full left-0 mt-0 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50`}>
-        <div className={`bg-[#0c0d12] border-t-2 border-[#22c55e] rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden ${isGrid ? 'w-[600px] p-6' : 'w-[280px] p-4'}`}>
+        <div className={`bg-[#0c0d12] border-t-2 border-[#3b82f6] rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden ${isGrid ? 'w-[600px] p-6' : 'w-[280px] p-4'}`}>
           <div className={isGrid ? "grid grid-cols-2 gap-4" : "space-y-2"}>
             {item.dropdownItems.map((dropdownItem, idx) => {
               if (isGrid) {
@@ -202,7 +213,7 @@ const Navbar: React.FC = () => {
                   <Link
                     key={idx}
                     href={dropdownItem.href}
-                    className="relative group/card h-32 rounded-xl border border-white/5 overflow-hidden transition-all duration-300 hover:border-[#22c55e]/30"
+                    className="relative group/card h-32 rounded-xl border border-white/5 overflow-hidden transition-all duration-300 hover:border-[#3b82f6]/30"
                   >
                     {dropdownItem.image ? (
                       <div className="absolute inset-0">
@@ -232,10 +243,10 @@ const Navbar: React.FC = () => {
                 <Link
                   key={idx}
                   href={dropdownItem.href}
-                  className="flex flex-col p-3 rounded-lg border border-white/5 hover:border-[#22c55e]/20 hover:bg-white/5 transition-all duration-300 group/item"
+                  className="flex flex-col p-3 rounded-lg border border-white/5 hover:border-[#3b82f6]/20 hover:bg-white/5 transition-all duration-300 group/item"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-white group-hover/item:text-[#22c55e] transition-colors">
+                    <span className="text-sm font-semibold text-white group-hover/item:text-[#3b82f6] transition-colors">
                       {dropdownItem.name}
                     </span>
                     {dropdownItem.badge && (
@@ -328,7 +339,7 @@ const Navbar: React.FC = () => {
           prefetch={true}
         >
           {item.showStatusDot && (
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
           )}
           <span>{item.name}</span>
           {item.hasDropdown && <ChevronRight className="w-3 h-3 rotate-90 opacity-50 group-hover:opacity-100 transition-all" />}
@@ -348,78 +359,74 @@ const Navbar: React.FC = () => {
     const translatedName = getTranslatedNavName(item.name);
     const isDropdownOpen = mobileDropdownStates[item.name] || false;
 
-    if (item.hasDropdown && item.dropdownType === 'games') {
-      const isActive = pathname.startsWith('/games');
-      const isDropdownOpen = mobileDropdownStates[item.name] || false;
-
+    // Items with mega menu (Products)
+    if (item.hasDropdown && item.isMegaMenu && item.megaMenuSections) {
       return (
-        <div key={item.name} className="mb-3">
-          <div className="flex">
-            <Link
-              href={item.href}
-              className={`flex items-center space-x-3 flex-1 px-3 py-3 rounded-l-lg transition-colors ${isActive
-                ? 'card-primary text-icon-text-primary border border-secondary border-r-0'
-                : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700 border-r-0'
-                }`}
-              onClick={closeMobileMenu}
-              prefetch={true}
-            >
-              {IconComponent && <IconComponent className="w-5 h-5" />}
-              <span className="font-medium">{translatedName}</span>
-            </Link>
-            <button
-              onClick={() => toggleMobileDropdown(item.name)}
-              className={`px-3 py-3 rounded-r-lg transition-all duration-200 ${isActive
-                ? 'card-primary text-icon-text-primary border border-secondary border-l-0'
-                : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700 border-l-0'
-                }`}
-              aria-label={`Toggle ${item.name} dropdown`}
-            >
-              <motion.div
-                animate={{ rotate: isDropdownOpen ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </motion.div>
-            </button>
-          </div>
+        <div key={item.name}>
+          <button
+            onClick={() => toggleMobileDropdown(item.name)}
+            className={`w-full flex items-center justify-between px-4 py-4 transition-all duration-200 border-b border-white/5 ${
+              isDropdownOpen ? 'bg-[#3b82f6]/5' : 'hover:bg-white/3'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDropdownOpen ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+                {IconComponent
+                  ? <IconComponent className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                  : <Network className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                }
+              </div>
+              <span className={`text-sm font-semibold tracking-wide ${isDropdownOpen ? 'text-white' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
+            </div>
+            <motion.div animate={{ rotate: isDropdownOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
+              <ChevronRight className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-500'}`} />
+            </motion.div>
+          </button>
+
           <AnimatePresence>
             {isDropdownOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="mt-2 pl-2 overflow-hidden"
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                className="overflow-hidden bg-[#0a0b10]"
               >
-                <div className="max-h-[35vh] overflow-y-auto">
-                  <div className="grid grid-cols-2 gap-2">
-                    {filteredGames.map((game: any) => (
-                      <Link
-                        key={game.name}
-                        href={`/games?game=${game.id}`}
-                        className="relative block aspect-[16/10] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-secondary transition-colors group"
-                        onClick={closeMobileMenu}
-                        aria-label={`View ${game.displayName} server options`}
-                        prefetch={true}
-                      >
-                        <Image
-                          src={game.banner}
-                          alt={`${game.displayName} banner`}
-                          fill
-                          sizes="(max-width: 640px) 180px, 180px"
-                          className="object-cover"
-                          quality={75}
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
-                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
-                          <h3 className="text-white text-xs font-semibold truncate">{game.displayName}</h3>
-                        </div>
-                      </Link>
-                    ))}
+                {item.megaMenuSections.map((section, sIdx) => (
+                  <div key={sIdx}>
+                    <div className="px-4 pt-3 pb-1">
+                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#3b82f6]/60 uppercase">{section.title}</span>
+                    </div>
+                    {section.items.map((subItem, iIdx) => {
+                      const SubIcon = getIcon(subItem.icon);
+                      const isSubActive = pathname === subItem.href;
+                      return (
+                        <Link
+                          key={iIdx}
+                          href={subItem.href}
+                          onClick={closeMobileMenu}
+                          prefetch={true}
+                          className={`flex items-center justify-between px-4 py-3.5 transition-all duration-150 border-b border-white/3 ${
+                            isSubActive ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isSubActive ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/8'}`}>
+                              {SubIcon && <SubIcon className={`w-3.5 h-3.5 ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-400'}`} />}
+                            </div>
+                            <div>
+                              <div className={`text-sm font-semibold leading-tight ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-200'}`}>{subItem.name}</div>
+                              {subItem.description && (
+                                <div className="text-[11px] text-gray-500 mt-0.5 leading-tight">{subItem.description}</div>
+                              )}
+                            </div>
+                          </div>
+                          <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
+                        </Link>
+                      );
+                    })}
                   </div>
-                </div>
+                ))}
               </motion.div>
             )}
           </AnimatePresence>
@@ -427,64 +434,61 @@ const Navbar: React.FC = () => {
       );
     }
 
-    if (item.hasDropdown && item.dropdownType === 'legal' && item.dropdownItems) {
-      const isActive = pathname === item.href;
-      const isDropdownOpen = mobileDropdownStates[item.name] || false;
-
+    // Items with standard list dropdown (Legal, Company)
+    if (item.hasDropdown && item.dropdownItems) {
       return (
-        <div key={item.name} className="mb-3">
-          <div className="flex">
-            <Link
-              href={item.href}
-              className={`flex items-center space-x-3 flex-1 px-3 py-3 rounded-l-lg transition-colors ${isActive
-                ? 'card-primary text-icon-text-primary border border-secondary border-r-0'
-                : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700 border-r-0'
-                }`}
-              onClick={closeMobileMenu}
-              prefetch={true}
-            >
-              {IconComponent && <IconComponent className="w-5 h-5" />}
-              <span className="font-medium">{translatedName}</span>
-            </Link>
-            <button
-              onClick={() => toggleMobileDropdown(item.name)}
-              className={`px-3 py-3 rounded-r-lg transition-all duration-200 ${isActive
-                ? 'card-primary text-icon-text-primary border border-secondary border-l-0'
-                : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700 border-l-0'
-                }`}
-              aria-label={`Toggle ${item.name} dropdown`}
-            >
-              <motion.div
-                animate={{ rotate: isDropdownOpen ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </motion.div>
-            </button>
-          </div>
+        <div key={item.name}>
+          <button
+            onClick={() => toggleMobileDropdown(item.name)}
+            className={`w-full flex items-center justify-between px-4 py-4 transition-all duration-200 border-b border-white/5 ${
+              isDropdownOpen ? 'bg-[#3b82f6]/5' : 'hover:bg-white/3'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDropdownOpen ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+                {IconComponent
+                  ? <IconComponent className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                  : <FileText className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                }
+              </div>
+              <span className={`text-sm font-semibold tracking-wide ${isDropdownOpen ? 'text-white' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
+            </div>
+            <motion.div animate={{ rotate: isDropdownOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
+              <ChevronRight className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-500'}`} />
+            </motion.div>
+          </button>
+
           <AnimatePresence>
             {isDropdownOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="mt-2 ml-6 space-y-1 overflow-hidden"
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                className="overflow-hidden bg-[#0a0b10]"
               >
-                {item.dropdownItems.map((dropdownItem: any) => {
-                  const translatedName = dropdownItem.name === 'Terms of Service' ? t('navbar.termsOfService') :
+                {item.dropdownItems.map((dropdownItem: any, idx: number) => {
+                  const dName = dropdownItem.name === 'Terms of Service' ? t('navbar.termsOfService') :
                     dropdownItem.name === 'Privacy Policy' ? t('navbar.privacyPolicy') :
                       dropdownItem.name;
-
+                  const isSubActive = pathname === dropdownItem.href;
                   return (
                     <Link
-                      key={dropdownItem.name}
+                      key={idx}
                       href={dropdownItem.href}
-                      className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-icon-text-primary hover:bg-gray-50 dark:hover:bg-gray-800/30 rounded-md transition-colors"
                       onClick={closeMobileMenu}
                       prefetch={true}
+                      className={`flex items-center justify-between px-4 py-3.5 border-b border-white/3 transition-all duration-150 ${
+                        isSubActive ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'
+                      }`}
                     >
-                      {translatedName}
+                      <div>
+                        <div className={`text-sm font-semibold ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-200'}`}>{dName}</div>
+                        {dropdownItem.description && (
+                          <div className="text-[11px] text-gray-500 mt-0.5">{dropdownItem.description}</div>
+                        )}
+                      </div>
+                      <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
                     </Link>
                   );
                 })}
@@ -495,23 +499,30 @@ const Navbar: React.FC = () => {
       );
     }
 
+    // Simple nav item
     const isActive = pathname === item.href;
     return (
       <Link
         key={item.name}
         href={item.href}
-        className={`flex items-center justify-between w-full px-3 py-3 rounded-lg transition-colors mb-2 ${isActive
-          ? 'card-primary text-icon-text-primary border border-secondary'
-          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-          }`}
         onClick={closeMobileMenu}
         prefetch={true}
+        className={`flex items-center justify-between px-4 py-4 border-b border-white/5 transition-all duration-200 ${
+          isActive ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'
+        }`}
       >
-        <div className="flex items-center space-x-3">
-          {IconComponent && <IconComponent className="w-5 h-5" />}
-          <span className="font-medium">{translatedName}</span>
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isActive ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+            {item.showStatusDot
+              ? <span className="w-2 h-2 bg-[#3b82f6] rounded-full shadow-[0_0_8px_rgba(59,130,246,0.7)]" />
+              : IconComponent
+                ? <IconComponent className={`w-4 h-4 ${isActive ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                : <Globe className={`w-4 h-4 ${isActive ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+            }
+          </div>
+          <span className={`text-sm font-semibold tracking-wide ${isActive ? 'text-[#3b82f6]' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
         </div>
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className={`w-4 h-4 ${isActive ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
       </Link>
     );
   }, [pathname, closeMobileMenu, filteredGames, mobileDropdownStates, toggleMobileDropdown]);
@@ -677,7 +688,7 @@ const Navbar: React.FC = () => {
       )}
 
 
-      <nav className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${isScrolled
+      <nav ref={navRef} className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${isScrolled
           ? 'top-0 bg-[#0c0d12]/90 backdrop-blur-xl border-b border-white/5 py-2'
           : (showBanner ? 'top-[52px] bg-[#0c0d12]/60 backdrop-blur-md py-4' : 'top-0 bg-[#0c0d12]/60 backdrop-blur-md py-4')
         }`}>
@@ -764,7 +775,7 @@ const Navbar: React.FC = () => {
             <div className="flex items-center py-2 md:hidden ml-auto">
               <button
                 type="button"
-                className="inline-flex items-center justify-center p-2 rounded-md text-icon-primary hover:text-icon-text-primary transition-colors relative"
+                className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all"
                 onClick={toggleMobileMenu}
                 aria-expanded={isMobileMenuOpen}
                 aria-controls="mobile-menu"
@@ -772,148 +783,147 @@ const Navbar: React.FC = () => {
               >
                 <span className="sr-only">Open main menu</span>
                 <motion.div
-                  animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
+                  animate={{ rotate: isMobileMenuOpen ? 45 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Menu className={`${isMobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`} />
-                </motion.div>
-                <motion.div
-                  animate={{ rotate: isMobileMenuOpen ? 0 : -90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X className={`${isMobileMenuOpen ? 'block' : 'hidden'} h-6 w-6`} />
+                  {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </motion.div>
               </button>
             </div>
           </div>
         </div>
+      </nav>
 
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
               id="mobile-menu"
-              className="md:hidden bg-white dark:bg-[#10121b] border-t border-gray-200 dark:border-gray-700 overflow-hidden"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut"
-              }}
+              className="md:hidden fixed inset-x-0 bottom-0 z-40"
+              style={{ top: `${navbarHeight}px` }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
             >
+              {/* Backdrop */}
               <motion.div
-                className="divide-y divide-gray-200 dark:divide-gray-700"
-                initial={{ y: -20 }}
-                animate={{ y: 0 }}
-                exit={{ y: -20 }}
-                transition={{
-                  duration: 0.2,
-                  delay: 0.1
-                }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={closeMobileMenu}
+              />
+
+              {/* Drawer panel */}
+              <motion.div
+                className="relative bg-[#0d0f1a] flex flex-col h-full overflow-hidden origin-top border-t border-[#3b82f6]/30"
+                style={{ maxHeight: `calc(100vh - ${navbarHeight}px)` }}
+                initial={{ scaleY: 0.95, opacity: 0 }}
+                animate={{ scaleY: 1, opacity: 1 }}
+                exit={{ scaleY: 0.95, opacity: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
               >
-                <motion.div
-                  className="px-4 py-3"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ delay: 0.15 }}
-                >
-                  {config.mainNavigation.map((item, index) => (
-                    <motion.div
-                      key={item.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{
-                        delay: 0.1 + (index * 0.05),
-                        duration: 0.2
-                      }}
-                    >
-                      {renderMobileNavigationItem(item)}
-                    </motion.div>
-                  ))}
-                </motion.div>
-
-                <motion.div
-                  className="px-4 py-4 bg-gray-50/50 dark:bg-gray-800/20"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <motion.div
-                    className="flex items-center justify-between py-2 mb-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.2 }}
+                {/* Drawer header */}
+                <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/8 flex-shrink-0 bg-[#0d0f1a]">
+                  <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-2.5">
+                    <Image
+                      src={heroSettings.navbar.logo}
+                      alt={heroSettings.navbar.brandName}
+                      className="h-7 w-auto"
+                      width={28} height={28} priority quality={90}
+                    />
+                    <span className="text-white font-bold text-base orbitron-font tracking-tight">
+                      {heroSettings.navbar.brandName}<span className="text-[#3b82f6]">{heroSettings.navbar.brandAccent}</span>
+                    </span>
+                  </Link>
+                  <button
+                    onClick={closeMobileMenu}
+                    className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                    aria-label="Close menu"
                   >
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Language</span>
-                    <LanguageSelector className="w-32" />
-                  </motion.div>
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
 
-
-
-                  <motion.div
-                    className="flex items-center justify-center gap-6 py-2 mb-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.3 }}
+                {/* Scrollable nav list */}
+                <div className="flex-1 overflow-y-auto overscroll-contain">
+                  {/* Partners link (hardcoded) */}
+                  <Link
+                    href="/partners"
+                    onClick={closeMobileMenu}
+                    prefetch={true}
+                    className={`flex items-center justify-between px-4 py-4 border-b border-white/5 transition-all duration-200 ${pathname === '/partners' ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'}`}
                   >
-                    {config.socialLinks.map((social, index) => {
-                      const SocialIcon = SocialIcons[social.icon];
-                      return (
-                        <motion.a
-                          key={social.name}
-                          href={social.href}
-                          className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                          aria-label={`Visit our ${social.name} page`}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          transition={{
-                            delay: 0.35 + (index * 0.05),
-                            duration: 0.2
-                          }}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <SocialIcon />
-                        </motion.a>
-                      );
-                    })}
-                  </motion.div>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${pathname === '/partners' ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+                        <Network className={`w-4 h-4 ${pathname === '/partners' ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                      </div>
+                      <span className={`text-sm font-semibold tracking-wide ${pathname === '/partners' ? 'text-[#3b82f6]' : 'text-gray-300'}`}>PARTNERS</span>
+                    </div>
+                    <ChevronRight className={`w-4 h-4 ${pathname === '/partners' ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
+                  </Link>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.4 }}
-                    className="relative"
-                  >
+                  {config.mainNavigation.map((item) => renderMobileNavigationItem(item))}
+                </div>
+
+                {/* Footer actions */}
+                <div className="flex-shrink-0 border-t border-white/8 bg-[#0a0b10] px-4 py-4 space-y-3">
+                  {/* Language + social row */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-widest">Lang</span>
+                      <LanguageSelector className="w-28" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {config.socialLinks.map((social) => {
+                        const SocialIcon = SocialIcons[social.icon];
+                        return (
+                          <a
+                            key={social.name}
+                            href={social.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Visit our ${social.name} page`}
+                            className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/10 transition-all"
+                          >
+                            <SocialIcon />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Auth / dashboard CTA */}
+                  {session?.user ? (
                     <Link
-                      href={config.clientSpace.href}
-                      className="flex items-center justify-center space-x-2 button-primary text-button-primary border border-transparent px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 w-full shadow-sm hover:shadow-md hover:bg-[var(--hover-gradient)] hover:text-[var(--icon-text-primary)] hover:border-[var(--border-secondary)]"
+                      href="/dashboard/account"
                       onClick={closeMobileMenu}
-                      prefetch={true}
+                      className="flex items-center justify-center gap-2 w-full bg-[#3b82f6] hover:bg-[#2563eb] text-[#0a0b10] font-bold text-sm px-4 py-3 rounded-xl transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
                     >
-                      {(() => {
-                        const ClientIcon = getIcon(config.clientSpace.icon);
-                        return ClientIcon ? <ClientIcon className="w-4 h-4" /> : null;
-                      })()}
-                      <span>{t('navbar.clientSpace')}</span>
+                      <User className="w-4 h-4" />
+                      <span>My Dashboard</span>
                     </Link>
-
-                  </motion.div>
-                </motion.div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Link
+                        href={config.loginLink?.href || '/login'}
+                        onClick={closeMobileMenu}
+                        className="flex-1 flex items-center justify-center gap-2 border border-white/15 text-gray-300 hover:text-white hover:border-white/30 font-semibold text-sm px-4 py-3 rounded-xl transition-all duration-200"
+                      >
+                        {config.loginLink?.name || 'Log In'}
+                      </Link>
+                      <Link
+                        href={config.clientSpace.href}
+                        onClick={closeMobileMenu}
+                        prefetch={true}
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#3b82f6] hover:bg-[#2563eb] text-[#0a0b10] font-bold text-sm px-4 py-3 rounded-xl transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
+                      >
+                        {t('navbar.clientSpace')}
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
     </div>
   );
 };

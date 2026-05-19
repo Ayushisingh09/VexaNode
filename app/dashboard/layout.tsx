@@ -17,7 +17,8 @@ import {
   ShieldCheck,
   ChevronRight,
   Bell,
-  Search
+  Search,
+  CreditCard
 } from "lucide-react"
 import { useState, useEffect } from "react"
 
@@ -51,6 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navigation = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Services", href: "/dashboard/services", icon: Server },
+    { name: "Invoices", href: "/dashboard/invoices", icon: CreditCard },
     { name: "Tickets", href: "/dashboard/tickets", icon: Ticket },
     { name: "Account", href: "/dashboard/account", icon: User },
     { name: "Order", href: "/dashboard/order", icon: ShoppingCart },

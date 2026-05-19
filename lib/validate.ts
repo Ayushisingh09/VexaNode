@@ -19,7 +19,7 @@ export const orderSchema = z.object({
 })
 
 export const adminActionSchema = z.object({
-  type: z.enum(["BAN_USER", "DELETE_ORDER", "UPDATE_ORDER_STATUS", "UPDATE_TICKET_STATUS"]),
+  type: z.enum(["BAN_USER", "UNBAN_USER", "DELETE_ORDER", "UPDATE_ORDER_STATUS", "UPDATE_TICKET_STATUS"]),
   id: z.string().uuid(),
   status: z.string().optional()
 })

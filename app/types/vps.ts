@@ -11,6 +11,8 @@ export interface VPSPlan {
   storageDetail: string
   bandwidth?: string
   bandwidthDetail?: string
+  ipv4?: string
+  ipv4Detail?: string
   price: string
   period: string
   orderLink: string
@@ -26,6 +28,7 @@ export interface VPSPlanType {
 export interface VPSLocation {
   id: string
   name: string
+  country?: string
   flag: string
   displayName: string
   availableCpus: string[]
