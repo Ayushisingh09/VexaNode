@@ -121,3 +121,14 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON public.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON public.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ############################################################
+-- PART 4: SYSTEM SETTINGS
+-- ############################################################
+
+CREATE TABLE IF NOT EXISTS public.settings (
+  key text NOT NULL PRIMARY KEY,
+  value jsonb NOT NULL,
+  updated_at timestamp with time zone DEFAULT now()
+);
+

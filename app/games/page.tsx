@@ -104,7 +104,7 @@ export default function MinecraftPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-[#228dbd]/30">
       <Navbar />
 
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -114,7 +114,7 @@ export default function MinecraftPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <span className="bg-blue-600/10 text-blue-500 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-500/20">
+          <span className="bg-[#228dbd]/10 text-[#228dbd] text-xs font-bold px-4 py-1.5 rounded-full border border-[#228dbd]/20">
             Minecraft Game Hosting
           </span>
         </motion.div>
@@ -123,10 +123,10 @@ export default function MinecraftPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 orbitron-font">
-              Extreme <span className="relative inline-block text-blue-500">
+              Extreme <span className="relative inline-block text-[#228dbd] text-neon-glow-brand">
                 Performance
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M0 5 Q 50 0 100 5" stroke="#3b82f6" strokeWidth="4" fill="none" />
+                  <path d="M0 5 Q 50 0 100 5" stroke="#228dbd" strokeWidth="4" fill="none" />
                 </svg>
               </span>
             </h1>
@@ -144,8 +144,8 @@ export default function MinecraftPage() {
                   onClick={() => setSelectedCycle(cycle.id)}
                   className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                     selectedCycle === cycle.id
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "text-gray-500 hover:text-gray-300"
+                      ? "bg-[#228dbd] text-white shadow-[0_0_15px_rgba(34,141,189,0.3)]"
+                      : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
                   }`}
                 >
                   {cycle.name}
@@ -175,12 +175,12 @@ export default function MinecraftPage() {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`flex flex-col items-start gap-3 p-6 rounded-2xl border transition-all duration-300 text-left ${
                     selectedCategory === cat.id
-                      ? "bg-blue-600 border-blue-500 text-white shadow-[0_0_30px_rgba(59,130,246,0.2)]"
-                      : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
+                      ? "bg-[#0b0c16]/50 border-[#228dbd] ring-1 ring-[#228dbd]/30 text-white shadow-[0_0_30px_rgba(34,141,189,0.25)]"
+                      : "bg-[#0b0c16]/20 backdrop-blur-sm border-white/10 text-gray-400 hover:border-white/20 hover:bg-white/[0.02]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <cat.icon className={`w-6 h-6 ${selectedCategory === cat.id ? "text-white" : "text-blue-500"}`} />
+                    <cat.icon className={`w-6 h-6 ${selectedCategory === cat.id ? "text-white" : "text-[#228dbd]"}`} />
                     <span className="text-xl font-bold">{cat.name}</span>
                   </div>
                   <p className="text-sm opacity-80">{cat.desc}</p>
@@ -205,10 +205,10 @@ export default function MinecraftPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="group bg-white/5 hover:bg-white/[0.07] border border-white/10 hover:border-blue-500/30 rounded-2xl p-4 md:p-6 transition-all duration-300 flex flex-col lg:flex-row items-center gap-6"
+                  className="group bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 hover:border-[#228dbd]/30 rounded-2xl p-4 md:p-6 transition-all duration-300 flex flex-col lg:flex-row items-center gap-6"
                 >
                   {/* Icon */}
-                  <div className="flex-shrink-0 w-16 h-16 bg-blue-600/10 rounded-xl flex items-center justify-center border border-blue-500/20 group-hover:border-blue-500/50 transition-colors">
+                  <div className="flex-shrink-0 w-16 h-16 bg-[#228dbd]/10 rounded-xl flex items-center justify-center border border-[#228dbd]/20 group-hover:border-[#228dbd]/50 transition-colors">
                     {selectedCategory === "premium" ? (
                       <CustomIcons.AMD className="w-10 h-10 text-[#ED1C24] group-hover:scale-110 transition-transform" />
                     ) : (
@@ -218,25 +218,25 @@ export default function MinecraftPage() {
 
                   {/* Name */}
                   <div className="flex-1 text-center lg:text-left">
-                    <h4 className="text-xl font-bold mb-1 group-hover:text-blue-400 transition-colors">{plan.name}</h4>
+                    <h4 className="text-xl font-bold mb-1 group-hover:text-[#228dbd] transition-colors">{plan.name}</h4>
                     <div className="flex items-center justify-center lg:justify-start gap-2">
                       <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded uppercase font-bold tracking-wider">Bedrock + Java</span>
-                      <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded uppercase font-bold tracking-wider">Unlimited Slots</span>
+                      <span className="text-[10px] bg-[#228dbd]/20 text-[#228dbd] px-2 py-0.5 rounded uppercase font-bold tracking-wider">Unlimited Slots</span>
                     </div>
                   </div>
 
                   {/* Specs */}
                   <div className="flex flex-wrap justify-center gap-3">
-                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 group-hover:border-blue-500/20">
-                      <Cpu className="w-4 h-4 text-blue-500" />
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 group-hover:border-[#228dbd]/20">
+                      <Cpu className="w-4 h-4 text-[#228dbd]" />
                       <span className="text-xs font-bold text-gray-300">{plan.cpu}</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 group-hover:border-blue-500/20">
-                      <Zap className="w-4 h-4 text-blue-500" />
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 group-hover:border-[#228dbd]/20">
+                      <Zap className="w-4 h-4 text-[#228dbd]" />
                       <span className="text-xs font-bold text-gray-300">{plan.ram}</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 group-hover:border-blue-500/20">
-                      <HardDrive className="w-4 h-4 text-blue-500" />
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 group-hover:border-[#228dbd]/20">
+                      <HardDrive className="w-4 h-4 text-[#228dbd]" />
                       <span className="text-xs font-bold text-gray-300">{plan.storage}</span>
                     </div>
                   </div>
@@ -246,12 +246,12 @@ export default function MinecraftPage() {
                     <div className="text-right">
                       <div className="text-2xl font-bold text-white">₹{calculatePrice(plan.basePrice)}<span className="text-sm font-normal text-gray-500">/mo</span></div>
                       {selectedCycle !== 'monthly' && (
-                        <div className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter text-right">Billed {selectedCycle}</div>
+                        <div className="text-[10px] text-[#228dbd] font-bold uppercase tracking-tighter text-right">Billed {selectedCycle}</div>
                       )}
                     </div>
                     <button
                       onClick={() => handleDeploy(plan)}
-                      className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] flex items-center gap-2"
+                      className="bg-[#228dbd] hover:bg-[#1a6e94] text-white px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(34,141,189,0.2)] hover:shadow-[0_0_30px_rgba(34,141,189,0.4)] flex items-center gap-2"
                     >
                       Build Server
                       <ChevronRight className="w-4 h-4" />
@@ -264,18 +264,18 @@ export default function MinecraftPage() {
         </div>
 
         {/* Features Row */}
-        <div className="mt-24 flex flex-wrap justify-center gap-12 text-center opacity-60">
-          <div className="flex flex-col items-center gap-3">
-            <Shield className="w-8 h-8 text-blue-500" />
-            <span className="text-sm font-bold orbitron-font">DDoS Protected</span>
+        <div className="mt-24 flex flex-wrap justify-center gap-12 text-center opacity-70">
+          <div className="flex flex-col items-center gap-3 group">
+            <Shield className="w-8 h-8 text-[#228dbd] group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-bold orbitron-font text-gray-300 group-hover:text-white transition-colors">DDoS Protected</span>
           </div>
-          <div className="flex flex-col items-center gap-3">
-            <Users className="w-8 h-8 text-blue-500" />
-            <span className="text-sm font-bold orbitron-font">100% Uptime</span>
+          <div className="flex flex-col items-center gap-3 group">
+            <Users className="w-8 h-8 text-[#228dbd] group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-bold orbitron-font text-gray-300 group-hover:text-white transition-colors">100% Uptime</span>
           </div>
-          <div className="flex flex-col items-center gap-3">
-            <Zap className="w-8 h-8 text-blue-500" />
-            <span className="text-sm font-bold orbitron-font">NVMe Gen4 Storage</span>
+          <div className="flex flex-col items-center gap-3 group">
+            <Zap className="w-8 h-8 text-[#228dbd] group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-bold orbitron-font text-gray-300 group-hover:text-white transition-colors">NVMe Gen4 Storage</span>
           </div>
         </div>
       </main>

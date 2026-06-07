@@ -38,6 +38,11 @@ export default function CheckoutPage() {
   const [cartTotal, setCartTotal] = useState(0)
   const [cartItems, setCartItems] = useState<any[]>([])
 
+  // Cashfree integration states
+  const [cashfreeConfig, setCashfreeConfig] = useState<{ enabled: boolean; appId: string; sandbox: boolean } | null>(null)
+  const [isVerifyingCashfree, setIsVerifyingCashfree] = useState(false)
+  const [cashfreeVerificationError, setCashfreeVerificationError] = useState<string | null>(null)
+
   useEffect(() => {
     if (step === 2 && paymentMethod === "upi") {
       setIsGeneratingQR(true)
@@ -45,6 +50,124 @@ export default function CheckoutPage() {
       return () => clearTimeout(timer)
     }
   }, [step, paymentMethod])
+
+  // Fetch Cashfree Config on mount
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch("/api/payments/config")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.cashfree) {
+            setCashfreeConfig(data.cashfree)
+            // Default to Cashfree if enabled
+            if (data.cashfree.enabled) {
+              setPaymentMethod("cashfree")
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch payment config:", error)
+      }
+    }
+    fetchConfig()
+  }, [])
+
+  // Check URL parameters for Cashfree return redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const gateway = urlParams.get("gateway")
+    const orderId = urlParams.get("order_id")
+
+    if (gateway === "cashfree" && orderId) {
+      verifyCashfreeOrder(orderId)
+    }
+  }, [])
+
+  const verifyCashfreeOrder = async (orderId: string) => {
+    setStep(2)
+    setPaymentMethod("cashfree")
+    setIsVerifyingCashfree(true)
+    setCashfreeVerificationError(null)
+    
+    try {
+      const res = await fetch(`/api/payments/cashfree/verify?order_id=${orderId}`)
+      const data = await res.json()
+      
+      if (res.ok && data.success) {
+        // Clear cart
+        localStorage.removeItem('vexa_cart_total')
+        localStorage.removeItem('vexa_cart_items')
+        setStep(3)
+      } else {
+        setCashfreeVerificationError(data.message || data.error || "Payment verification failed. If you have completed the payment, please contact support.")
+      }
+    } catch (err) {
+      setCashfreeVerificationError("Network verification error. Please refresh the page to retry verification.")
+    } finally {
+      setIsVerifyingCashfree(false)
+    }
+  }
+
+  const handleNextStep = async () => {
+    if (paymentMethod === "cashfree") {
+      setIsGeneratingQR(true) // Show inline loading
+      try {
+        const res = await fetch("/api/payments/cashfree/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: cartTotal.toString(),
+            items: cartItems
+          })
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          alert(data.error || "Failed to create checkout session. Please try again.")
+          setIsGeneratingQR(false)
+          return
+        }
+
+        const { payment_session_id, sandbox } = data
+
+        const loadScript = () => {
+          return new Promise((resolve) => {
+            if ((window as any).Cashfree) {
+              resolve(true)
+              return
+            }
+            const script = document.createElement("script")
+            script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"
+            script.onload = () => resolve(true)
+            script.onerror = () => resolve(false)
+            document.body.appendChild(script)
+          })
+        }
+
+        const loaded = await loadScript()
+        if (!loaded) {
+          alert("Failed to load payment gateway script. Please verify your connection.")
+          setIsGeneratingQR(false)
+          return
+        }
+
+        const cashfree = (window as any).Cashfree({
+          mode: sandbox ? "sandbox" : "production"
+        })
+
+        cashfree.checkout({
+          paymentSessionId: payment_session_id,
+          redirectTarget: "_self"
+        })
+
+      } catch (err) {
+        alert("Failed to initialize payment gateway.")
+        setIsGeneratingQR(false)
+      }
+    } else {
+      setStep(2)
+    }
+  }
 
   useEffect(() => {
     const total = localStorage.getItem('vexa_cart_total')
@@ -160,6 +283,11 @@ export default function CheckoutPage() {
         ? "border-yellow-500 bg-yellow-500/5" 
         : "border-white/5 bg-white/5 hover:border-white/10"
     }
+    if (color === 'purple') {
+      return isActive 
+        ? "border-purple-500 bg-purple-500/5" 
+        : "border-white/5 bg-white/5 hover:border-white/10"
+    }
     return "border-white/5 bg-white/5 hover:border-white/10"
   }
 
@@ -167,6 +295,7 @@ export default function CheckoutPage() {
     const isActive = paymentMethod === id
     if (color === 'blue') return isActive ? "bg-blue-500 text-white" : "bg-white/5 text-gray-500 group-hover:text-white"
     if (color === 'yellow') return isActive ? "bg-yellow-500 text-white" : "bg-white/5 text-gray-500 group-hover:text-white"
+    if (color === 'purple') return isActive ? "bg-purple-500 text-white" : "bg-white/5 text-gray-500 group-hover:text-white"
     return "bg-white/5 text-gray-500 group-hover:text-white"
   }
 
@@ -216,6 +345,7 @@ export default function CheckoutPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                 {[
+                  ...(cashfreeConfig?.enabled ? [{ id: "cashfree", name: "Cards / UPI / NetBanking", icon: CreditCard, desc: "Automated Instant Gateway", color: "purple" }] : []),
                   { id: "upi", name: "UPI / QR Pay", icon: QrCode, desc: "Instant GPay, PhonePe, Paytm", color: "blue" },
                   { id: "binance", name: "Binance / Crypto", icon: Bitcoin, desc: "USDT, BTC (BEP20 / TRC20)", color: "yellow" },
                 ].map((method) => (
@@ -234,14 +364,17 @@ export default function CheckoutPage() {
                     </div>
 
                     {paymentMethod === method.id && (
-                      <div className={`absolute top-6 right-6 p-1.5 rounded-full ${method.color === 'blue' ? 'bg-blue-500' : 'bg-yellow-500'}`}>
+                      <div className={`absolute top-6 right-6 p-1.5 rounded-full ${
+                        method.color === 'blue' ? 'bg-blue-500' : 
+                        method.color === 'yellow' ? 'bg-yellow-500' : 'bg-purple-500'
+                      }`}>
                         <CheckCircle2 className="w-4 h-4 text-white" />
                       </div>
                     )}
 
                     {/* Background Glow */}
                     <div className={`absolute -bottom-10 -right-10 w-32 h-32 blur-[60px] rounded-full transition-all ${paymentMethod === method.id 
-                      ? (method.color === 'blue' ? "bg-blue-500/20" : "bg-yellow-500/20") 
+                      ? (method.color === 'blue' ? "bg-blue-500/20" : method.color === 'yellow' ? "bg-yellow-500/20" : "bg-purple-500/20") 
                       : "bg-transparent"
                     }`} />
                   </button>
@@ -254,11 +387,21 @@ export default function CheckoutPage() {
                   <h3 className="text-4xl font-bold orbitron-font text-white">{formatPrice(cartTotal)}</h3>
                 </div>
                 <button
-                  onClick={() => setStep(2)}
-                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-12 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3"
+                  onClick={handleNextStep}
+                  disabled={isGeneratingQR}
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-12 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3"
                 >
-                  Next Step
-                  <ChevronRight className="w-4 h-4" />
+                  {isGeneratingQR ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Initializing...
+                    </>
+                  ) : (
+                    <>
+                      Next Step
+                      <ChevronRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -300,192 +443,283 @@ export default function CheckoutPage() {
             className="grid grid-cols-1 lg:grid-cols-2 gap-10"
           >
             {/* Payment Portal */}
-            <div className="bg-[#0a0b0f] border border-white/10 rounded-[40px] p-10 md:p-14 text-center">
+            <div className="bg-[#0a0b0f] border border-white/10 rounded-[40px] p-10 md:p-14 text-center flex flex-col justify-center items-center">
               <h2 className="text-3xl font-bold mb-2 orbitron-font">Secure <span className="text-blue-500">Portal</span></h2>
-              <p className="text-sm text-gray-500 mb-12">Scan the QR code and transfer the exact amount.</p>
-
-              {paymentMethod === "upi" ? (
-                <div className="space-y-10">
-                  <div className="relative w-64 h-64 mx-auto group">
-                    <div className="absolute inset-0 bg-blue-500/10 blur-[40px] rounded-full group-hover:bg-blue-500/20 transition-all" />
-                    <div className="relative bg-white p-6 rounded-[40px] w-full h-full shadow-2xl overflow-hidden border-4 border-blue-500/20">
-                      {isGeneratingQR ? (
-                        <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center p-8">
-                          <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
-                          <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Generating Secure QR</p>
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: "100%" }}
-                            transition={{ duration: 2 }}
-                            className="h-1 bg-blue-500 rounded-full mt-4"
-                          />
-                        </div>
-                      ) : (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="relative"
-                        >
-                          <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`upi://pay?pa=vexanode@upi&pn=VexaNode&am=${cartTotal}&cu=INR`)}`}
-                            alt="QR"
-                            className="w-full h-full"
-                          />
-                          {/* Scanner Line Animation */}
-                          <motion.div
-                            animate={{ top: ["0%", "100%", "0%"] }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                            className="absolute left-0 right-0 h-0.5 bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-10"
-                          />
-                        </motion.div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Or Pay to UPI ID</p>
-                    <div className="bg-white/5 border border-white/5 rounded-2xl py-4 px-6 flex items-center justify-between group hover:border-blue-500/30 transition-all">
-                      <span className="text-sm font-bold text-blue-500 underline underline-offset-4 tracking-wider">vexanode@upi</span>
-                      <button className="text-[9px] font-black bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/20">COPY</button>
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-amber-500/5 border border-amber-500/10 rounded-3xl flex gap-5 text-left">
-                    <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0">
-                      <AlertCircle className="w-5 h-5 text-amber-500" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-amber-200/90 mb-1">Payment Instructions</p>
-                      <p className="text-[10px] text-amber-200/60 leading-relaxed font-medium italic">
-                        Once you finish payment, please upload the screenshot on the right. Our AI will automatically verify the transaction.
-                      </p>
-                    </div>
-                  </div>
+              
+              {paymentMethod === "cashfree" ? (
+                <div className="w-full py-10 space-y-6 flex flex-col items-center justify-center">
+                  {isVerifyingCashfree ? (
+                    <>
+                      <Loader2 className="w-12 h-12 text-purple-500 animate-spin mb-4" />
+                      <h3 className="text-lg font-bold orbitron-font text-white">Verifying Payment...</h3>
+                      <p className="text-xs text-gray-500 max-w-xs leading-relaxed">Please do not close this window or click back. We are confirming your transaction with Cashfree.</p>
+                    </>
+                  ) : cashfreeVerificationError ? (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mb-4 animate-bounce">
+                        <X className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-lg font-bold orbitron-font text-red-500">Payment Status: Failed</h3>
+                      <p className="text-xs text-red-200/60 max-w-xs leading-relaxed mb-6">{cashfreeVerificationError}</p>
+                      <button 
+                        onClick={() => {
+                          router.replace("/dashboard/checkout")
+                          setStep(1)
+                          setPaymentMethod("cashfree")
+                        }} 
+                        className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all font-bold"
+                      >
+                        Try Again
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Loader2 className="w-12 h-12 text-purple-500 animate-spin mb-4" />
+                      <h3 className="text-lg font-bold orbitron-font text-white">Redirecting to Cashfree...</h3>
+                      <p className="text-xs text-gray-500 max-w-xs leading-relaxed">Initializing secure checkout session.</p>
+                    </>
+                  )}
                 </div>
               ) : (
-                <div className="space-y-10">
-                  <div className="w-32 h-32 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/20 relative">
-                    <Bitcoin className="w-16 h-16 text-yellow-500" />
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-0 border-2 border-dashed border-yellow-500/20 rounded-full"
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-400">Send exactly <span className="text-white font-bold text-lg">{(cartTotal * 0.012).toFixed(2)} USDT</span> (BEP20)</p>
-                    <div className="bg-white/5 border border-white/5 rounded-2xl p-6 break-all text-xs font-mono text-gray-500 hover:text-white transition-colors cursor-pointer">
-                      0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+                <>
+                  <p className="text-sm text-gray-500 mb-12">Scan the QR code and transfer the exact amount.</p>
+                  {paymentMethod === "upi" ? (
+                    <div className="space-y-10">
+                      <div className="relative w-64 h-64 mx-auto group">
+                        <div className="absolute inset-0 bg-blue-500/10 blur-[40px] rounded-full group-hover:bg-blue-500/20 transition-all" />
+                        <div className="relative bg-white p-6 rounded-[40px] w-full h-full shadow-2xl overflow-hidden border-4 border-blue-500/20">
+                          {isGeneratingQR ? (
+                            <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center p-8">
+                              <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+                              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Generating Secure QR</p>
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 2 }}
+                                className="h-1 bg-blue-500 rounded-full mt-4"
+                              />
+                            </div>
+                          ) : (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="relative"
+                            >
+                              <img
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`upi://pay?pa=vexanode@upi&pn=VexaNode&am=${cartTotal}&cu=INR`)}`}
+                                alt="QR"
+                                className="w-full h-full"
+                              />
+                              {/* Scanner Line Animation */}
+                              <motion.div
+                                animate={{ top: ["0%", "100%", "0%"] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                className="absolute left-0 right-0 h-0.5 bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-10"
+                              />
+                            </motion.div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Or Pay to UPI ID</p>
+                        <div className="bg-white/5 border border-white/5 rounded-2xl py-4 px-6 flex items-center justify-between group hover:border-blue-500/30 transition-all">
+                          <span className="text-sm font-bold text-blue-500 underline underline-offset-4 tracking-wider">vexanode@upi</span>
+                          <button className="text-[9px] font-black bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/20">COPY</button>
+                        </div>
+                      </div>
+
+                      <div className="p-6 bg-amber-500/5 border border-amber-500/10 rounded-3xl flex gap-5 text-left">
+                        <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0">
+                          <AlertCircle className="w-5 h-5 text-amber-500" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-amber-200/90 mb-1">Payment Instructions</p>
+                          <p className="text-[10px] text-amber-200/60 leading-relaxed font-medium italic">
+                            Once you finish payment, please upload the screenshot on the right. Our AI will automatically verify the transaction.
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Click address to copy</p>
-                  </div>
-                </div>
+                  ) : (
+                    <div className="space-y-10">
+                      <div className="w-32 h-32 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/20 relative">
+                        <Bitcoin className="w-16 h-16 text-yellow-500" />
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                          className="absolute inset-0 border-2 border-dashed border-yellow-500/20 rounded-full"
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <p className="text-sm text-gray-400">Send exactly <span className="text-white font-bold text-lg">{(cartTotal * 0.012).toFixed(2)} USDT</span> (BEP20)</p>
+                        <div className="bg-white/5 border border-white/5 rounded-2xl p-6 break-all text-xs font-mono text-gray-500 hover:text-white transition-colors cursor-pointer">
+                          0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+                        </div>
+                        <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Click address to copy</p>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
-            {/* Proof Section */}
-            <div className="bg-[#0a0b0f] border border-white/10 rounded-[40px] p-10 md:p-14 flex flex-col">
-              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-3xl font-bold orbitron-font">Vexa<span className="text-blue-500">Verify</span></h2>
-                <div className="px-3 py-1 bg-blue-500/10 rounded-full text-[9px] font-black text-blue-500 uppercase tracking-widest border border-blue-500/20">AI Automated</div>
-              </div>
+            {/* Proof / Transaction Status Section */}
+            {paymentMethod === "cashfree" ? (
+              <div className="bg-[#0a0b0f] border border-white/10 rounded-[40px] p-10 md:p-14 flex flex-col justify-between h-full min-h-[450px]">
+                <div>
+                  <div className="flex items-center justify-between mb-10">
+                    <h2 className="text-3xl font-bold orbitron-font">Secure <span className="text-purple-500">Transaction</span></h2>
+                    <div className="px-3 py-1 bg-purple-500/10 rounded-full text-[9px] font-black text-purple-500 uppercase tracking-widest border border-purple-500/20">Gateway Auto</div>
+                  </div>
 
-              <div className="flex-1 flex flex-col">
-                {classificationError && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-red-500/10 border border-red-500/20 p-5 rounded-2xl flex gap-4 mb-6"
-                  >
-                    <div className="p-2 bg-red-500/20 rounded-lg shrink-0">
-                      <X className="w-4 h-4 text-red-500" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-red-200">Verification Failed</p>
-                      <p className="text-[10px] text-red-200/60 font-medium">{classificationError}</p>
-                    </div>
-                  </motion.div>
-                )}
-
-                {!screenshot ? (
-                  <label className="flex-1 border-2 border-dashed border-white/10 rounded-[40px] flex flex-col items-center justify-center p-12 hover:border-blue-500/40 hover:bg-blue-500/[0.02] transition-all cursor-pointer group relative overflow-hidden">
-                    <div className="p-6 bg-white/5 rounded-3xl mb-6 group-hover:scale-110 transition-transform group-hover:bg-blue-600/10 group-hover:text-blue-500 text-gray-500">
-                      <Camera className="w-10 h-10 transition-colors" />
-                    </div>
-                    <div className="text-center space-y-2">
-                      <p className="text-sm font-bold text-white">Upload Payment Screenshot</p>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Supports JPG, PNG, WEBP</p>
-                    </div>
-                    <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" />
-
-                    {/* Corner Borders */}
-                    <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-white/10 rounded-tl-xl" />
-                    <div className="absolute bottom-6 right-6 w-8 h-8 border-b-2 border-r-2 border-white/10 rounded-br-xl" />
-                  </label>
-                ) : (
-                  <div className="space-y-8 h-full flex flex-col">
-                    <div className="relative flex-1 bg-black rounded-[32px] overflow-hidden border border-white/10 group shadow-2xl">
-                      <img src={screenshot} alt="Payment Proof" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          onClick={() => { setScreenshot(null); setAnalysisResult(null); }}
-                          className="p-4 bg-red-500 text-white rounded-full hover:scale-110 transition-all shadow-xl shadow-red-500/20"
-                        >
-                          <X className="w-6 h-6" />
-                        </button>
+                  <div className="space-y-6">
+                    <div className="p-6 bg-white/[0.01] border border-white/5 rounded-2xl space-y-4">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-gray-500">Processor</span>
+                        <span className="text-white font-bold">Cashfree PG</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-gray-500">Checkout Mode</span>
+                        <span className="text-white font-bold">Cards / UPI / NetBanking</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-gray-500">Verification</span>
+                        <span className="text-purple-500 font-bold flex items-center gap-1.5 font-mono">
+                          {isVerifyingCashfree ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              VERIFYING...
+                            </>
+                          ) : cashfreeVerificationError ? (
+                            "FAILED"
+                          ) : (
+                            "PENDING REDIRECT"
+                          )}
+                        </span>
                       </div>
                     </div>
 
-                    {/* AI Result Card */}
-                    <div className={`p-8 rounded-3xl border transition-all ${isAnalyzing ? "bg-white/5 border-white/10" : "bg-emerald-500/5 border-emerald-500/20 shadow-lg shadow-emerald-500/5"
-                      }`}>
-                      {isAnalyzing ? (
-                        <div className="flex items-center gap-5">
-                          <div className="relative">
-                            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-                            <div className="absolute inset-0 blur-lg bg-blue-500/50" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-black text-white uppercase tracking-widest mb-1">VexaAI Analyzing...</p>
-                            <div className="flex items-center gap-2">
-                              <div className="h-1 w-24 bg-white/10 rounded-full overflow-hidden">
-                                <motion.div animate={{ x: [-100, 100] }} transition={{ duration: 1.5, repeat: Infinity }} className="h-full w-1/2 bg-blue-500" />
-                              </div>
-                              <span className="text-[10px] text-gray-500 font-bold">SCANNING OCR</span>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-5">
-                            <div className="p-3 bg-emerald-500/20 rounded-2xl relative">
-                              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-                              <div className="absolute inset-0 blur-md bg-emerald-500/30" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-white mb-0.5">Amount Verified: {formatPrice(analysisResult?.detectedAmount)}</p>
-                              <div className="flex items-center gap-3">
-                                <span className="text-[9px] text-emerald-500 font-black uppercase tracking-widest px-2 py-0.5 bg-emerald-500/10 rounded-md border border-emerald-500/20">98.4% Confidence</span>
-                                <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{analysisResult?.type}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                    <div className="p-6 bg-purple-600/5 border border-purple-600/10 rounded-2xl space-y-3">
+                      <div className="flex justify-between text-xs font-medium">
+                        <span className="text-gray-400">Total Charged Amount</span>
+                        <span className="text-white font-bold text-base orbitron-font">₹{cartTotal.toFixed(2)}</span>
+                      </div>
                     </div>
                   </div>
-                )}
+                </div>
 
-                <button
-                  disabled={!analysisResult || isAnalyzing}
-                  onClick={completeOrder}
-                  className="w-full mt-8 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:bg-white/5 text-white py-5 rounded-[24px] font-bold text-xs uppercase tracking-widest transition-all shadow-2xl shadow-blue-500/20 flex items-center justify-center gap-3 group"
-                >
-                  Confirm Order
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+                <div className="mt-8 p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-center gap-4">
+                  <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0 animate-pulse" />
+                  <p className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest leading-relaxed font-medium">
+                    Gateway session is protected by TLS/SSL and Cashfree fraud detection.
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-[#0a0b0f] border border-white/10 rounded-[40px] p-10 md:p-14 flex flex-col">
+                <div className="flex items-center justify-between mb-10">
+                  <h2 className="text-3xl font-bold orbitron-font">Vexa<span className="text-blue-500">Verify</span></h2>
+                  <div className="px-3 py-1 bg-blue-500/10 rounded-full text-[9px] font-black text-blue-500 uppercase tracking-widest border border-blue-500/20">AI Automated</div>
+                </div>
+
+                <div className="flex-1 flex flex-col">
+                  {classificationError && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-red-500/10 border border-red-500/20 p-5 rounded-2xl flex gap-4 mb-6"
+                    >
+                      <div className="p-2 bg-red-500/20 rounded-lg shrink-0">
+                        <X className="w-4 h-4 text-red-500" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-red-200">Verification Failed</p>
+                        <p className="text-[10px] text-red-200/60 font-medium">{classificationError}</p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {!screenshot ? (
+                    <label className="flex-1 border-2 border-dashed border-white/10 rounded-[40px] flex flex-col items-center justify-center p-12 hover:border-blue-500/40 hover:bg-blue-500/[0.02] transition-all cursor-pointer group relative overflow-hidden">
+                      <div className="p-6 bg-white/5 rounded-3xl mb-6 group-hover:scale-110 transition-transform group-hover:bg-blue-600/10 group-hover:text-blue-500 text-gray-500">
+                        <Camera className="w-10 h-10 transition-colors" />
+                      </div>
+                      <div className="text-center space-y-2">
+                        <p className="text-sm font-bold text-white">Upload Payment Screenshot</p>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Supports JPG, PNG, WEBP</p>
+                      </div>
+                      <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" />
+
+                      {/* Corner Borders */}
+                      <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-white/10 rounded-tl-xl" />
+                      <div className="absolute bottom-6 right-6 w-8 h-8 border-b-2 border-r-2 border-white/10 rounded-br-xl" />
+                    </label>
+                  ) : (
+                    <div className="space-y-8 h-full flex flex-col">
+                      <div className="relative flex-1 bg-black rounded-[32px] overflow-hidden border border-white/10 group shadow-2xl">
+                        <img src={screenshot} alt="Payment Proof" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            onClick={() => { setScreenshot(null); setAnalysisResult(null); }}
+                            className="p-4 bg-red-500 text-white rounded-full hover:scale-110 transition-all shadow-xl shadow-red-500/20"
+                          >
+                            <X className="w-6 h-6" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* AI Result Card */}
+                      <div className={`p-8 rounded-3xl border transition-all ${isAnalyzing ? "bg-white/5 border-white/10" : "bg-emerald-500/5 border-emerald-500/20 shadow-lg shadow-emerald-500/5"
+                        }`}>
+                        {isAnalyzing ? (
+                          <div className="flex items-center gap-5">
+                            <div className="relative">
+                              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                              <div className="absolute inset-0 blur-lg bg-blue-500/50" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-black text-white uppercase tracking-widest mb-1">VexaAI Analyzing...</p>
+                              <div className="flex items-center gap-2">
+                                <div className="h-1 w-24 bg-white/10 rounded-full overflow-hidden">
+                                  <motion.div animate={{ x: [-100, 100] }} transition={{ duration: 1.5, repeat: Infinity }} className="h-full w-1/2 bg-blue-500" />
+                                </div>
+                                <span className="text-[10px] text-gray-500 font-bold">SCANNING OCR</span>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-5">
+                              <div className="p-3 bg-emerald-500/20 rounded-2xl relative">
+                                <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                                <div className="absolute inset-0 blur-md bg-emerald-500/30" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-white mb-0.5">Amount Verified: {formatPrice(analysisResult?.detectedAmount)}</p>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[9px] text-emerald-500 font-black uppercase tracking-widest px-2 py-0.5 bg-emerald-500/10 rounded-md border border-emerald-500/20">98.4% Confidence</span>
+                                  <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{analysisResult?.type}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    disabled={!analysisResult || isAnalyzing}
+                    onClick={completeOrder}
+                    className="w-full mt-8 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:bg-white/5 text-white py-5 rounded-[24px] font-bold text-xs uppercase tracking-widest transition-all shadow-2xl shadow-blue-500/20 flex items-center justify-center gap-3 group"
+                  >
+                    Confirm Order
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
 

@@ -49,7 +49,7 @@ export default function ContactPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-[#228dbd]/30">
       <Navbar />
 
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -57,7 +57,7 @@ export default function ContactPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-block bg-blue-600/10 text-blue-500 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-500/20 mb-4"
+            className="inline-block bg-[#228dbd]/10 text-[#228dbd] text-xs font-bold px-4 py-1.5 rounded-full border border-[#228dbd]/20 mb-4"
           >
             Get In Touch
           </motion.div>
@@ -67,7 +67,7 @@ export default function ContactPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-6xl font-bold mb-6 orbitron-font"
           >
-            Contact <span className="text-blue-500">VexaNode</span>
+            Contact <span className="text-[#228dbd] text-neon-glow-brand">VexaNode</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -89,14 +89,14 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 + 0.3 }}
-              className="p-8 rounded-[32px] bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all group"
+              className="p-8 rounded-[32px] bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 hover:border-[#228dbd]/30 transition-all group"
             >
-              <div className={`w-14 h-14 rounded-2xl mb-6 flex items-center justify-center bg-${method.color}-600/10 border border-${method.color}-500/20 group-hover:scale-110 transition-transform`}>
-                <method.icon className={`w-7 h-7 text-${method.color}-500`} />
+              <div className={`w-14 h-14 rounded-2xl mb-6 flex items-center justify-center bg-${method.color === 'blue' ? '[#228dbd]/10' : method.color + '-600/10'} border border-${method.color === 'blue' ? '[#228dbd]/20' : method.color + '-500/20'} group-hover:scale-110 transition-transform`}>
+                <method.icon className={`w-7 h-7 ${method.color === 'blue' ? 'text-[#228dbd]' : 'text-' + method.color + '-500'}`} />
               </div>
               <h3 className="text-xl font-bold mb-2">{method.title}</h3>
               <p className="text-gray-500 text-sm mb-4 leading-relaxed">{method.desc}</p>
-              <div className="text-blue-400 font-medium flex items-center gap-2">
+              <div className="text-[#228dbd] font-medium flex items-center gap-2">
                 {method.value}
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -110,7 +110,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-white/5 border border-white/10 rounded-[40px] p-8 md:p-12"
+            className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[40px] p-8 md:p-12"
           >
             <h2 className="text-2xl font-bold mb-8 orbitron-font">Send a Message</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -121,7 +121,7 @@ export default function ContactPage() {
                     type="text"
                     required
                     placeholder="Your Name"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-blue-500/50 outline-none transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-[#228dbd]/50 outline-none transition-all text-white placeholder-gray-500"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
@@ -132,7 +132,7 @@ export default function ContactPage() {
                     type="email"
                     required
                     placeholder="your@email.com"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-blue-500/50 outline-none transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-[#228dbd]/50 outline-none transition-all text-white placeholder-gray-500"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -144,7 +144,7 @@ export default function ContactPage() {
                   type="text"
                   required
                   placeholder="How can we help?"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-blue-500/50 outline-none transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-[#228dbd]/50 outline-none transition-all text-white placeholder-gray-500"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 />
@@ -155,14 +155,14 @@ export default function ContactPage() {
                   rows={5}
                   required
                   placeholder="Tell us more about your needs..."
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-blue-500/50 outline-none transition-all resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-[#228dbd]/50 outline-none transition-all resize-none text-white placeholder-gray-500"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold transition-all shadow-[0_0_30px_rgba(59,130,246,0.2)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] flex items-center justify-center gap-2 group"
+                className="w-full bg-[#228dbd] hover:bg-[#1a6e94] text-white py-4 rounded-2xl font-bold transition-all shadow-[0_0_30px_rgba(34,141,189,0.2)] hover:shadow-[0_0_40px_rgba(34,141,189,0.4)] flex items-center justify-center gap-2 group"
               >
                 Send Message
                 <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -177,14 +177,14 @@ export default function ContactPage() {
             transition={{ delay: 0.7 }}
             className="space-y-8"
           >
-            <div className="p-8 rounded-[32px] bg-gradient-to-br from-blue-600 to-blue-800 shadow-2xl shadow-blue-500/20">
+            <div className="p-8 rounded-[32px] bg-[#0b0c16]/30 backdrop-blur-md border border-[#228dbd]/20 shadow-2xl shadow-[#228dbd]/5">
               <h3 className="text-2xl font-bold mb-4 text-white">Join our Discord</h3>
-              <p className="text-blue-100 mb-6 leading-relaxed">
+              <p className="text-gray-400 mb-6 leading-relaxed">
                 The fastest way to get support is through our Discord server. Join thousands of other users and get direct access to our staff.
               </p>
               <a 
                 href="https://discord.vexanode.cloud" 
-                className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all"
+                className="inline-flex items-center gap-2 bg-[#228dbd] hover:bg-[#1a6e94] text-white px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(34,141,189,0.3)]"
               >
                 Join Server
                 <ChevronRight className="w-4 h-4" />
@@ -192,21 +192,21 @@ export default function ContactPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-8 rounded-[32px] bg-white/5 border border-white/10">
-                <MapPin className="w-8 h-8 text-blue-500 mb-4" />
+              <div className="p-8 rounded-[32px] bg-[#0b0c16]/30 backdrop-blur-md border border-white/10">
+                <MapPin className="w-8 h-8 text-[#228dbd] mb-4" />
                 <h4 className="font-bold mb-2">Location</h4>
                 <p className="text-gray-500 text-sm">Mumbai, India <br /> Global Nodes: 12+</p>
               </div>
-              <div className="p-8 rounded-[32px] bg-white/5 border border-white/10">
-                <Phone className="w-8 h-8 text-blue-500 mb-4" />
+              <div className="p-8 rounded-[32px] bg-[#0b0c16]/30 backdrop-blur-md border border-white/10">
+                <Phone className="w-8 h-8 text-[#228dbd] mb-4" />
                 <h4 className="font-bold mb-2">Availability</h4>
                 <p className="text-gray-500 text-sm">Technical: 24/7/365 <br /> Billing: 9AM - 6PM IST</p>
               </div>
             </div>
 
-            <div className="p-8 rounded-[32px] bg-white/5 border border-white/10">
+            <div className="p-8 rounded-[32px] bg-[#0b0c16]/30 backdrop-blur-md border border-white/10">
               <h4 className="font-bold mb-4 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-500" />
+                <Shield className="w-5 h-5 text-[#228dbd]" />
                 Enterprise Solutions
               </h4>
               <p className="text-gray-500 text-sm leading-relaxed">

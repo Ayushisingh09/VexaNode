@@ -204,16 +204,19 @@ const Navbar: React.FC = () => {
     const isGrid = item.dropdownType === 'grid';
 
     return (
-      <div className={`absolute top-full left-0 mt-0 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50`}>
-        <div className={`bg-[#0c0d12] border-t-2 border-[#3b82f6] rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden ${isGrid ? 'w-[600px] p-6' : 'w-[280px] p-4'}`}>
-          <div className={isGrid ? "grid grid-cols-2 gap-4" : "space-y-2"}>
+      <div className="absolute top-full left-0 mt-0 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
+        <div className={`relative bg-[#06070c]/90 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.8),0_0_40px_rgba(34,141,189,0.15)] overflow-hidden ${isGrid ? 'w-[600px] p-6' : 'w-[280px] p-4'}`}>
+          {/* Accent Top Bar */}
+          <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#228dbd]/80 to-transparent" />
+          
+          <div className={isGrid ? "grid grid-cols-2 gap-4" : "space-y-1.5"}>
             {item.dropdownItems.map((dropdownItem, idx) => {
               if (isGrid) {
                 return (
                   <Link
                     key={idx}
                     href={dropdownItem.href}
-                    className="relative group/card h-32 rounded-xl border border-white/5 overflow-hidden transition-all duration-300 hover:border-[#3b82f6]/30"
+                    className="relative group/card h-32 rounded-xl border border-white/5 overflow-hidden transition-all duration-300 hover:border-[#228dbd]/30"
                   >
                     {dropdownItem.image ? (
                       <div className="absolute inset-0">
@@ -243,20 +246,23 @@ const Navbar: React.FC = () => {
                 <Link
                   key={idx}
                   href={dropdownItem.href}
-                  className="flex flex-col p-3 rounded-lg border border-white/5 hover:border-[#3b82f6]/20 hover:bg-white/5 transition-all duration-300 group/item"
+                  className="flex flex-col p-3 rounded-xl border border-transparent hover:border-[#228dbd]/20 hover:bg-[#228dbd]/5 transition-all duration-300 group/item"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-white group-hover/item:text-[#3b82f6] transition-colors">
+                    <span className="text-sm font-semibold text-white group-hover/item:text-[#228dbd] transition-colors">
                       {dropdownItem.name}
                     </span>
-                    {dropdownItem.badge && (
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${dropdownItem.badgeColor || 'bg-blue-500'} text-white`}>
-                        {dropdownItem.badge}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5">
+                      {dropdownItem.badge && (
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${dropdownItem.badgeColor || 'bg-[#228dbd]'} text-white`}>
+                          {dropdownItem.badge}
+                        </span>
+                      )}
+                      <ChevronRight className="w-3.5 h-3.5 text-[#228dbd] opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300" />
+                    </div>
                   </div>
                   {dropdownItem.description && (
-                    <p className="text-[11px] text-gray-400 leading-relaxed">
+                    <p className="text-[11px] text-gray-400 group-hover/item:text-gray-300 transition-colors leading-relaxed">
                       {dropdownItem.description}
                     </p>
                   )}
@@ -288,28 +294,32 @@ const Navbar: React.FC = () => {
     if (!item.megaMenuSections) return null;
 
     return (
-      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-screen max-w-5xl px-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-        <div className="bg-[#0c0d12]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-12">
+      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-screen max-w-5xl px-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+        <div className="relative bg-[#06070c]/90 backdrop-blur-3xl border border-white/10 rounded-[28px] p-8 shadow-[0_30px_70px_rgba(0,0,0,0.8),0_0_50px_rgba(34,141,189,0.15)] overflow-hidden grid grid-cols-3 gap-12">
+          {/* Accent Top Bar */}
+          <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#228dbd]/80 to-transparent" />
+          
           {item.megaMenuSections.map((section, sIdx) => (
             <div key={sIdx}>
-              <h3 className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mb-6 uppercase">
+              <h3 className="text-[10px] font-bold text-[#228dbd] tracking-[0.2em] mb-6 uppercase opacity-80">
                 {section.title}
               </h3>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {section.items.map((subItem, iIdx) => {
                   const SubIcon = getIcon(subItem.icon);
                   return (
                     <Link
                       key={iIdx}
                       href={subItem.href}
-                      className="flex items-start gap-4 group/item hover:bg-white/5 p-3 -m-3 rounded-xl transition-colors"
+                      className="flex items-start gap-4 group/item hover:bg-[#228dbd]/5 border border-transparent hover:border-[#228dbd]/20 p-3 -m-3 rounded-xl transition-all duration-300"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover/item:border-blue-500/50 transition-colors">
-                        {SubIcon && <SubIcon className="w-5 h-5 text-gray-400 group-hover/item:text-blue-500 transition-colors" />}
+                      <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover/item:border-[#228dbd]/50 group-hover/item:bg-[#228dbd]/10 transition-all duration-300">
+                        {SubIcon && <SubIcon className="w-5 h-5 text-gray-400 group-hover/item:text-[#228dbd] transition-colors" />}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-gray-200 group-hover/item:text-white transition-colors">
-                          {subItem.name}
+                        <div className="text-sm font-bold text-gray-200 group-hover/item:text-white transition-colors flex items-center gap-1.5">
+                          <span>{subItem.name}</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-[#228dbd] opacity-0 -translate-x-1.5 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300" />
                         </div>
                         <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors mt-1">
                           {subItem.description}
@@ -334,18 +344,20 @@ const Navbar: React.FC = () => {
       <div key={item.name} className="relative group flex items-center h-full">
         <Link
           href={item.href}
-          className={`px-4 py-8 text-[13px] font-semibold text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-1 relative
-          ${isActive ? 'text-white' : ''}`}
+          className={`px-4 py-8 text-[13px] font-semibold text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-1.5 relative
+          ${isActive ? 'text-white font-bold' : ''}`}
           prefetch={true}
         >
           {item.showStatusDot && (
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 shadow-[0_0_8px_rgba(34,141,189,0.5)] animate-pulse" />
           )}
           <span>{item.name}</span>
-          {item.hasDropdown && <ChevronRight className="w-3 h-3 rotate-90 opacity-50 group-hover:opacity-100 transition-all" />}
+          {item.hasDropdown && <ChevronRight className="w-3 h-3 rotate-90 opacity-50 group-hover:opacity-100 group-hover:rotate-[270deg] transition-all duration-300" />}
 
           <motion.div
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className={`absolute bottom-6 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#228dbd] rounded-full shadow-[0_0_8px_rgba(34,141,189,0.8)] transition-all duration-300 ${
+              isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100'
+            }`}
             layoutId="nav-hover-dot"
           />
         </Link>
@@ -366,20 +378,20 @@ const Navbar: React.FC = () => {
           <button
             onClick={() => toggleMobileDropdown(item.name)}
             className={`w-full flex items-center justify-between px-4 py-4 transition-all duration-200 border-b border-white/5 ${
-              isDropdownOpen ? 'bg-[#3b82f6]/5' : 'hover:bg-white/3'
+              isDropdownOpen ? 'bg-[#228dbd]/5' : 'hover:bg-white/3'
             }`}
           >
             <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDropdownOpen ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDropdownOpen ? 'bg-[#228dbd]/15 border border-[#228dbd]/30' : 'bg-white/5 border border-white/10'}`}>
                 {IconComponent
-                  ? <IconComponent className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
-                  : <Network className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                  ? <IconComponent className={`w-4 h-4 ${isDropdownOpen ? 'text-[#228dbd]' : 'text-gray-400'}`} />
+                  : <Network className={`w-4 h-4 ${isDropdownOpen ? 'text-[#228dbd]' : 'text-gray-400'}`} />
                 }
               </div>
               <span className={`text-sm font-semibold tracking-wide ${isDropdownOpen ? 'text-white' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
             </div>
             <motion.div animate={{ rotate: isDropdownOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
-              <ChevronRight className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-500'}`} />
+              <ChevronRight className={`w-4 h-4 ${isDropdownOpen ? 'text-[#228dbd]' : 'text-gray-500'}`} />
             </motion.div>
           </button>
 
@@ -395,7 +407,7 @@ const Navbar: React.FC = () => {
                 {item.megaMenuSections.map((section, sIdx) => (
                   <div key={sIdx}>
                     <div className="px-4 pt-3 pb-1">
-                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#3b82f6]/60 uppercase">{section.title}</span>
+                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#228dbd]/60 uppercase">{section.title}</span>
                     </div>
                     {section.items.map((subItem, iIdx) => {
                       const SubIcon = getIcon(subItem.icon);
@@ -407,21 +419,21 @@ const Navbar: React.FC = () => {
                           onClick={closeMobileMenu}
                           prefetch={true}
                           className={`flex items-center justify-between px-4 py-3.5 transition-all duration-150 border-b border-white/3 ${
-                            isSubActive ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'
+                            isSubActive ? 'bg-[#228dbd]/8' : 'hover:bg-white/3'
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isSubActive ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/8'}`}>
-                              {SubIcon && <SubIcon className={`w-3.5 h-3.5 ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-400'}`} />}
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isSubActive ? 'bg-[#228dbd]/15 border border-[#228dbd]/30' : 'bg-white/5 border border-white/8'}`}>
+                              {SubIcon && <SubIcon className={`w-3.5 h-3.5 ${isSubActive ? 'text-[#228dbd]' : 'text-gray-400'}`} />}
                             </div>
                             <div>
-                              <div className={`text-sm font-semibold leading-tight ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-200'}`}>{subItem.name}</div>
+                              <div className={`text-sm font-semibold leading-tight ${isSubActive ? 'text-[#228dbd]' : 'text-gray-200'}`}>{subItem.name}</div>
                               {subItem.description && (
                                 <div className="text-[11px] text-gray-500 mt-0.5 leading-tight">{subItem.description}</div>
                               )}
                             </div>
                           </div>
-                          <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
+                          <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSubActive ? 'text-[#228dbd]' : 'text-gray-600'}`} />
                         </Link>
                       );
                     })}
@@ -441,20 +453,20 @@ const Navbar: React.FC = () => {
           <button
             onClick={() => toggleMobileDropdown(item.name)}
             className={`w-full flex items-center justify-between px-4 py-4 transition-all duration-200 border-b border-white/5 ${
-              isDropdownOpen ? 'bg-[#3b82f6]/5' : 'hover:bg-white/3'
+              isDropdownOpen ? 'bg-[#228dbd]/5' : 'hover:bg-white/3'
             }`}
           >
             <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDropdownOpen ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDropdownOpen ? 'bg-[#228dbd]/15 border border-[#228dbd]/30' : 'bg-white/5 border border-white/10'}`}>
                 {IconComponent
-                  ? <IconComponent className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
-                  : <FileText className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                  ? <IconComponent className={`w-4 h-4 ${isDropdownOpen ? 'text-[#228dbd]' : 'text-gray-400'}`} />
+                  : <FileText className={`w-4 h-4 ${isDropdownOpen ? 'text-[#228dbd]' : 'text-gray-400'}`} />
                 }
               </div>
               <span className={`text-sm font-semibold tracking-wide ${isDropdownOpen ? 'text-white' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
             </div>
             <motion.div animate={{ rotate: isDropdownOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
-              <ChevronRight className={`w-4 h-4 ${isDropdownOpen ? 'text-[#3b82f6]' : 'text-gray-500'}`} />
+              <ChevronRight className={`w-4 h-4 ${isDropdownOpen ? 'text-[#228dbd]' : 'text-gray-500'}`} />
             </motion.div>
           </button>
 
@@ -470,7 +482,7 @@ const Navbar: React.FC = () => {
                 {item.dropdownItems.map((dropdownItem: any, idx: number) => {
                   const dName = dropdownItem.name === 'Terms of Service' ? t('navbar.termsOfService') :
                     dropdownItem.name === 'Privacy Policy' ? t('navbar.privacyPolicy') :
-                      dropdownItem.name;
+                    dropdownItem.name;
                   const isSubActive = pathname === dropdownItem.href;
                   return (
                     <Link
@@ -479,16 +491,16 @@ const Navbar: React.FC = () => {
                       onClick={closeMobileMenu}
                       prefetch={true}
                       className={`flex items-center justify-between px-4 py-3.5 border-b border-white/3 transition-all duration-150 ${
-                        isSubActive ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'
+                        isSubActive ? 'bg-[#228dbd]/8' : 'hover:bg-white/3'
                       }`}
                     >
                       <div>
-                        <div className={`text-sm font-semibold ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-200'}`}>{dName}</div>
+                        <div className={`text-sm font-semibold ${isSubActive ? 'text-[#228dbd]' : 'text-gray-200'}`}>{dName}</div>
                         {dropdownItem.description && (
                           <div className="text-[11px] text-gray-500 mt-0.5">{dropdownItem.description}</div>
                         )}
                       </div>
-                      <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSubActive ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
+                      <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSubActive ? 'text-[#228dbd]' : 'text-gray-600'}`} />
                     </Link>
                   );
                 })}
@@ -508,21 +520,21 @@ const Navbar: React.FC = () => {
         onClick={closeMobileMenu}
         prefetch={true}
         className={`flex items-center justify-between px-4 py-4 border-b border-white/5 transition-all duration-200 ${
-          isActive ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'
+          isActive ? 'bg-[#228dbd]/8' : 'hover:bg-white/3'
         }`}
       >
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isActive ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isActive ? 'bg-[#228dbd]/15 border border-[#228dbd]/30' : 'bg-white/5 border border-white/10'}`}>
             {item.showStatusDot
-              ? <span className="w-2 h-2 bg-[#3b82f6] rounded-full shadow-[0_0_8px_rgba(59,130,246,0.7)]" />
+              ? <span className="w-2 h-2 bg-[#228dbd] rounded-full shadow-[0_0_8px_rgba(34,141,189,0.7)]" />
               : IconComponent
-                ? <IconComponent className={`w-4 h-4 ${isActive ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
-                : <Globe className={`w-4 h-4 ${isActive ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                ? <IconComponent className={`w-4 h-4 ${isActive ? 'text-[#228dbd]' : 'text-gray-400'}`} />
+                : <Globe className={`w-4 h-4 ${isActive ? 'text-[#228dbd]' : 'text-gray-400'}`} />
             }
           </div>
-          <span className={`text-sm font-semibold tracking-wide ${isActive ? 'text-[#3b82f6]' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
+          <span className={`text-sm font-semibold tracking-wide ${isActive ? 'text-[#228dbd]' : 'text-gray-300'}`}>{translatedName.toUpperCase()}</span>
         </div>
-        <ChevronRight className={`w-4 h-4 ${isActive ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
+        <ChevronRight className={`w-4 h-4 ${isActive ? 'text-[#228dbd]' : 'text-gray-600'}`} />
       </Link>
     );
   }, [pathname, closeMobileMenu, filteredGames, mobileDropdownStates, toggleMobileDropdown]);
@@ -650,52 +662,15 @@ const Navbar: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {showBanner && config.banner.show && (
-        <div
-          className={`relative text-white text-sm py-3 px-4 transition-colors duration-300 ${!config.banner.useThemeColor ? config.banner.backgroundColor : ''
-            }`}
-          style={{
-            backgroundColor: config.banner.useThemeColor
-              ? 'var(--button-primary)'
-              : undefined
-          }}
-        >
-          <div className="max-w-7xl mx-auto px-2 sm:px-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1 flex items-center justify-center space-x-2 sm:space-x-3">
-                <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 icon-text-primary rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="icon-text-primary text-xs font-bold">%</span>
-                </div>
-                <span className="text-xs sm:text-sm md:text-base text-white font-medium">{config.banner.text}</span>
-                <button
-                  onClick={handleCopyCode}
-                  className="bg-white/20 hover:bg-white/30 px-1.5 sm:px-2 md:px-3 py-1 rounded text-xs font-bold transition-colors cursor-pointer whitespace-nowrap flex-shrink-0 text-white border border-white/30 hover:border-white/50"
-                >
-                  {config.banner.couponCode}
-                </button>
-              </div>
-              <button
-                className="text-white hover:text-white/90 transition-colors flex-shrink-0"
-                onClick={() => setShowBanner(false)}
-                aria-label="Close banner"
-              >
-                <X className="w-4 h-4" />
-              </button>
 
-            </div>
-          </div>
-        </div>
-      )}
-
-
-      <nav ref={navRef} className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${isScrolled
-          ? 'top-0 bg-[#0c0d12]/90 backdrop-blur-xl border-b border-white/5 py-2'
-          : (showBanner ? 'top-[52px] bg-[#0c0d12]/60 backdrop-blur-md py-4' : 'top-0 bg-[#0c0d12]/60 backdrop-blur-md py-4')
+      <nav ref={navRef} className={`fixed z-50 transition-all duration-500 ease-in-out ${isScrolled
+          ? 'top-4 inset-x-4 max-w-7xl mx-auto bg-[#030408]/90 backdrop-blur-xl border border-white/10 rounded-2xl py-2.5 px-6 shadow-[0_0_30px_rgba(34,141,189,0.25)]'
+          : 'top-0 inset-x-0 bg-[#030408]/60 backdrop-blur-md py-5 px-6 sm:px-8 lg:px-12 border-b border-white/5'
         }`}>
-        <div className="px-4 sm:px-0 max-w-7xl mx-auto">
-          <div className="flex items-center">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="flex items-center justify-between">
 
-            <div className="flex-shrink-0 flex items-center mr-6">
+            <div className="flex-shrink-0 flex items-center mr-8">
               <Link
                 href="/"
                 className="flex items-center space-x-3 group transition-transform duration-300 hover:scale-[1.02]"
@@ -706,38 +681,45 @@ const Navbar: React.FC = () => {
                   <Image
                     src={heroSettings.navbar.logo}
                     alt={heroSettings.navbar.brandName}
-                    className="h-8 sm:h-10 md:h-12 w-auto drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-                    width={48}
-                    height={48}
+                    className="h-8 sm:h-9 md:h-10 w-auto drop-shadow-[0_0_15px_rgba(34,141,189,0.5)]"
+                    width={40}
+                    height={40}
                     priority
                     quality={90}
-                    sizes="(max-width: 640px) 32px, (max-width: 768px) 40px, 48px"
+                    sizes="(max-width: 640px) 32px, 40px"
                   />
                 </div>
-                <span className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white orbitron-font tracking-tight">
-                  {heroSettings.navbar.brandName}<span className="text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]">{heroSettings.navbar.brandAccent}</span>
+                <span className="text-base sm:text-lg md:text-xl font-black text-white orbitron-font tracking-tight uppercase">
+                  {heroSettings.navbar.brandName}<span className="text-[#228dbd] drop-shadow-[0_0_10px_rgba(34,141,189,0.4)]">{heroSettings.navbar.brandAccent}</span>
                 </span>
               </Link>
             </div>
 
-
-            <div className="hidden md:flex md:items-center flex-1 justify-center">
+            <div className="hidden md:flex md:items-center flex-1 justify-center gap-1">
               {config.mainNavigation.map((item) => renderNavigationItem(item))}
               <div className="relative group flex items-center h-full">
                 <Link
                   href="/partners"
-                  className={`px-4 py-8 text-[13px] font-semibold text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-1 relative ${pathname === '/partners' ? 'text-white' : ''}`}
+                  className={`px-4 py-8 text-[13px] font-semibold text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-1 relative ${pathname === '/partners' ? 'text-white font-bold' : ''}`}
                 >
                   Partners
                   <motion.div
-                    className="absolute bottom-6 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className={`absolute bottom-6 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#228dbd] rounded-full shadow-[0_0_8px_rgba(34,141,189,0.8)] transition-all duration-300 ${
+                      pathname === '/partners' ? 'opacity-100 scale-100' : 'opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100'
+                    }`}
                     layoutId="nav-hover-dot"
                   />
                 </Link>
               </div>
             </div>
 
-            <div className="hidden md:flex md:items-center space-x-4 ml-auto">
+            <div className="hidden md:flex md:items-center space-x-4">
+              {/* Operational Status Dot */}
+              <div className="hidden lg:flex items-center gap-2 bg-[#228dbd]/5 border border-[#228dbd]/10 rounded-full px-3 py-1.5 select-none transition-all duration-300 hover:bg-[#228dbd]/10">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">All Systems Online</span>
+              </div>
+
               <CurrencySelector />
               <LanguageSelector />
               
@@ -746,18 +728,18 @@ const Navbar: React.FC = () => {
                   href="/dashboard/account"
                   className="flex items-center gap-2 group transition-all duration-300"
                 >
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 overflow-hidden flex items-center justify-center group-hover:border-blue-500">
+                  <div className="w-10 h-10 rounded-full bg-[#228dbd]/10 border border-[#228dbd]/20 overflow-hidden flex items-center justify-center group-hover:border-[#228dbd] transition-colors">
                     {session.user.image ? (
                       <img src={session.user.image} alt="User" className="w-full h-full object-cover" />
                     ) : (
-                      <User className="w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform" />
+                      <User className="w-5 h-5 text-[#228dbd] group-hover:scale-110 transition-transform" />
                     )}
                   </div>
                 </Link>
               ) : (
                 <Link
                   href={config.loginLink?.href || "#"}
-                  className="text-gray-400 hover:text-white text-sm font-bold transition-colors px-4 py-2"
+                  className="text-gray-400 hover:text-white text-sm font-bold transition-colors px-4 py-2 hover:text-[#228dbd]"
                 >
                   {config.loginLink?.name || "Log In"}
                 </Link>
@@ -765,7 +747,7 @@ const Navbar: React.FC = () => {
 
               <Link
                 href={config.clientSpace.href}
-                className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)]"
+                className="bg-[#228dbd] hover:bg-[#1a6e94] text-white px-6 py-2.5 rounded-full text-xs font-black transition-all duration-300 shadow-[0_0_20px_rgba(34,141,189,0.25)] hover:shadow-[0_0_30px_rgba(34,141,189,0.45)] orbitron-font uppercase tracking-wider"
                 prefetch={true}
               >
                 {config.clientSpace.name}
@@ -813,7 +795,7 @@ const Navbar: React.FC = () => {
 
               {/* Drawer panel */}
               <motion.div
-                className="relative bg-[#0d0f1a] flex flex-col h-full overflow-hidden origin-top border-t border-[#3b82f6]/30"
+                className="relative bg-[#0d0f1a]/95 backdrop-blur-xl flex flex-col h-full overflow-hidden origin-top border-t border-[#228dbd]/30"
                 style={{ maxHeight: `calc(100vh - ${navbarHeight}px)` }}
                 initial={{ scaleY: 0.95, opacity: 0 }}
                 animate={{ scaleY: 1, opacity: 1 }}
@@ -830,7 +812,7 @@ const Navbar: React.FC = () => {
                       width={28} height={28} priority quality={90}
                     />
                     <span className="text-white font-bold text-base orbitron-font tracking-tight">
-                      {heroSettings.navbar.brandName}<span className="text-[#3b82f6]">{heroSettings.navbar.brandAccent}</span>
+                      {heroSettings.navbar.brandName}<span className="text-[#228dbd]">{heroSettings.navbar.brandAccent}</span>
                     </span>
                   </Link>
                   <button
@@ -849,15 +831,15 @@ const Navbar: React.FC = () => {
                     href="/partners"
                     onClick={closeMobileMenu}
                     prefetch={true}
-                    className={`flex items-center justify-between px-4 py-4 border-b border-white/5 transition-all duration-200 ${pathname === '/partners' ? 'bg-[#3b82f6]/8' : 'hover:bg-white/3'}`}
+                    className={`flex items-center justify-between px-4 py-4 border-b border-white/5 transition-all duration-200 ${pathname === '/partners' ? 'bg-[#228dbd]/8' : 'hover:bg-white/3'}`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${pathname === '/partners' ? 'bg-[#3b82f6]/15 border border-[#3b82f6]/30' : 'bg-white/5 border border-white/10'}`}>
-                        <Network className={`w-4 h-4 ${pathname === '/partners' ? 'text-[#3b82f6]' : 'text-gray-400'}`} />
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${pathname === '/partners' ? 'bg-[#228dbd]/15 border border-[#228dbd]/30' : 'bg-white/5 border border-white/10'}`}>
+                        <Network className={`w-4 h-4 ${pathname === '/partners' ? 'text-[#228dbd]' : 'text-gray-400'}`} />
                       </div>
-                      <span className={`text-sm font-semibold tracking-wide ${pathname === '/partners' ? 'text-[#3b82f6]' : 'text-gray-300'}`}>PARTNERS</span>
+                      <span className={`text-sm font-semibold tracking-wide ${pathname === '/partners' ? 'text-[#228dbd]' : 'text-gray-300'}`}>PARTNERS</span>
                     </div>
-                    <ChevronRight className={`w-4 h-4 ${pathname === '/partners' ? 'text-[#3b82f6]' : 'text-gray-600'}`} />
+                    <ChevronRight className={`w-4 h-4 ${pathname === '/partners' ? 'text-[#228dbd]' : 'text-gray-600'}`} />
                   </Link>
 
                   {config.mainNavigation.map((item) => renderMobileNavigationItem(item))}
@@ -881,7 +863,7 @@ const Navbar: React.FC = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={`Visit our ${social.name} page`}
-                            className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/10 transition-all"
+                            className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-[#228dbd]/40 hover:bg-[#228dbd]/10 transition-all"
                           >
                             <SocialIcon />
                           </a>
@@ -895,7 +877,7 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/dashboard/account"
                       onClick={closeMobileMenu}
-                      className="flex items-center justify-center gap-2 w-full bg-[#3b82f6] hover:bg-[#2563eb] text-[#0a0b10] font-bold text-sm px-4 py-3 rounded-xl transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
+                      className="flex items-center justify-center gap-2 w-full bg-[#228dbd] hover:bg-[#1a6e94] text-white font-bold text-sm px-4 py-3 rounded-xl transition-all duration-200 shadow-[0_0_20px_rgba(34,141,189,0.25)]"
                     >
                       <User className="w-4 h-4" />
                       <span>My Dashboard</span>
@@ -913,7 +895,7 @@ const Navbar: React.FC = () => {
                         href={config.clientSpace.href}
                         onClick={closeMobileMenu}
                         prefetch={true}
-                        className="flex-1 flex items-center justify-center gap-2 bg-[#3b82f6] hover:bg-[#2563eb] text-[#0a0b10] font-bold text-sm px-4 py-3 rounded-xl transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#228dbd] hover:bg-[#1a6e94] text-white font-bold text-sm px-4 py-3 rounded-xl transition-all duration-200 shadow-[0_0_20px_rgba(34,141,189,0.25)]"
                       >
                         {t('navbar.clientSpace')}
                       </Link>

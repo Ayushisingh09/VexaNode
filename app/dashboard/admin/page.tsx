@@ -25,13 +25,17 @@ import {
   UserCheck,
   UserX,
   MessageSquare,
-  Clock
+  Clock,
+  Settings,
+  Key,
+  EyeOff,
+  Save
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useCurrency } from "../../contexts/CurrencyContext"
 
-type TabType = "overview" | "invoices" | "clients" | "tickets"
+type TabType = "overview" | "invoices" | "clients" | "tickets" | "settings"
 
 export default function AdminPage() {
   const { data: session, status } = useSession()
@@ -43,6 +47,16 @@ export default function AdminPage() {
   const [tickets, setTickets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<TabType>("overview")
+
+  // Cashfree Settings States
+  const [cashfreeEnabled, setCashfreeEnabled] = useState(false)
+  const [cashfreeAppId, setCashfreeAppId] = useState("")
+  const [cashfreeSecretKey, setCashfreeSecretKey] = useState("")
+  const [cashfreeSandbox, setCashfreeSandbox] = useState(true)
+  const [storageSystem, setStorageSystem] = useState("Database")
+  const [settingsSaving, setSettingsSaving] = useState(false)
+  const [settingsSuccess, setSettingsSuccess] = useState(false)
+  const [showSecret, setShowSecret] = useState(false)
 
   // Searching & Filtering states
   const [invoiceSearch, setInvoiceSearch] = useState("")
@@ -61,10 +75,60 @@ export default function AdminPage() {
       if (data.users) setUsers(data.users)
       if (data.orders) setOrders(data.orders)
       if (data.tickets) setTickets(data.tickets)
+
+      // Fetch admin settings
+      const settingsRes = await fetch("/api/admin/settings")
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json()
+        if (settingsData.cashfree) {
+          setCashfreeEnabled(settingsData.cashfree.enabled)
+          setCashfreeAppId(settingsData.cashfree.appId)
+          setCashfreeSecretKey(settingsData.cashfree.secretKey)
+          setCashfreeSandbox(settingsData.cashfree.sandbox)
+        }
+        if (settingsData.storage) {
+          setStorageSystem(settingsData.storage)
+        }
+      }
     } catch (error) {
       console.error("Failed to fetch admin data")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSettingsSaving(true)
+    setSettingsSuccess(false)
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          enabled: cashfreeEnabled,
+          appId: cashfreeAppId,
+          secretKey: cashfreeSecretKey,
+          sandbox: cashfreeSandbox
+        })
+      })
+      if (res.ok) {
+        setSettingsSuccess(true)
+        setTimeout(() => setSettingsSuccess(false), 3000)
+        // Refresh to get storage updates
+        const settingsRes = await fetch("/api/admin/settings")
+        if (settingsRes.ok) {
+          const settingsData = await settingsRes.json()
+          if (settingsData.storage) setStorageSystem(settingsData.storage)
+        }
+      } else {
+        const data = await res.json()
+        alert(data.error || "Failed to save settings")
+      }
+    } catch (error) {
+      alert("Network error. Failed to save settings.")
+    } finally {
+      setSettingsSaving(false)
     }
   }
 
@@ -178,7 +242,7 @@ export default function AdminPage() {
 
       {/* Paymenter-Style Navigation Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-white/5 pb-2">
-        {(["overview", "invoices", "clients", "tickets"] as TabType[]).map((tab) => (
+        {(["overview", "invoices", "clients", "tickets", "settings"] as TabType[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -650,6 +714,204 @@ export default function AdminPage() {
                   <p className="text-sm text-gray-500 italic">No tickets found</p>
                 </div>
               )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Tab 5: Configuration Settings */}
+        {activeTab === "settings" && (
+          <motion.div
+            key="settings"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            className="space-y-8"
+          >
+            <div className="bg-[#0a0b0f] border border-white/10 rounded-[32px] p-8 md:p-10 space-y-8">
+              <div>
+                <h3 className="text-xl font-bold orbitron-font flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-purple-500 animate-spin" style={{ animationDuration: '6s' }} />
+                  System <span className="text-purple-500">Configuration</span>
+                </h3>
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                  Manage external application API integrations and payment gateways
+                </p>
+              </div>
+
+              <form onSubmit={handleSaveSettings} className="space-y-8">
+                {/* Cashfree Payment Gateway Integration Card */}
+                <div className="bg-[#06070a] border border-white/5 rounded-2xl p-6 md:p-8 space-y-6 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-36 h-36 bg-purple-600/5 blur-[50px] rounded-full group-hover:bg-purple-600/10 transition-all pointer-events-none" />
+
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6">
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-xl">
+                          <CreditCard className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-md font-bold text-white">Cashfree Payment Gateway</h4>
+                          <p className="text-[10px] text-gray-500 font-medium">Accept automated UPI, Indian Cards, Netbanking, and Wallets.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
+                        cashfreeEnabled 
+                          ? "bg-purple-500/10 border-purple-500/25 text-purple-500" 
+                          : "bg-white/5 border-white/5 text-gray-500"
+                      }`}>
+                        {cashfreeEnabled ? "Enabled" : "Disabled"}
+                      </span>
+                      {cashfreeEnabled && (
+                        <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                          cashfreeSandbox 
+                            ? "bg-amber-500/10 border-amber-500/25 text-amber-500" 
+                            : "bg-emerald-500/10 border-emerald-500/25 text-emerald-500"
+                        }`}>
+                          {cashfreeSandbox ? "Sandbox" : "Production"}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    {/* Enable toggle */}
+                    <div className="p-5 bg-white/[0.01] border border-white/5 rounded-xl flex items-center justify-between hover:border-purple-500/10 transition-colors">
+                      <div>
+                        <label className="text-xs font-bold text-white block mb-1">Enable Gateway</label>
+                        <p className="text-[10px] text-gray-500">Allow customers to check out using Cashfree PG.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCashfreeEnabled(!cashfreeEnabled)}
+                        className={`w-12 h-6 rounded-full p-1 transition-all relative ${
+                          cashfreeEnabled ? "bg-purple-600" : "bg-white/10"
+                        }`}
+                      >
+                        <motion.div
+                          layout
+                          className="w-4 h-4 bg-white rounded-full absolute top-1 left-1"
+                          animate={{ x: cashfreeEnabled ? 24 : 0 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Sandbox toggle */}
+                    <div className="p-5 bg-white/[0.01] border border-white/5 rounded-xl flex items-center justify-between hover:border-purple-500/10 transition-colors">
+                      <div>
+                        <label className="text-xs font-bold text-white block mb-1">Sandbox (Test Mode)</label>
+                        <p className="text-[10px] text-gray-500">Use Cashfree Sandbox Environment for test payments.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCashfreeSandbox(!cashfreeSandbox)}
+                        className={`w-12 h-6 rounded-full p-1 transition-all relative ${
+                          cashfreeSandbox ? "bg-amber-600" : "bg-white/10"
+                        }`}
+                      >
+                        <motion.div
+                          layout
+                          className="w-4 h-4 bg-white rounded-full absolute top-1 left-1"
+                          animate={{ x: cashfreeSandbox ? 24 : 0 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                      </button>
+                    </div>
+
+                    {/* App ID Input */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
+                        <Key className="w-3.5 h-3.5 text-purple-500" />
+                        Cashfree App ID
+                      </label>
+                      <input
+                        type="text"
+                        value={cashfreeAppId}
+                        onChange={(e) => setCashfreeAppId(e.target.value)}
+                        placeholder="e.g. TEST103829420..."
+                        disabled={!cashfreeEnabled}
+                        className="w-full bg-black/40 border border-white/5 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl py-3.5 px-4 text-xs font-medium outline-none focus:border-purple-500/30 transition-all font-mono"
+                      />
+                    </div>
+
+                    {/* Secret Key Input */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <ShieldAlert className="w-3.5 h-3.5 text-purple-500" />
+                          Cashfree Secret Key
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setShowSecret(!showSecret)}
+                          className="text-[9px] font-black uppercase text-purple-500 hover:underline tracking-wider"
+                          disabled={!cashfreeEnabled}
+                        >
+                          {showSecret ? "Hide" : "Show"}
+                        </button>
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showSecret ? "text" : "password"}
+                          value={cashfreeSecretKey}
+                          onChange={(e) => setCashfreeSecretKey(e.target.value)}
+                          placeholder="cf_secret_key_..."
+                          disabled={!cashfreeEnabled}
+                          className="w-full bg-black/40 border border-white/5 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl py-3.5 px-4 text-xs font-medium outline-none focus:border-purple-500/30 transition-all font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form submit & status indicators */}
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/5">
+                  <div className="text-left">
+                    <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-0.5">Configuration Storage</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white">{storageSystem}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <AnimatePresence>
+                      {settingsSuccess && (
+                        <motion.div
+                          initial={{ opacity: 0, x: 10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 10 }}
+                          className="text-xs text-emerald-500 font-bold flex items-center gap-1.5"
+                        >
+                          <Check className="w-4 h-4" />
+                          Configurations Saved!
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <button
+                      type="submit"
+                      disabled={settingsSaving}
+                      className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-xl shadow-purple-600/20 flex items-center justify-center gap-2"
+                    >
+                      {settingsSaving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4" />
+                          Save Configurations
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
           </motion.div>
         )}

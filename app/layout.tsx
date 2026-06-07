@@ -7,7 +7,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { AuthProvider } from "./components/AuthProvider";
 import CookieConsent from "./components/CookieConsent";
-import TopBanner from "./components/TopBanner";
+import SummerSalePopup from "./components/SummerSalePopup";
 import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
@@ -230,6 +230,7 @@ export default function RootLayout({
               <AuthProvider>
                 <LayoutWrapper>
                   {children}
+                  <SummerSalePopup />
                   <Analytics />
                 </LayoutWrapper>
               </AuthProvider>

@@ -104,6 +104,26 @@
           "name": "Privacy Policy",
           "href": "/privacy-policy",
           "description": "Data protection policy"
+        },
+        {
+          "name": "Refund Policy",
+          "href": "/refund-policy",
+          "description": "Billing refunds & eligibility"
+        },
+        {
+          "name": "SLA",
+          "href": "/sla",
+          "description": "Service Level Agreement"
+        },
+        {
+          "name": "Acceptable Use",
+          "href": "/aup",
+          "description": "Fair use guidelines"
+        },
+        {
+          "name": "Fair Usage",
+          "href": "/fup",
+          "description": "Resource allocation policy"
         }
       ]
     },
@@ -114,14 +134,19 @@
       "dropdownType": "list",
       "dropdownItems": [
         {
-          "name": "Affiliate Program",
-          "href": "/affiliates",
-          "description": "Earn recurring commission"
+          "name": "Team",
+          "href": "/team",
+          "description": "Meet our leadership"
         },
         {
           "name": "Partners",
           "href": "/partners",
           "description": "Our trusted ecosystem"
+        },
+        {
+          "name": "Affiliate Program",
+          "href": "/affiliates",
+          "description": "Earn recurring commission"
         },
         {
           "name": "About Us",

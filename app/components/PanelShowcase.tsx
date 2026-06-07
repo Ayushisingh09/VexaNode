@@ -13,7 +13,6 @@ import {
 } from "lucide-react"
 import showcaseConfig from "@/app/config/sections/showcase.json"
 import { useLanguage } from '../contexts/LanguageContext';
-import uiConfig from "@/app/config/sections/ui.json"
 
 interface ShowcaseCard {
   id: number;
@@ -45,6 +44,7 @@ export default function PanelShowcase() {
     imageDark: card.imageDark,
     imageLight: card.imageLight
   }))
+
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress(prev => {
@@ -69,35 +69,35 @@ export default function PanelShowcase() {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-[#0a0b0f] relative py-12 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-
-      <div className="absolute top-20 -left-32 w-64 h-64 icon-text-primary rounded-full blur-3xl" />
-      <div className="absolute bottom-20 -right-32 w-72 h-72 icon-text-primary  rounded-full blur-3xl" />
+    <div className="bg-[#030408] relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-b border-white/5">
+      {/* Background glow blobs */}
+      <div className="absolute top-20 -left-32 w-64 h-64 bg-[#228dbd]/5 rounded-full blur-3xl pointer-events-none will-change-transform" />
+      <div className="absolute bottom-20 -right-32 w-72 h-72 bg-[#228dbd]/5 rounded-full blur-3xl pointer-events-none will-change-transform" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.5 }}
           className="text-left mb-8"
         >
           <div className="inline-flex items-center gap-2 card-primary px-4 py-2 rounded-tl-2xl rounded-br-2xl mb-4 border border-secondary">
             <span className="icon-text-primary orbitron-font text-sm">{t('panelShowcase.badge')}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3 orbitron-font sm:mb-4">
-            {t('panelShowcase.title').split(' ').slice(0, -1).join(' ')} <span className="icon-text-primary">{t('panelShowcase.title').split(' ').slice(-1)[0]}</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3 orbitron-font sm:mb-4 uppercase tracking-tight">
+            {t('panelShowcase.title').split(' ').slice(0, -1).join(' ')} <span className="text-[#228dbd] text-neon-glow-brand">{t('panelShowcase.title').split(' ').slice(-1)[0]}</span>
           </h2>
-          <p className="text-sm  text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {t('panelShowcase.subtitle')}
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-4 lg:gap-4 lg:items-stretch">
+        <div className="grid lg:grid-cols-2 gap-6 lg:items-stretch">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.5 }}
             className="flex flex-col h-full"
           >
             <div className="flex flex-col flex-1 gap-4">
@@ -110,38 +110,32 @@ export default function PanelShowcase() {
                     key={card.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
                     onClick={() => handleCardClick(index)}
-                    className={`relative cursor-pointer transition-all duration-300 bg-white/40 dark:bg-white/5 backdrop-blur-md border rounded-xl overflow-hidden ${isActive
-                        ? 'border-blue-500/50 dark:border-blue-400/50 shadow-lg shadow-blue-500/10'
-                        : 'border-white/20 dark:border-white/10 hover:border-blue-500/30'
+                    className={`relative cursor-pointer transition-all duration-300 bg-[#0c0e1a]/30 backdrop-blur-md border rounded-xl overflow-hidden ${isActive
+                        ? 'border-[#228dbd]/50 shadow-lg shadow-[#228dbd]/10'
+                        : 'border-white/5 hover:border-[#228dbd]/30'
                       } flex-1 group`}
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent transition-opacity ${isActive ? 'opacity-100' : 'opacity-0'}`} />
+                    <div className={`absolute inset-0 bg-gradient-to-br from-[#228dbd]/5 to-transparent transition-opacity ${isActive ? 'opacity-100' : 'opacity-0'}`} />
                     <div className="flex justify-between items-start">
                       <div className="flex-1 p-4 sm:p-6">
-                        <h3 className={`text-base sm:text-lg font-semibold mb-1 sm:mb-2 ${isActive
-                            ? 'text-gray-900 dark:text-white'
-                            : 'text-gray-900 dark:text-white'
-                          }`}>
+                        <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2 text-white">
                           {card.title}
                         </h3>
-                        <p className={`text-xs sm:text-sm ${isActive
-                            ? 'text-gray-600 dark:text-gray-400'
-                            : 'text-gray-600 dark:text-gray-400'
-                          }`}>
+                        <p className="text-xs sm:text-sm text-gray-400">
                           {card.description}
                         </p>
                       </div>
                       <div className="bg-white dark:bg-white/3 w-10 h-10 sm:w-12 sm:h-12 border-l border-b border-gray-200 dark:border-white/3 rounded-tr-md flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 icon-text-primary" />
+                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#228dbd]" />
                       </div>
                     </div>
 
                     {isActive && (
                       <div className="absolute bottom-0 left-0 right-0 h-1 ">
                         <motion.div
-                          className="h-full rounded-full button-primary"
+                          className="h-full rounded-full bg-[#228dbd]"
                           initial={{ width: "0%" }}
                           animate={{ width: `${progress}%` }}
                           transition={{ duration: 0.1, ease: "linear" }}
@@ -158,19 +152,19 @@ export default function PanelShowcase() {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="relative flex h-full"
           >
-            <div className="relative w-full bg-white dark:bg-white/2 backdrop-blur-sm border border-gray-200 dark:border-white/5 rounded-md overflow-hidden flex flex-col h-full">
-              <div className="flex-1   pb-0">
+            <div className="relative w-full bg-[#0c0e1a]/40 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden flex flex-col h-full">
+              <div className="flex-1 pb-0">
                 <div className="relative w-full h-full min-h-[200px] sm:min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeCard}
-                      initial={{ opacity: 0, scale: 1.1 }}
+                      initial={{ opacity: 0, scale: 1.05 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.5 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
                       className="absolute inset-0"
                     >
                       <div className="hidden dark:block w-full h-full">
@@ -202,14 +196,14 @@ export default function PanelShowcase() {
               <div className="p-3 sm:p-6">
                 <motion.div
                   key={activeCard}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                  transition={{ duration: 0.3, delay: 0.05 }}
                 >
-                  <h3 className="text-gray-900 dark:text-white text-lg sm:text-xl font-semibold mb-2">
+                  <h3 className="text-white text-lg sm:text-xl font-semibold mb-2">
                     {showcaseCards[activeCard].title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
+                  <p className="text-gray-400 text-xs sm:text-sm">
                     {showcaseCards[activeCard].description}
                   </p>
                 </motion.div>
