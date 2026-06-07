@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: VexaNode Discord
+    url: https://discord.gg/vexanode
+    about: For general support, join our Discord server.
+  - name: VexaNode Website
+    url: https://vexanode.cloud
+    about: Visit the live platform.
