@@ -1,252 +1,98 @@
-# 🚀 Node Website Template
+# 🌌 VexaNode — Premium Cloud & Game Hosting Platform
 
-Welcome! Thank you for purchasing Node - a modern, responsive website template for hosting services.
+VexaNode is a modern, ultra-high-performance cloud and game hosting storefront and dashboard. Featuring a premium glassmorphic dark design system, VexaNode is engineered for lightning-fast speeds, responsive navigation, and secure credential handling.
 
-## 📋 Important Notes
+---
 
-> **Please read these terms carefully before proceeding:**
+## 🎨 Design Theme & Core Features
+- **Unified Branding system**: Tailored around VexaNode's signature brand blue `#228dbd` and dark-frosted glassmorphic panels.
+- **Floating Header Navigation**: Enhanced dropdowns and mega-menus with top-edge lighting gradients and animated chevrons.
+- **Overhauled Authentication**: Dual support for passwordless OAuth (Google & Discord) alongside email/password credentials.
+- **Interactive Forms**: Visually compact Login and Registration screens with password visibility toggles and real-time password strength indicators.
+- **Support Ticket Engine**: Real-time customer support ticket management and system status indicators.
+- **Scalable Hosting Types**: Seamless location, hosting, and billing-frequency calculators for Game servers, Lavalink VPS nodes, and Domain registration.
 
-- ❌ **No refunds** - All sales are final
-- 🔧 **Custom modifications** require additional payment
-- 💡 **Basic support** is provided, but self-help is expected
-- ⚠️ **Support exclusions** - No support for heavily modified websites or removed footer credits
+---
 
-## 🛠️ Getting Started
+## 🛠️ Technology Stack
+- **Framework**: Next.js (App Router) & React 19
+- **Database**: Supabase (PostgreSQL with custom functions & triggers)
+- **Authentication**: NextAuth.js (JWT Strategy) with `bcryptjs` hashing
+- **Animation**: Framer Motion & CSS keyframe micro-animations
+- **Styling**: Vanilla CSS & TailwindCSS
+- **Server Management**: PM2 process runner and Nginx reverse proxies
 
-### Configuration Files
-Customize your website by modifying these key files:
+---
 
-| File/Directory | Purpose |
+## 📂 Project Structure
+
+| Directory/File | Purpose |
 |----------------|---------|
-| `/app/config/sections/` | Main content configuration |
-| `ui.json` | Currencies, colors, and UI settings |
-| `hero.json` | Hero section content |
-| `Footer.tsx` | Footer component and logo |
-| `language.json` | Language and translations |
-| `layout.tsx` | Meta data and SEO settings |
+| `/app/api/auth/` | NextAuth integration router & custom registration handlers |
+| `/app/components/` | Reusable UI compartments (Navbar, HeroSection, FAQ, Footer) |
+| `/app/config/sections/` | JSON-driven static configuration blocks (`hero.json`, `navigation.json`) |
+| `/app/dashboard/` | Core user control panel (Services, Invoices, Ticket Support) |
+| `/lib/` | Supabase initialization clients, database methods, and utility files |
+| `/types/` | Global TypeScript models and schema definitions |
+| `setup_database.sql` | Supabase database tables schema definitions |
 
-### 🎨 Quick Customization Guide
+---
 
-1. **Colors & UI**: Edit `ui.json`
-2. **Content**: Modify files in `/app/config/sections/`
-3. **Branding**: Update `hero.json` and `Footer.tsx`
-4. **Languages**: Configure `language.json`
-5. **SEO**: Update `layout.tsx`
+## 🔑 Database Migration
+To enable email/password credentials alongside OAuth, ensure the `users` table has a `password` field. Execute the following SQL statement in your Supabase SQL editor:
+```sql
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS password text;
+```
 
+---
 
+## ⚙️ Environment Configuration (`.env.local`)
+Create a `.env.local` file in the root directory and define the following keys:
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL="your_supabase_project_url"
+SUPABASE_SERVICE_ROLE_KEY="your_supabase_service_role_key"
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+# NextAuth Configuration
+NEXTAUTH_SECRET="your_nextauth_jwt_secret"
+NEXTAUTH_URL="http://localhost:3000"
 
-2. **Install PM2 Process Manager**
-   ```bash
-   npm install -g pm2
-   ```
+# Discord OAuth Provider
+DISCORD_CLIENT_ID="your_discord_client_id"
+DISCORD_CLIENT_SECRET="your_discord_client_secret"
 
-3. **Build and Start the Application**
-   ```bash
-   npm run build
-   pm2 start npm --name "Node-website" -- start
-   ```
+# Google OAuth Provider
+GOOGLE_CLIENT_ID="your_google_client_id"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
+```
 
-   The application will run on `localhost:3000`
+---
 
-4. **PM2 Management Commands**
-   ```bash
-   pm2 list              # View running processes
-   pm2 restart Node-website    # Restart the app
-   pm2 stop Node-website       # Stop the app
-   pm2 delete Node-website     # Delete the app from PM2
-   pm2 logs Node-website       # View logs
-   ```
+## 🚀 Getting Started
 
-### 🔧 Nginx Reverse Proxy Setup
-
-Create an Nginx configuration file for your domain:
-
+### 1. Installation
+Staging dependencies and installing packages:
 ```bash
-sudo nano /etc/nginx/sites-available/your-domain.com
+npm install
 ```
 
-Add the following configuration:
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com www.your-domain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-**Enable the site:**
+### 2. Launching in Development
+Run the local Next.js compiler in Turbopack mode:
 ```bash
-sudo ln -s /etc/nginx/sites-available/your-domain.com /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
+npm run dev
 ```
 
-**For HTTPS with Let's Encrypt:**
+### 3. Production Compilation
+Compile the code and verify pre-render optimization states:
 ```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+npm run build
 ```
 
-**Important Notes:**
-- Replace `your-domain.com` with your actual domain name
-- Ensure your domain points to your server's IP address
-- The application must be running on port 3000 (as configured with PM2)
-- Test your configuration with `sudo nginx -t` before reloading
+---
 
-### ☁️ Vercel Deployment Guide
+## 👥 Project Contributors
 
-Deploy your Node website template to Vercel for easy hosting and automatic deployments.
+We appreciate all contributions that make VexaNode possible!
 
-#### Prerequisites
-- GitHub account
-- Vercel account (free tier available)
-- Your project pushed to a GitHub repository
-
-#### Step-by-Step Deployment
-
-1. **Prepare Your Repository**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/yourusername/your-repo-name.git
-   git push -u origin main
-   ```
-
-2. **Connect to Vercel**
-   - Go to [vercel.com](https://vercel.com) and sign in
-   - Click "New Project"
-   - Import your GitHub repository
-   - Vercel will automatically detect it's a Next.js project
-
-3. **Configure Build Settings**
-   - **Framework Preset**: Next.js (auto-detected)
-   - **Root Directory**: `./` (default)
-   - **Build Command**: `npm run build` (auto-detected)
-   - **Output Directory**: `.next` (auto-detected)
-   - **Install Command**: `npm install` (auto-detected)
-
-4. **Environment Variables** (if needed)
-   - Add any environment variables in the Vercel dashboard
-   - Go to Project Settings → Environment Variables
-   - Add variables like `NEXT_PUBLIC_API_URL` if your app uses them
-
-5. **Deploy**
-   - Click "Deploy"
-   - Vercel will build and deploy your site automatically
-   - You'll get a URL like `https://your-project-name.vercel.app`
-
-#### Custom Domain Setup
-
-1. **Add Custom Domain**
-   - Go to your project dashboard
-   - Click "Domains" tab
-   - Add your domain (e.g., `yourdomain.com`)
-
-2. **Configure DNS**
-   - Add a CNAME record pointing to `cname.vercel-dns.com`
-   - Or add an A record pointing to Vercel's IP addresses
-
-3. **SSL Certificate**
-   - Vercel automatically provides SSL certificates
-   - HTTPS will be enabled automatically
-
-#### Vercel Configuration File (Optional)
-
-Create a `vercel.json` file in your project root for advanced configuration:
-
-```json
-{
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    }
-  ]
-}
-```
-
-#### Automatic Deployments
-
-- **Push to main branch**: Automatically triggers production deployment
-- **Pull requests**: Creates preview deployments
-- **Branch deployments**: Each branch gets its own URL
-
-#### Vercel CLI (Alternative Method)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Login to Vercel
-vercel login
-
-# Deploy from your project directory
-vercel
-
-# Deploy to production
-vercel --prod
-```
-
-#### Performance Optimizations
-
-Vercel automatically provides:
-- **Edge Network**: Global CDN for fast loading
-- **Image Optimization**: Automatic image optimization
-- **Automatic HTTPS**: SSL certificates
-- **Analytics**: Built-in performance monitoring
-
-#### Troubleshooting
-
-**Common Issues:**
-- **Build failures**: Check your `package.json` scripts
-- **Environment variables**: Ensure they're set in Vercel dashboard
-- **Static files**: Place them in the `public` directory
-- **API routes**: Must be in `app/api/` or `pages/api/` directory
-
-**Useful Commands:**
-```bash
-# View deployment logs
-vercel logs
-
-# Check deployment status
-vercel ls
-
-# Remove deployment
-vercel rm your-project-name
-```
+- **Ayushisingh09** ([GitHub Profile](https://github.com/Ayushisingh09)) — Core developer, dashboard refactoring, database setup, and user interface customization.
+- **titanxdevz** ([GitHub Profile](https://github.com/titanxdevz)) — Original repository creator and infrastructure engineer.
