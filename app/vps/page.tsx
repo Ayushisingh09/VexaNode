@@ -129,7 +129,7 @@ export default function VPSPage() {
   const currentLocObj = locations.find(loc => loc.id === selectedLocation)
 
   return (
-    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-[#228dbd]/30">
       <Navbar />
 
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -140,15 +140,15 @@ export default function VPSPage() {
             animate={{ opacity: 1, x: 0 }}
             className="max-w-2xl"
           >
-            <div className="inline-block bg-blue-600/10 text-blue-500 text-[10px] font-bold px-4 py-1 rounded-full border border-blue-500/20 mb-6 uppercase tracking-widest">
+            <div className="inline-block bg-[#228dbd]/10 text-[#228dbd] text-[10px] font-bold px-4 py-1 rounded-full border border-[#228dbd]/20 mb-6 uppercase tracking-widest">
               Enterprise Cloud Infrastructure
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 orbitron-font leading-tight">
               Virtual Private <br />
-              <span className="text-blue-500 relative">
+              <span className="text-[#228dbd] relative text-neon-glow-brand">
                 Servers
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M0 5 Q 50 10 100 5" stroke="#3b82f6" strokeWidth="4" fill="none" />
+                  <path d="M0 5 Q 50 10 100 5" stroke="#228dbd" strokeWidth="4" fill="none" />
                 </svg>
               </span>
             </h1>
@@ -161,7 +161,7 @@ export default function VPSPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white/5 border border-white/10 p-6 rounded-[32px] w-full lg:w-auto"
+            className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 p-6 rounded-[32px] w-full lg:w-auto"
           >
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Billing Cycle</h4>
             <div className="flex flex-col gap-2">
@@ -171,8 +171,8 @@ export default function VPSPage() {
                   onClick={() => setSelectedCycle(cycle.id)}
                   className={`flex items-center justify-between px-6 py-3 rounded-2xl transition-all ${
                     selectedCycle === cycle.id
-                      ? "bg-blue-600 text-white shadow-xl"
-                      : "bg-white/5 text-gray-400 hover:bg-white/10"
+                      ? "bg-[#228dbd] text-white shadow-[0_0_15px_rgba(34,141,189,0.3)]"
+                      : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   <span className="text-sm font-bold">{cycle.name}</span>
@@ -187,9 +187,9 @@ export default function VPSPage() {
 
         {/* Configuration Selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white/5 border border-white/10 rounded-[40px] p-8">
+          <div className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[40px] p-8">
             <h3 className="text-sm font-bold text-gray-400 mb-6 uppercase tracking-widest flex items-center gap-2">
-              <Globe className="w-4 h-4 text-blue-500" />
+              <Globe className="w-4 h-4 text-[#228dbd]" />
               1. Deployment Location
             </h3>
             
@@ -197,7 +197,7 @@ export default function VPSPage() {
             <div className="relative">
               <button
                 onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-                className="w-full flex items-center justify-between bg-black/40 border border-white/10 text-white py-4 px-5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-semibold hover:border-white/20"
+                className="w-full flex items-center justify-between bg-black/40 border border-white/10 text-white py-4 px-5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#228dbd]/50 transition-all font-semibold hover:border-white/20"
               >
                 {currentLocObj ? (
                   <div className="flex items-center gap-3">
@@ -226,7 +226,7 @@ export default function VPSPage() {
                           setIsLocationDropdownOpen(false)
                         }}
                         className={`w-full flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-all text-left ${
-                          selectedLocation === loc.id ? "bg-blue-600/10 text-blue-500" : "text-gray-300"
+                          selectedLocation === loc.id ? "bg-[#228dbd]/10 text-[#228dbd]" : "text-gray-300"
                         }`}
                       >
                         <span className="text-2xl">{loc.flag}</span>
@@ -242,9 +242,9 @@ export default function VPSPage() {
 
           </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-[40px] p-8">
+          <div className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[40px] p-8">
             <h3 className="text-sm font-bold text-gray-400 mb-6 uppercase tracking-widest flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-blue-500" />
+              <Cpu className="w-4 h-4 text-[#228dbd]" />
               2. Processor Architecture
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -254,7 +254,7 @@ export default function VPSPage() {
                   onClick={() => setSelectedCpu(cpu.id)}
                   className={`flex flex-col items-center justify-center gap-2 p-4 rounded-3xl border transition-all ${
                     selectedCpu === cpu.id
-                      ? "bg-blue-600/10 border-blue-500 text-white"
+                      ? "bg-[#228dbd]/10 border-[#228dbd] text-white"
                       : "bg-black/20 border-white/5 text-gray-500 hover:border-white/10"
                   }`}
                 >
@@ -274,11 +274,11 @@ export default function VPSPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-12"
         >
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4 px-6 py-8 rounded-[32px] bg-blue-600/5 border border-blue-500/20">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4 px-6 py-8 rounded-[32px] bg-[#228dbd]/5 border border-[#228dbd]/20">
             {vpsFeatures.map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-blue-400" />
+                <div className="w-5 h-5 rounded-full bg-[#228dbd]/20 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-[#228dbd]" />
                 </div>
                 <span className="text-sm font-semibold text-gray-300">{feature}</span>
               </div>
@@ -297,40 +297,40 @@ export default function VPSPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="relative bg-white/5 hover:bg-[#111424] border border-white/10 hover:border-blue-500/50 rounded-[32px] p-6 transition-all flex flex-col group overflow-hidden"
+                  className="relative bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 hover:border-[#228dbd]/50 rounded-[32px] p-6 transition-all flex flex-col group overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#228dbd]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="flex justify-between items-start mb-6">
                       <div>
-                        <h4 className="text-xl font-bold mb-1 text-white group-hover:text-blue-400 transition-colors">{plan.name}</h4>
+                        <h4 className="text-xl font-bold mb-1 text-white group-hover:text-[#228dbd] transition-colors">{plan.name}</h4>
                         <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{selectedCpu} Processor</p>
                       </div>
-                      <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/10 group-hover:border-blue-500/30 transition-all">
+                      <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/10 group-hover:border-[#228dbd]/30 transition-all">
                         <Image src={cpuTypes.find(c => c.id === selectedCpu)?.image || ""} alt="CPU" width={30} height={30} className="object-contain" />
                       </div>
                     </div>
                     
                     <div className="space-y-4 mb-8 flex-1">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Cpu className="w-4 h-4 text-blue-500" /> CPU</span>
+                        <span className="text-gray-400 flex items-center gap-2"><Cpu className="w-4 h-4 text-[#228dbd]" /> CPU</span>
                         <span className="font-bold text-white">{plan.cores}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Zap className="w-4 h-4 text-blue-500" /> RAM</span>
+                        <span className="text-gray-400 flex items-center gap-2"><Zap className="w-4 h-4 text-[#228dbd]" /> RAM</span>
                         <span className="font-bold text-white">{plan.ram}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><HardDrive className="w-4 h-4 text-blue-500" /> Storage</span>
+                        <span className="text-gray-400 flex items-center gap-2"><HardDrive className="w-4 h-4 text-[#228dbd]" /> Storage</span>
                         <span className="font-bold text-white">{plan.storage}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Activity className="w-4 h-4 text-blue-500" /> Bandwidth</span>
+                        <span className="text-gray-400 flex items-center gap-2"><Activity className="w-4 h-4 text-[#228dbd]" /> Bandwidth</span>
                         <span className="font-bold text-white">{plan.bandwidth}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Globe className="w-4 h-4 text-blue-500" /> Network</span>
+                        <span className="text-gray-400 flex items-center gap-2"><Globe className="w-4 h-4 text-[#228dbd]" /> Network</span>
                         <span className="font-bold text-white">{plan.ipv4}</span>
                       </div>
                     </div>
@@ -342,7 +342,7 @@ export default function VPSPage() {
                       </div>
                       <button
                         onClick={() => handleDeploy(plan)}
-                        className="w-full bg-white/5 hover:bg-blue-600 border border-white/10 hover:border-transparent text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                        className="w-full bg-white/5 hover:bg-[#228dbd] hover:text-white border border-white/10 hover:border-transparent py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(34,141,189,0.3)]"
                       >
                         Order Now <ChevronRight className="w-4 h-4" />
                       </button>

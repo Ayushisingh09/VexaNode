@@ -5,6 +5,8 @@ import PanelShowcase from "./components/PanelShowcase"
 import LocationsSection from "./components/LocationsSection"
 import FAQSection from "./components/FAQSection"
 import PricingSection from "./components/PricingSection"
+import ReviewMarquee from "./components/ReviewMarquee"
+import ComparisonSection from "./components/ComparisonSection"
 import Footer from "./components/Footer"
 import Navbar from "./components/Navbar"
 
@@ -16,12 +18,14 @@ const fadeInUp = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0b0f] transition-colors duration-300">
+    <div className="min-h-screen bg-[#030408] text-white transition-colors duration-300">
       <Navbar />
         <HeroSection />
         <FeaturesSection />
-        <LocationsSection />
+        <ComparisonSection />
         <PricingSection />
+        <ReviewMarquee />
+        <LocationsSection />
         <FAQSection />
         <PanelShowcase />
         <Footer />

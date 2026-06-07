@@ -1,97 +1,139 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Shield, Lock, Eye, FileText, Globe, Clock, ChevronRight } from "lucide-react"
+import { Shield, Lock, Eye, FileText, Globe, Clock, ChevronRight, Mail, Server, Database } from "lucide-react"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 
 const sections = [
   {
-    title: "Information We Collect",
-    content: "We collect information you provide directly to us, such as when you create or modify your account, request services, contact customer support, or otherwise communicate with us. This information may include name, email address, phone number, postal address, profile picture, payment method, and other information you choose to provide."
+    title: "1. Data Collection",
+    content: "We collect information you provide directly to us, such as when you create an account, subscribe to our services, or contact support. This includes your name, email address, billing information, and any communication logs. We also automatically collect technical data like IP addresses and browser types to enhance security and site performance.",
+    icon: Database
   },
   {
-    title: "How We Use Information",
-    content: "We use the information we collect to provide, maintain, and improve our services, such as to facilitate payments, send receipts, provide products and services you request, and develop new features. We also use it to personalize the services, including providing content and features that match your interests."
+    title: "2. Usage of Information",
+    content: "Your data is used strictly to provide and improve VexaNode services. This includes processing payments, delivering hosting resources, sending critical service updates, and personalizing your dashboard experience. We do not sell your personal information to third parties for marketing purposes.",
+    icon: Server
   },
   {
-    title: "Data Security",
-    content: "We take the security of your data seriously. VexaNode implements industry-standard technical and organizational measures to protect your information against unauthorized access, disclosure, alteration, or destruction. However, no method of transmission over the internet or electronic storage is 100% secure."
+    title: "3. Infrastructure Security",
+    content: "We implement multi-layered security protocols to protect your data. This includes end-to-end encryption for sensitive transmissions, regular security audits, and strict access controls at our datacenter locations. While no system is 100% immune, we maintain industry-leading standards to mitigate risks.",
+    icon: Lock
   },
   {
-    title: "Cookies and Tracking",
-    content: "We use cookies and similar tracking technologies to track the activity on our service and hold certain information. Cookies are files with small amount of data which may include an anonymous unique identifier. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent."
+    title: "4. Cookies & Tracking",
+    content: "We use essential cookies to maintain your session and remember your preferences. Analytics cookies help us understand how users interact with our platform so we can optimize performance. You can manage cookie settings in your browser, though disabling them may limit certain features.",
+    icon: Eye
   },
   {
-    title: "Third-Party Services",
-    content: "Our services may contain links to other websites that are not operated by us. If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit. We have no control over and assume no responsibility for the content or practices of any third-party sites."
+    title: "5. Third-Party Disclosure",
+    content: "We only share data with trusted partners necessary for service delivery, such as payment processors (Stripe/PayPal) and infrastructure providers. These partners are legally bound to protect your data and only use it for the specified service functions.",
+    icon: Globe
   }
 ]
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#08090d] text-white selection:bg-blue-500/30">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-40 pb-20 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0%,transparent_70%)] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-20">
           <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20 mb-6 tracking-widest uppercase"
+          >
+            <Shield className="w-3 h-3" />
+            Privacy First
+          </motion.div>
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-blue-600/10 border border-blue-500/20 px-4 py-2 rounded-full mb-8"
+            className="text-4xl md:text-6xl font-black mb-6 tracking-tighter"
           >
-            <Shield className="w-4 h-4 text-blue-500" />
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Trust & Security</span>
-          </motion.div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 orbitron-font">
             Privacy <span className="text-blue-500">Policy</span>
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-            Your privacy is paramount. This policy outlines how we handle, protect, and utilize your personal information at VexaNode.
-          </p>
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-500 font-bold">
-            <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> Last Updated: May 2026</span>
-            <span className="flex items-center gap-2"><Globe className="w-4 h-4" /> Effective Globally</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-gray-500 max-w-xl mx-auto text-lg leading-relaxed font-medium"
+          >
+            Your trust is our most valuable asset. Learn how we protect your personal and professional data.
+          </motion.p>
+          
+          <div className="mt-8 flex flex-wrap justify-center gap-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+            <span className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5"><Clock className="w-3 h-3 text-blue-500" /> Updated: June 2026</span>
+            <span className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5"><Lock className="w-3 h-3 text-blue-500" /> GDPR Compliant</span>
           </div>
         </div>
-      </section>
 
-      {/* Content Section */}
-      <section className="pb-32 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl">
-             <div className="p-8 md:p-12 space-y-16">
-               {sections.map((section, idx) => (
-                 <motion.div 
-                   key={idx}
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   viewport={{ once: true }}
-                   transition={{ delay: idx * 0.1 }}
-                   className="relative pl-8 md:pl-12 border-l border-white/5"
-                 >
-                   <div className="absolute left-0 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.5)] border-4 border-[#0a0b0f]" />
-                   <h2 className="text-2xl font-bold mb-4 orbitron-font text-white">{idx + 1}. {section.title}</h2>
-                   <div className="text-gray-400 leading-relaxed space-y-4">
-                     <p>{section.content}</p>
-                   </div>
-                 </motion.div>
-               ))}
-
-               <div className="pt-12 border-t border-white/5 text-center">
-                 <p className="text-sm text-gray-500 mb-6 italic">
-                   If you have any questions about this Privacy Policy, please contact our legal team at <a href="mailto:legal@vexanode.cloud" className="text-blue-500 hover:underline">legal@vexanode.cloud</a>.
-                 </p>
-                 <button className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-xl flex items-center gap-2 mx-auto">
-                   Download Full Policy <ChevronRight className="w-4 h-4" />
-                 </button>
-               </div>
-             </div>
-          </div>
+        {/* Content Cards */}
+        <div className="space-y-4 mb-24">
+          {sections.map((section, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.05 }}
+              className="group bg-[#0c0d12] border border-[#1f2129] hover:border-[#2d303d] rounded-[2.5rem] p-8 md:p-12 transition-all duration-300"
+            >
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-500">
+                  <section.icon className="w-7 h-7 text-blue-500 group-hover:text-white transition-colors duration-500" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold mb-4 tracking-tight text-white">{section.title}</h2>
+                  <p className="text-gray-400 leading-relaxed text-base">
+                    {section.content}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </section>
+
+        {/* Legal Contact CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-blue-600 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden group/cta"
+        >
+          {/* Animated Background Elements */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover/cta:scale-125 transition-transform duration-1000" />
+          
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-6xl font-black mb-8 text-white leading-tight tracking-tighter uppercase">
+              Privacy Concerns?
+            </h2>
+            <p className="text-blue-100/80 max-w-2xl mx-auto mb-12 text-lg md:text-xl leading-relaxed">
+              If you have any questions regarding your data or our privacy practices, our legal team is ready to assist you.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <a
+                href="mailto:legal@vexanode.cloud"
+                className="w-full sm:w-auto bg-white text-blue-600 px-10 py-5 rounded-2xl font-black hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-base shadow-2xl"
+              >
+                Email Legal Team
+                <Mail className="w-5 h-5" />
+              </a>
+              <a
+                href="/contact"
+                className="w-full sm:w-auto bg-transparent text-white px-10 py-5 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-base border-2 border-white/20 hover:border-white"
+              >
+                Contact Support
+              </a>
+            </div>
+          </div>
+        </motion.div>
+      </main>
 
       <Footer />
     </div>

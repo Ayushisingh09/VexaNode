@@ -1,121 +1,153 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { FileText, Scale, AlertCircle, CheckCircle2, UserCheck, Gavel, Clock, Globe } from "lucide-react"
+import { Scale, ShieldCheck, Gavel, Clock, ChevronRight, MessageSquare, AlertTriangle, HelpCircle } from "lucide-react"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 
 const terms = [
   {
-    title: "Acceptance of Terms",
-    content: "By accessing or using VexaNode's hosting services, you agree to be bound by these Terms of Service. If you do not agree to all terms and conditions, you must not access the website or use our services. These terms apply to all visitors, users, and others who access or use the Service."
+    title: "1. Service Agreement",
+    content: "By accessing or using VexaNode's services, you agree to be bound by these Terms of Service. If you do not agree to all terms and conditions, you must not access the website or use our services. These terms apply to all visitors and users."
   },
   {
-    title: "User Responsibilities",
-    content: "You are responsible for maintaining the confidentiality of your account and password and for restricting access to your computer. You agree to accept responsibility for all activities that occur under your account or password. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account."
+    title: "2. User Obligations",
+    content: "You are responsible for maintaining the security of your account and any activities that occur under it. You must provide accurate information and notify us immediately of any security breaches. Unauthorized access or use of our systems is strictly prohibited."
   },
   {
-    title: "Service Availability",
-    content: "While we strive for 100% uptime, VexaNode does not guarantee that our services will be available at all times. We reserve the right to modify, suspend, or discontinue any part of the service with or without notice. We are not liable for any service interruptions or data loss resulting from maintenance or technical issues."
+    title: "3. Acceptable Use Policy",
+    content: "Our infrastructure must not be used for illegal activities, distributing malware, sending spam, or hosting copyrighted material without permission. Violation of our AUP will result in immediate service termination without refund."
   },
   {
-    title: "Acceptable Use Policy",
-    content: "Our services must not be used for any illegal purposes or to distribute malware, spam, or copyrighted material without authorization. We reserve the right to terminate accounts that violate our Acceptable Use Policy (AUP) without refund."
+    title: "4. Billing & Payments",
+    content: "All services are billed in advance on a recurring basis. Payments are processed securely through our authorized gateways. Failure to settle invoices by the due date will lead to service suspension and potential data loss after 7 days."
   },
   {
-    title: "Payments and Refunds",
-    content: "Subscription fees are billed in advance on a recurring basis. All payments are non-refundable unless otherwise specified in our dedicated Refund Policy. Failure to pay on time may result in immediate suspension or termination of your services."
+    title: "5. Service Availability (SLA)",
+    content: "While we strive for 100% uptime, standard services come with a 99.9% uptime guarantee. Scheduled maintenance is communicated in advance. We are not liable for outages caused by upstream providers or external network issues beyond our control."
   },
   {
-    title: "Limitation of Liability",
-    content: "In no event shall VexaNode, nor its directors, employees, partners, or agents, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, or other intangible losses."
+    title: "6. Limitation of Liability",
+    content: "VexaNode and its affiliates shall not be liable for any indirect, incidental, or consequential damages resulting from the use or inability to use our services, including data loss or loss of business profits."
   }
 ]
 
 export default function TermsOfService() {
   return (
-    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#08090d] text-white selection:bg-blue-500/30">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-40 pb-20 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0%,transparent_70%)] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-20">
           <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20 mb-6 tracking-widest uppercase"
+          >
+            <Gavel className="w-3 h-3" />
+            Legal Framework
+          </motion.div>
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-blue-600/10 border border-blue-500/20 px-4 py-2 rounded-full mb-8"
+            className="text-4xl md:text-6xl font-black mb-6 tracking-tighter"
           >
-            <Scale className="w-4 h-4 text-blue-500" />
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Legal Agreement</span>
-          </motion.div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 orbitron-font">
             Terms of <span className="text-blue-500">Service</span>
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-            These terms govern your use of the VexaNode platform. By using our services, you agree to abide by these guidelines.
-          </p>
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-500 font-bold">
-            <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> Last Revised: May 2026</span>
-            <span className="flex items-center gap-2"><Gavel className="w-4 h-4" /> Binding Agreement</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-gray-500 max-w-xl mx-auto text-lg leading-relaxed font-medium"
+          >
+            Our commitment to transparency and excellence. Please read our service agreement carefully.
+          </motion.p>
+          
+          <div className="mt-8 flex flex-wrap justify-center gap-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+            <span className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5"><Clock className="w-3 h-3 text-blue-500" /> Updated: June 2026</span>
+            <span className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5"><Scale className="w-3 h-3 text-blue-500" /> Binding Contract</span>
           </div>
         </div>
-      </section>
 
-      {/* Content Section */}
-      <section className="pb-32 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-             <div className="p-6 rounded-2xl bg-blue-600/5 border border-blue-500/20 flex items-start gap-4">
-                <CheckCircle2 className="w-6 h-6 text-blue-500 mt-1" />
-                <div>
-                   <h3 className="font-bold mb-1">Our Commitment</h3>
-                   <p className="text-sm text-gray-400">To provide stable, high-performance hosting with expert technical support.</p>
-                </div>
-             </div>
-             <div className="p-6 rounded-2xl bg-red-600/5 border border-red-500/20 flex items-start gap-4">
-                <AlertCircle className="w-6 h-6 text-red-500 mt-1" />
-                <div>
-                   <h3 className="font-bold mb-1">Your Responsibility</h3>
-                   <p className="text-sm text-gray-400">To use our resources legally and keep your account information secure.</p>
-                </div>
-             </div>
+        {/* Quick Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+          <div className="p-6 rounded-[2rem] bg-[#111218] border border-[#1f2129] flex gap-4 items-start">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20">
+              <ShieldCheck className="w-5 h-5 text-blue-500" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white mb-1 uppercase tracking-tight">Our Promise</h3>
+              <p className="text-sm text-gray-500">High-performance infrastructure, extreme reliability, and elite technical support 24/7.</p>
+            </div>
           </div>
+          <div className="p-6 rounded-[2rem] bg-[#111218] border border-[#1f2129] flex gap-4 items-start">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0 border border-amber-500/20">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white mb-1 uppercase tracking-tight">Your Duty</h3>
+              <p className="text-sm text-gray-500">Legal usage of resources, account security, and timely settlement of service invoices.</p>
+            </div>
+          </div>
+        </div>
 
-          <div className="space-y-8">
-            {terms.map((term, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.05 }}
-                className="bg-white/5 border border-white/10 p-8 rounded-2xl hover:border-blue-500/30 transition-all group"
+        {/* Detailed Sections */}
+        <div className="space-y-4 mb-24">
+          {terms.map((term, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.05 }}
+              className="bg-[#0c0d12] border border-[#1f2129] hover:border-[#2d303d] rounded-[2rem] p-8 md:p-10 transition-all duration-300"
+            >
+              <h2 className="text-xl font-bold mb-4 tracking-tight text-white">{term.title}</h2>
+              <p className="text-gray-400 leading-relaxed text-base">
+                {term.content}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Contact CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-white rounded-[2.5rem] p-12 md:p-16 text-center relative overflow-hidden group"
+        >
+          <div className="relative z-10">
+            <div className="w-16 h-16 bg-black/5 rounded-3xl flex items-center justify-center mx-auto mb-6">
+              <HelpCircle className="w-8 h-8 text-black" />
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black mb-6 text-black tracking-tighter leading-none uppercase">
+              Need Clarification?
+            </h2>
+            <p className="text-gray-600 max-w-lg mx-auto mb-10 text-base font-medium">
+              Our legal and operations teams are available to help you understand every aspect of our service agreement.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="/contact"
+                className="bg-black text-white px-10 py-4 rounded-xl font-bold hover:bg-gray-900 transition-all flex items-center gap-2 text-sm uppercase tracking-widest"
               >
-                <div className="flex items-center gap-4 mb-4">
-                   <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all font-bold orbitron-font">
-                      {idx + 1}
-                   </div>
-                   <h2 className="text-xl font-bold orbitron-font">{term.title}</h2>
-                </div>
-                <p className="text-gray-400 leading-relaxed pl-14">
-                  {term.content}
-                </p>
-              </motion.div>
-            ))}
+                Message Support
+                <MessageSquare className="w-4 h-4" />
+              </a>
+              <a
+                href="https://discord.vexanode.cloud"
+                className="bg-transparent text-black border-2 border-black/10 px-10 py-4 rounded-xl font-bold hover:bg-black/5 transition-all flex items-center gap-2 text-sm uppercase tracking-widest"
+              >
+                Join Discord
+              </a>
+            </div>
           </div>
-
-          <div className="mt-20 p-12 rounded-3xl bg-gradient-to-br from-blue-600/20 to-transparent border border-blue-500/20 text-center">
-             <h3 className="text-2xl font-bold mb-4 orbitron-font">Questions?</h3>
-             <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-               Our legal and support teams are here to help you understand our service agreements. Feel free to reach out anytime.
-             </p>
-             <button className="bg-white text-black hover:bg-blue-50 px-10 py-4 rounded-xl font-bold transition-all shadow-xl">
-               Contact Support
-             </button>
-          </div>
-        </div>
-      </section>
+        </motion.div>
+      </main>
 
       <Footer />
     </div>

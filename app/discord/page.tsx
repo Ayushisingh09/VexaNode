@@ -174,7 +174,7 @@ export default function DiscordBotPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#0a0b0f] text-white selection:bg-[#228dbd]/30">
       <Navbar />
 
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -185,26 +185,26 @@ export default function DiscordBotPage() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="inline-block bg-blue-600/10 text-blue-500 text-[10px] font-bold px-4 py-1 rounded-full border border-blue-500/20 mb-6 uppercase tracking-widest">
+            <div className="inline-block bg-[#228dbd]/10 text-[#228dbd] text-[10px] font-bold px-4 py-1.5 rounded-full border border-[#228dbd]/20 mb-6 uppercase tracking-widest orbitron-font">
               Performance First Hosting
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 orbitron-font leading-tight">
+            <h1 className="text-5xl md:text-7xl font-black mb-8 orbitron-font leading-none uppercase tracking-tight">
               Power Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
+              <span className="text-[#228dbd] text-neon-glow-brand">
                 Discord Bots
               </span>
             </h1>
-            <p className="text-gray-400 text-lg mb-10 leading-relaxed max-w-xl">
+            <p className="text-gray-400 text-lg mb-10 leading-relaxed max-w-xl quicksand-font">
               Unleash the full potential of your Discord bots with our high-performance Pterodactyl-powered nodes. Built for reliability, speed, and 24/7 uptime.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+              <button className="bg-[#228dbd] hover:bg-[#1a6e94] text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_0_30px_rgba(34,141,189,0.3)] orbitron-font uppercase tracking-wider text-sm">
                 View Plans
               </button>
               <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10">
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0a0b0f] bg-blue-600 flex items-center justify-center text-[10px] font-bold">
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0a0b0f] bg-[#228dbd] flex items-center justify-center text-[10px] font-bold">
                       {i === 3 ? "1k+" : <Image src={`https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=40&w=32`} alt="" width={32} height={32} className="rounded-full" />}
                     </div>
                   ))}
@@ -238,7 +238,7 @@ export default function DiscordBotPage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className={log.includes("[BOT]") ? "text-blue-400" : log.includes("[SYSTEM]") ? "text-emerald-400" : "text-gray-400"}
+                      className={log.includes("[BOT]") ? "text-[#228dbd]" : log.includes("[SYSTEM]") ? "text-green-400" : "text-gray-400"}
                     >
                       <span className="text-gray-600 mr-3">[{new Date().toLocaleTimeString()}]</span>
                       {log}
@@ -248,7 +248,7 @@ export default function DiscordBotPage() {
                 <motion.div 
                   animate={{ opacity: [0, 1] }} 
                   transition={{ duration: 0.8, repeat: Infinity }}
-                  className="w-2 h-4 bg-blue-500 inline-block align-middle" 
+                  className="w-2 h-4 bg-[#228dbd] inline-block align-middle" 
                 />
               </div>
             </div>
@@ -257,15 +257,15 @@ export default function DiscordBotPage() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-6 -right-6 md:-right-12 bg-blue-600 p-6 rounded-3xl shadow-2xl"
+              className="absolute -bottom-6 -right-6 md:-right-12 bg-[#228dbd] p-6 rounded-3xl shadow-2xl"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
                   <Rocket className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">99.9%</div>
-                  <div className="text-[10px] font-bold text-blue-100 uppercase tracking-widest">Uptime Guaranteed</div>
+                  <div className="text-2xl font-black text-white orbitron-font">99.9%</div>
+                  <div className="text-[10px] font-black text-blue-100 uppercase tracking-widest orbitron-font">Uptime SLA</div>
                 </div>
               </div>
             </motion.div>
@@ -274,22 +274,24 @@ export default function DiscordBotPage() {
 
         {/* Pricing Toggles */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-8 orbitron-font">Choose Your Performance Level</h2>
+          <h2 className="text-4xl font-black mb-4 orbitron-font uppercase tracking-tight">Choose Your <span className="text-[#228dbd] text-neon-glow-brand">Performance Level</span></h2>
+          <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto quicksand-font">Select the billing frequency that matches your project requirements.</p>
           <div className="flex flex-col items-center gap-6">
-            <div className="bg-white/5 border border-white/10 p-1.5 rounded-2xl flex gap-1">
+            <div className="bg-white/5 border border-white/10 p-1.5 rounded-2xl flex gap-1.5 backdrop-blur-md">
               {cycles.map((cycle) => (
                 <button
                   key={cycle.id}
+                  type="button"
                   onClick={() => setSelectedCycle(cycle.id)}
-                  className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider cursor-pointer ${
                     selectedCycle === cycle.id
-                      ? "bg-blue-600 text-white shadow-xl scale-105"
-                      : "text-gray-500 hover:text-gray-300"
+                      ? "bg-[#228dbd] text-white shadow-[0_0_15px_rgba(34,141,189,0.3)] scale-105"
+                      : "text-gray-400 hover:text-white"
                   }`}
                 >
                   {cycle.name}
                   {cycle.discount > 0 && (
-                    <span className="ml-1.5 text-[9px] bg-white/20 px-1.5 py-0.5 rounded">-{Math.round(cycle.discount * 100)}%</span>
+                    <span className="ml-1.5 text-[9px] bg-green-500 text-black px-1.5 py-0.5 rounded font-black">-{Math.round(cycle.discount * 100)}%</span>
                   )}
                 </button>
               ))}
@@ -304,28 +306,28 @@ export default function DiscordBotPage() {
               key={plan.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
+              transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -10 }}
-              className={`relative bg-white/5 border ${plan.popular ? 'border-blue-500/50' : 'border-white/10'} rounded-[40px] p-8 flex flex-col transition-all group overflow-hidden`}
+              className={`relative bg-[#0b0c16]/30 backdrop-blur-md border ${plan.popular ? 'border-[#228dbd] ring-1 ring-[#228dbd]/30' : 'border-white/10'} rounded-[40px] p-8 flex flex-col transition-all group overflow-hidden`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] font-black px-6 py-2 rounded-bl-3xl uppercase tracking-widest">
+                <div className="absolute top-0 right-0 bg-[#228dbd] text-white text-[9px] font-black px-6 py-2 rounded-bl-3xl uppercase tracking-widest orbitron-font shadow-[0_0_10px_rgba(34,141,189,0.35)]">
                   Popular
                 </div>
               )}
               
               <div className="mb-8">
-                <div className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-blue-500/30 transition-all`}>
-                  <CustomIcons.Bot className="w-8 h-8 text-blue-500" />
+                <div className={`w-14 h-14 rounded-2xl bg-[#228dbd]/10 border border-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-[#228dbd]/30 transition-all`}>
+                  <CustomIcons.Bot className="w-8 h-8 text-[#228dbd]" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{plan.name}</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold">{formatPrice(calculatePrice(plan.basePrice))}</span>
+                <h3 className="text-2xl font-black mb-2 orbitron-font uppercase tracking-tight group-hover:text-[#228dbd] transition-colors">{plan.name}</h3>
+                <div className="flex items-baseline gap-1 mt-3">
+                  <span className="text-3xl font-black orbitron-font text-white">{formatPrice(calculatePrice(plan.basePrice))}</span>
                   <span className="text-gray-500 text-xs font-bold uppercase tracking-widest">/mo</span>
                 </div>
               </div>
 
-              <div className="space-y-4 mb-10 flex-1">
+              <div className="space-y-4 mb-10 flex-1 border-t border-white/5 pt-6">
                 <SpecItem icon={Zap} label="Memory" value={plan.ram} />
                 <SpecItem icon={Cpu} label="CPU Core" value={plan.cpu} />
                 <SpecItem icon={HardDrive} label="NVMe Storage" value={plan.disk} />
@@ -334,10 +336,11 @@ export default function DiscordBotPage() {
               </div>
 
               <button 
+                type="button"
                 onClick={() => handleDeploy(plan)}
-                className={`w-full py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer orbitron-font uppercase tracking-wider text-xs ${
                   plan.popular 
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg' 
+                    ? 'bg-[#228dbd] hover:bg-[#1a6e94] text-white shadow-[0_0_20px_rgba(34,141,189,0.3)]' 
                     : 'bg-white/5 hover:bg-white/10 border border-white/10'
                 }`}
               >
@@ -352,11 +355,11 @@ export default function DiscordBotPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 border border-white/10 rounded-[40px] p-12 mb-32"
+          className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[40px] p-12 mb-32"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 orbitron-font">Premium Features Included</h2>
-            <p className="text-gray-400">Every bot plan comes with our enterprise-grade feature set by default.</p>
+            <h2 className="text-3xl font-black mb-4 orbitron-font uppercase tracking-tight">Premium Features <span className="text-[#228dbd] text-neon-glow-brand">Included</span></h2>
+            <p className="text-gray-400 max-w-xl mx-auto quicksand-font">Every bot plan comes with our enterprise-grade feature set by default.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -369,12 +372,12 @@ export default function DiscordBotPage() {
               { title: "Global Network", desc: "Low latency nodes positioned globally for optimal response times.", icon: Globe },
             ].map((f, i) => (
               <div key={i} className="flex gap-5">
-                <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20">
-                  <f.icon className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 rounded-2xl bg-[#228dbd]/10 flex items-center justify-center flex-shrink-0 border border-[#228dbd]/20">
+                  <f.icon className="w-6 h-6 text-[#228dbd]" />
                 </div>
                 <div>
                   <h4 className="font-bold text-white mb-2">{f.title}</h4>
-                  <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed quicksand-font">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -383,13 +386,13 @@ export default function DiscordBotPage() {
 
         {/* FAQ Style Section */}
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-8 orbitron-font">Ready to Scale?</h2>
-          <p className="text-gray-400 mb-10 max-w-lg mx-auto">Join hundreds of bot developers who trust VexaNode for their production bot infrastructure.</p>
+          <h2 className="text-3xl font-black mb-4 orbitron-font uppercase tracking-tight">Ready to Scale?</h2>
+          <p className="text-gray-400 mb-10 max-w-lg mx-auto quicksand-font">Join hundreds of bot developers who trust VexaNode for their production bot infrastructure.</p>
           <div className="flex justify-center gap-4">
-            <button className="bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-2xl font-bold transition-all">
+            <button className="bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-2xl font-bold transition-all orbitron-font uppercase tracking-wider text-xs">
               Contact Sales
             </button>
-            <button className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl">
+            <button className="bg-[#228dbd] hover:bg-[#1a6e94] text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-[0_0_20px_rgba(34,141,189,0.3)] orbitron-font uppercase tracking-wider text-xs">
               Get Started
             </button>
           </div>
@@ -418,7 +421,7 @@ function SpecItem({ icon: Icon, label, value }: { icon: any, label: string, valu
   return (
     <div className="flex items-center justify-between group/spec">
       <div className="flex items-center gap-3">
-        <Icon className="w-4 h-4 text-blue-500/60 group-hover/spec:text-blue-500 transition-colors" />
+        <Icon className="w-4 h-4 text-[#228dbd]/60 group-hover/spec:text-[#228dbd] transition-colors" />
         <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{label}</span>
       </div>
       <span className="text-sm font-bold text-white">{value}</span>
