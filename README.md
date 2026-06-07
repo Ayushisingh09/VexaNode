@@ -11,8 +11,6 @@
 
 [Live Demo](https://vexanode.cloud) · [Report a Bug](https://github.com/Ayushisingh09/VexaNode/issues) · [Request a Feature](https://github.com/Ayushisingh09/VexaNode/issues)
 
-</div>
-<div>
 ![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=titanxdevz.VexaNode)
 </div>
 ---
