@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Order", href: "/dashboard/order", icon: ShoppingCart },
   ]
 
-  const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "") || false
+  const isAdmin = session?.user?.isAdmin || process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').map(id => id.trim()).includes(session?.user?.id || "") || false
 
   return (
     <div className="min-h-screen bg-[#050507] text-white selection:bg-blue-500/30">
@@ -68,8 +68,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-10">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-                <span className="text-xl font-bold italic">V</span>
+              <div className="relative w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Image 
+                  src="/logo.png" 
+                  alt="VexaNode Logo" 
+                  width={40} 
+                  height={40} 
+                  className="object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                />
               </div>
               <span className="text-xl font-bold orbitron-font tracking-tighter hidden sm:block">VexaNode</span>
             </Link>
@@ -131,6 +137,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               />
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-[#0a0b0f] rounded-full" />
             </div>
+
+            {/* Desktop Sign Out */}
+            <button 
+              onClick={() => signOut()}
+              className="hidden lg:flex p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-xl transition-all items-center justify-center cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
 
             <button 
               onClick={() => setIsMobileMenuOpen(true)}

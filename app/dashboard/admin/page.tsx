@@ -134,7 +134,7 @@ export default function AdminPage() {
 
   // Protect Admin route and fetch data
   useEffect(() => {
-    const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "")
+    const isAdmin = session?.user?.isAdmin || process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').map(id => id.trim()).includes(session?.user?.id || "")
     if (status === "unauthenticated") {
       router.push("/discord")
     } else if (status === "authenticated" && !isAdmin) {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import { 
   CreditCard, 
   Search, 
@@ -244,8 +245,14 @@ export default function InvoicesPage() {
                 {/* Brand & Invoice Details */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-white/5 pb-8 print:border-black/10">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center print:bg-black print:text-white">
-                      <span className="text-2xl font-bold italic text-white">V</span>
+                    <div className="relative w-12 h-12 flex items-center justify-center print:bg-transparent">
+                      <Image 
+                        src="/logo.png" 
+                        alt="Logo" 
+                        width={48} 
+                        height={48} 
+                        className="object-contain"
+                      />
                     </div>
                     <div>
                       <h4 className="text-xl font-bold orbitron-font text-white print:text-black">VexaNode</h4>

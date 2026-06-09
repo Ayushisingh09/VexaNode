@@ -82,12 +82,36 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: any) {
       if (user) {
         token.id = user.id
+        // Fetch is_admin from profiles table in Supabase
+        if (supabaseUrl && supabaseSecret) {
+          try {
+            const supabase = createClient(supabaseUrl, supabaseSecret, {
+              auth: { persistSession: false }
+            })
+            const { data: profile, error } = await supabase
+              .from("profiles")
+              .select("is_admin")
+              .eq("id", user.id)
+              .maybeSingle()
+            if (!error && profile) {
+              token.isAdmin = profile.is_admin || false
+            } else {
+              token.isAdmin = false
+            }
+          } catch (err) {
+            console.error("Error fetching user profile in jwt callback:", err)
+            token.isAdmin = false
+          }
+        } else {
+          token.isAdmin = false
+        }
       }
       return token
     },
     async session({ session, token }: any) {
       if (session?.user && token) {
         session.user.id = token.id as string
+        session.user.isAdmin = token.isAdmin as boolean
       }
       return session
     },

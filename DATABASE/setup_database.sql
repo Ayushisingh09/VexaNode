@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   email text,
   "emailVerified" timestamp with time zone,
   image text,
+  password text, -- Added for Credentials hashing
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_email_key UNIQUE (email)
 );
@@ -131,4 +132,12 @@ CREATE TABLE IF NOT EXISTS public.settings (
   value jsonb NOT NULL,
   updated_at timestamp with time zone DEFAULT now()
 );
+
+-- ############################################################
+-- PART 5: HELPER TEMPLATES (Optional Utility Queries)
+-- ############################################################
+
+-- To promote a user profile to administrator, run:
+-- UPDATE public.profiles SET is_admin = true WHERE email = 'admin@example.com';
+
 
