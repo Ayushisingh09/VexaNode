@@ -5,7 +5,7 @@ import { getSetting, setSetting } from "@/lib/settings"
 
 export async function GET() {
   const session = await getServerSession(authOptions) as any
-  const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "")
+  const isAdmin = session?.user?.isAdmin || process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').map(id => id.trim()).includes(session?.user?.id || "")
 
   if (!isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -43,7 +43,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions) as any
-  const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "")
+  const isAdmin = session?.user?.isAdmin || process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').map(id => id.trim()).includes(session?.user?.id || "")
 
   if (!isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

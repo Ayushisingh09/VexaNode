@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Order", href: "/dashboard/order", icon: ShoppingCart },
   ]
 
-  const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "") || false
+  const isAdmin = session?.user?.isAdmin || process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').map(id => id.trim()).includes(session?.user?.id || "") || false
 
   return (
     <div className="min-h-screen bg-[#050507] text-white selection:bg-blue-500/30">
@@ -137,6 +137,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               />
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-[#0a0b0f] rounded-full" />
             </div>
+
+            {/* Desktop Sign Out */}
+            <button 
+              onClick={() => signOut()}
+              className="hidden lg:flex p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-xl transition-all items-center justify-center cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
 
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
