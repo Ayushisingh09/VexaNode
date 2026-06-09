@@ -68,8 +68,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-10">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-                <span className="text-xl font-bold italic">V</span>
+              <div className="relative w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Image 
+                  src="/logo.png" 
+                  alt="VexaNode Logo" 
+                  width={40} 
+                  height={40} 
+                  className="object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                />
               </div>
               <span className="text-xl font-bold orbitron-font tracking-tighter hidden sm:block">VexaNode</span>
             </Link>
