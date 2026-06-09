@@ -143,8 +143,8 @@ export default function VPSPage() {
             <div className="inline-block bg-[#228dbd]/10 text-[#228dbd] text-[10px] font-bold px-4 py-1 rounded-full border border-[#228dbd]/20 mb-6 uppercase tracking-widest">
               Enterprise Cloud Infrastructure
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 orbitron-font leading-tight">
-              Virtual Private <br />
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-6 orbitron-font leading-tight">
+              Virtual <span className="sm:inline">Private</span> <br className="hidden sm:block" />
               <span className="text-[#228dbd] relative text-neon-glow-brand">
                 Servers
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -152,7 +152,7 @@ export default function VPSPage() {
                 </svg>
               </span>
             </h1>
-            <p className="text-gray-400 text-lg leading-relaxed">
+            <p className="text-gray-400 text-sm sm:text-lg leading-relaxed">
               Deploy high-performance virtual instances in seconds. Experience full root access, dedicated resources, and enterprise-grade DDoS protection across our global network.
             </p>
           </motion.div>
@@ -161,23 +161,23 @@ export default function VPSPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 p-6 rounded-[32px] w-full lg:w-auto"
+            className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] w-full lg:w-auto"
           >
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Billing Cycle</h4>
-            <div className="flex flex-col gap-2">
+            <h4 className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 sm:mb-4">Billing Cycle</h4>
+            <div className="flex flex-col gap-1.5 sm:gap-2">
               {cycles.map((cycle) => (
                 <button
                   key={cycle.id}
                   onClick={() => setSelectedCycle(cycle.id)}
-                  className={`flex items-center justify-between px-6 py-3 rounded-2xl transition-all ${
+                  className={`flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all ${
                     selectedCycle === cycle.id
                       ? "bg-[#228dbd] text-white shadow-[0_0_15px_rgba(34,141,189,0.3)]"
                       : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
                   }`}
                 >
-                  <span className="text-sm font-bold">{cycle.name}</span>
+                  <span className="text-xs sm:text-sm font-bold">{cycle.name}</span>
                   {cycle.discount > 0 && (
-                    <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full ml-4">Save {Math.round(cycle.discount * 100)}%</span>
+                    <span className="text-[9px] sm:text-[10px] bg-white/20 px-1.5 sm:px-2 py-0.5 rounded-full ml-2 sm:ml-4">Save {Math.round(cycle.discount * 100)}%</span>
                   )}
                 </button>
               ))}
@@ -187,27 +187,26 @@ export default function VPSPage() {
 
         {/* Configuration Selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[40px] p-8">
-            <h3 className="text-sm font-bold text-gray-400 mb-6 uppercase tracking-widest flex items-center gap-2">
-              <Globe className="w-4 h-4 text-[#228dbd]" />
+          <div className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[24px] sm:rounded-[40px] p-5 sm:p-8">
+            <h3 className="text-[11px] sm:text-sm font-bold text-gray-400 mb-4 sm:mb-6 uppercase tracking-widest flex items-center gap-2">
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" />
               1. Deployment Location
             </h3>
             
-            {/* Custom Sleek Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-                className="w-full flex items-center justify-between bg-black/40 border border-white/10 text-white py-4 px-5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#228dbd]/50 transition-all font-semibold hover:border-white/20"
+                className="w-full flex items-center justify-between bg-black/40 border border-white/10 text-white py-3 sm:py-4 px-4 sm:px-5 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#228dbd]/50 transition-all font-semibold hover:border-white/20"
               >
                 {currentLocObj ? (
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{currentLocObj.flag}</span>
-                    <span className="text-lg">{currentLocObj.country} - {currentLocObj.name}</span>
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <span className="text-xl sm:text-2xl shrink-0">{currentLocObj.flag}</span>
+                    <span className="text-sm sm:text-lg truncate">{currentLocObj.country} - {currentLocObj.name}</span>
                   </div>
                 ) : (
                   <span>Select Location</span>
                 )}
-                <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isLocationDropdownOpen ? "-rotate-90" : "rotate-90"}`} />
+                <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-400 shrink-0 transition-transform ${isLocationDropdownOpen ? "-rotate-90" : "rotate-90"}`} />
               </button>
 
               <AnimatePresence>
@@ -216,7 +215,7 @@ export default function VPSPage() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-[#0a0b0f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[300px] overflow-y-auto custom-scrollbar"
+                    className="absolute top-full left-0 right-0 mt-2 bg-[#0a0b0f] border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[240px] sm:max-h-[300px] overflow-y-auto custom-scrollbar"
                   >
                     {locations.map((loc) => (
                       <button
@@ -225,42 +224,41 @@ export default function VPSPage() {
                           setSelectedLocation(loc.id)
                           setIsLocationDropdownOpen(false)
                         }}
-                        className={`w-full flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-all text-left ${
+                        className={`w-full flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-white/5 transition-all text-left ${
                           selectedLocation === loc.id ? "bg-[#228dbd]/10 text-[#228dbd]" : "text-gray-300"
                         }`}
                       >
-                        <span className="text-2xl">{loc.flag}</span>
-                        <span className="font-medium">{loc.country} - {loc.name}</span>
-                        {selectedLocation === loc.id && <Check className="w-4 h-4 ml-auto" />}
+                        <span className="text-lg sm:text-2xl shrink-0">{loc.flag}</span>
+                        <span className="text-xs sm:text-base font-medium truncate">{loc.country} - {loc.name}</span>
+                        {selectedLocation === loc.id && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-auto shrink-0" />}
                       </button>
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-            
 
           </div>
 
-          <div className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[40px] p-8">
-            <h3 className="text-sm font-bold text-gray-400 mb-6 uppercase tracking-widest flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-[#228dbd]" />
+          <div className="bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 rounded-[24px] sm:rounded-[40px] p-5 sm:p-8">
+            <h3 className="text-[11px] sm:text-sm font-bold text-gray-400 mb-4 sm:mb-6 uppercase tracking-widest flex items-center gap-2">
+              <Cpu className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" />
               2. Processor Architecture
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               {cpuTypes.map((cpu) => (
                 <button
                   key={cpu.id}
                   onClick={() => setSelectedCpu(cpu.id)}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-3xl border transition-all ${
+                  className={`flex flex-col items-center justify-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-2xl sm:rounded-3xl border transition-all ${
                     selectedCpu === cpu.id
                       ? "bg-[#228dbd]/10 border-[#228dbd] text-white"
                       : "bg-black/20 border-white/5 text-gray-500 hover:border-white/10"
                   }`}
                 >
-                  <Image src={cpu.image} alt={cpu.name} width={32} height={32} className={`mb-1 object-contain ${selectedCpu !== cpu.id && "opacity-50 grayscale"}`} />
-                  <span className="text-xs font-bold uppercase">{cpu.name}</span>
-                  <span className="text-[10px] text-gray-500 text-center">{cpu.desc}</span>
+                  <Image src={cpu.image} alt={cpu.name} width={24} height={24} className={`sm:w-8 sm:h-8 mb-0.5 sm:mb-1 object-contain ${selectedCpu !== cpu.id && "opacity-50 grayscale"}`} />
+                  <span className="text-[10px] sm:text-xs font-bold uppercase">{cpu.name}</span>
+                  <span className="text-[8px] sm:text-[10px] text-gray-500 text-center leading-tight">{cpu.desc}</span>
                 </button>
               ))}
             </div>
@@ -274,7 +272,7 @@ export default function VPSPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-12"
         >
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4 px-6 py-8 rounded-[32px] bg-[#228dbd]/5 border border-[#228dbd]/20">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-3 sm:gap-y-4 px-4 sm:px-6 py-5 sm:py-8 rounded-[24px] sm:rounded-[32px] bg-[#228dbd]/5 border border-[#228dbd]/20">
             {vpsFeatures.map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-full bg-[#228dbd]/20 flex items-center justify-center flex-shrink-0">
@@ -287,7 +285,7 @@ export default function VPSPage() {
         </motion.div>
 
         {/* Plans List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16 sm:mb-24">
           <AnimatePresence mode="popLayout">
             {currentPlans.length > 0 ? (
               currentPlans.map((plan: any, idx: number) => (
@@ -297,12 +295,12 @@ export default function VPSPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="relative bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 hover:border-[#228dbd]/50 rounded-[32px] p-6 transition-all flex flex-col group overflow-hidden"
+                  className="relative bg-[#0b0c16]/30 backdrop-blur-md border border-white/10 hover:border-[#228dbd]/50 rounded-[24px] sm:rounded-[32px] p-4 sm:p-6 transition-all flex flex-col group overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-[#228dbd]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   <div className="relative z-10 flex flex-col h-full">
-                    <div className="flex justify-between items-start mb-6">
+                    <div className="flex justify-between items-start mb-4 sm:mb-6">
                       <div>
                         <h4 className="text-xl font-bold mb-1 text-white group-hover:text-[#228dbd] transition-colors">{plan.name}</h4>
                         <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{selectedCpu} Processor</p>
@@ -312,32 +310,32 @@ export default function VPSPage() {
                       </div>
                     </div>
                     
-                    <div className="space-y-4 mb-8 flex-1">
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Cpu className="w-4 h-4 text-[#228dbd]" /> CPU</span>
+                    <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8 flex-1">
+                      <div className="flex justify-between items-center text-xs sm:text-sm">
+                        <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2"><Cpu className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" /> CPU</span>
                         <span className="font-bold text-white">{plan.cores}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Zap className="w-4 h-4 text-[#228dbd]" /> RAM</span>
+                      <div className="flex justify-between items-center text-xs sm:text-sm">
+                        <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2"><Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" /> RAM</span>
                         <span className="font-bold text-white">{plan.ram}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><HardDrive className="w-4 h-4 text-[#228dbd]" /> Storage</span>
+                      <div className="flex justify-between items-center text-xs sm:text-sm">
+                        <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2"><HardDrive className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" /> Storage</span>
                         <span className="font-bold text-white">{plan.storage}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Activity className="w-4 h-4 text-[#228dbd]" /> Bandwidth</span>
+                      <div className="flex justify-between items-center text-xs sm:text-sm">
+                        <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2"><Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" /> Bandwidth</span>
                         <span className="font-bold text-white">{plan.bandwidth}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 flex items-center gap-2"><Globe className="w-4 h-4 text-[#228dbd]" /> Network</span>
+                      <div className="flex justify-between items-center text-xs sm:text-sm">
+                        <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2"><Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#228dbd]" /> Network</span>
                         <span className="font-bold text-white">{plan.ipv4}</span>
                       </div>
                     </div>
 
-                    <div className="border-t border-white/10 pt-6 mt-auto">
-                      <div className="mb-6 flex items-end">
-                        <span className="text-3xl font-bold text-white leading-none">{formatPrice(calculatePrice(plan.basePrice))}</span>
+                    <div className="border-t border-white/10 pt-4 sm:pt-6 mt-auto">
+                      <div className="mb-4 sm:mb-6 flex items-end">
+                        <span className="text-2xl sm:text-3xl font-bold text-white leading-none">{formatPrice(calculatePrice(plan.basePrice))}</span>
                         <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest ml-2 mb-1">/ Month</span>
                       </div>
                       <button
