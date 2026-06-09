@@ -183,6 +183,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {item.name}
                   </Link>
                 ))}
+                {isAdmin && (
+                  <Link
+                    href="/dashboard/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-500 font-bold text-sm"
+                  >
+                    <ShieldCheck className="w-5 h-5 text-purple-500" />
+                    Admin Panel
+                  </Link>
+                )}
                 <button 
                   onClick={() => signOut()}
                   className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-sm"

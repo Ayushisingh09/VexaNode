@@ -25,6 +25,7 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null)
+  const [cashfreeEnabled, setCashfreeEnabled] = useState(false)
 
   const fetchData = async () => {
     try {
@@ -38,8 +39,23 @@ export default function InvoicesPage() {
     }
   }
 
+  const fetchPaymentConfig = async () => {
+    try {
+      const res = await fetch("/api/payments/config")
+      if (res.ok) {
+        const data = await res.json()
+        if (data.cashfree && data.cashfree.enabled) {
+          setCashfreeEnabled(true)
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch payment config:", error)
+    }
+  }
+
   useEffect(() => {
     fetchData()
+    fetchPaymentConfig()
   }, [])
 
   const filteredInvoices = orders.filter((order) => {
@@ -302,6 +318,34 @@ export default function InvoicesPage() {
                       <span className="font-bold text-white print:text-black text-sm uppercase">Total Due</span>
                       <span className="text-xl font-bold orbitron-font text-blue-500 print:text-black">{selectedInvoice.amount}</span>
                     </div>
+
+                    {(selectedInvoice.status === "Pending" || selectedInvoice.status === "Suspended") && (
+                      <div className="mt-6 space-y-3 print:hidden">
+                        {cashfreeEnabled ? (
+                          <button
+                            onClick={() => {
+                              window.location.href = `/dashboard/checkout?order_id=${selectedInvoice.id}`
+                            }}
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 animate-pulse"
+                          >
+                            <CreditCard className="w-4 h-4" />
+                            Pay Now with Cashfree
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              window.location.href = `/dashboard/checkout?order_id=${selectedInvoice.id}`
+                            }}
+                            className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                          >
+                            Pay with Manual QR / UPI
+                          </button>
+                        )}
+                        <p className="text-[9px] text-gray-500 text-center font-semibold uppercase tracking-wider">
+                          Secure online gateway and manual payment methods available.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 

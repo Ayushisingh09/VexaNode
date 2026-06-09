@@ -35,6 +35,7 @@ export default function CheckoutPage() {
   const [analysisResult, setAnalysisResult] = useState<any>(null)
   const [classificationError, setClassificationError] = useState<string | null>(null)
 
+  const [existingOrderId, setExistingOrderId] = useState<string | null>(null)
   const [cartTotal, setCartTotal] = useState(0)
   const [cartItems, setCartItems] = useState<any[]>([])
 
@@ -117,6 +118,7 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            orderId: existingOrderId,
             amount: cartTotal.toString(),
             items: cartItems
           })
@@ -170,10 +172,40 @@ export default function CheckoutPage() {
   }
 
   useEffect(() => {
-    const total = localStorage.getItem('vexa_cart_total')
-    const items = localStorage.getItem('vexa_cart_items')
-    if (total) setCartTotal(parseInt(total))
-    if (items) setCartItems(JSON.parse(items))
+    const urlParams = new URLSearchParams(window.location.search)
+    const orderId = urlParams.get("order_id")
+    const gateway = urlParams.get("gateway")
+
+    if (orderId) {
+      setExistingOrderId(orderId)
+
+      const fetchOrderDetails = async () => {
+        try {
+          const res = await fetch("/api/user/data")
+          if (res.ok) {
+            const data = await res.json()
+            const found = data.orders?.find((o: any) => o.id === orderId)
+            if (found) {
+              const cleanAmount = parseFloat(found.amount.replace(/[^0-9.]/g, ''))
+              setCartTotal(cleanAmount)
+              setCartItems([{ 
+                name: found.plan_name, 
+                price: cleanAmount, 
+                quantity: 1 
+              }])
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching order details:", error)
+        }
+      }
+      fetchOrderDetails()
+    } else {
+      const total = localStorage.getItem('vexa_cart_total')
+      const items = localStorage.getItem('vexa_cart_items')
+      if (total) setCartTotal(parseInt(total))
+      if (items) setCartItems(JSON.parse(items))
+    }
   }, [])
 
   const handleFileUpload = (e: any) => {
@@ -251,6 +283,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId: existingOrderId,
           amount: formatPrice(cartTotal),
           proofUrl: screenshot,
           items: cartItems

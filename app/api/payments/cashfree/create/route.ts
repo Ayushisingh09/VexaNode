@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { getSetting } from "@/lib/settings"
 import { createOrder } from "@/lib/db"
+import { createClient } from "@/lib/supabase"
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions) as any
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { amount, phone, items } = await req.json()
+    const { orderId, amount, phone, items } = await req.json()
     const expectedAmount = parseFloat(amount)
 
     if (isNaN(expectedAmount) || expectedAmount <= 0) {
@@ -34,22 +35,51 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Cashfree is not properly configured by administrator" }, { status: 500 })
     }
 
-    // 1. Create a Pending Order in the Database first to get a UUID
-    const planName = items && Array.isArray(items) 
-      ? items.map((i: any) => `${i.name} (Qty: ${i.quantity || 1})`).join(", ")
-      : "Hosting Service"
+    let orderIdToUse = orderId
 
-    const order = await createOrder({
-      user_id: session.user.id,
-      user_name: session.user.name || "Client",
-      plan_name: planName,
-      amount: `₹${expectedAmount.toFixed(2)}`,
-      status: "Pending",
-      proof_url: "Cashfree PG Session Initialized",
-      created_at: new Date().toISOString()
-    })
+    if (orderId) {
+      // Validate order ownership
+      const supabase = await createClient()
+      const { data: existing, error: findError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
+        .eq('user_id', session.user.id)
+        .single()
 
-    const orderId = order.id // UUID from Database
+      if (findError || !existing) {
+        return NextResponse.json({ error: "Order not found or unauthorized access" }, { status: 404 })
+      }
+
+      if (existing.status === 'Approved') {
+        return NextResponse.json({ error: "This invoice has already been paid and approved" }, { status: 400 })
+      }
+
+      // Update the proof_url to indicate initialized
+      await supabase
+        .from('orders')
+        .update({ proof_url: "Cashfree PG Session Initialized" })
+        .eq('id', orderId)
+
+      orderIdToUse = existing.id
+    } else {
+      // 1. Create a Pending Order in the Database first to get a UUID
+      const planName = items && Array.isArray(items) 
+        ? items.map((i: any) => `${i.name} (Qty: ${i.quantity || 1})`).join(", ")
+        : "Hosting Service"
+
+      const order = await createOrder({
+        user_id: session.user.id,
+        user_name: session.user.name || "Client",
+        plan_name: planName,
+        amount: `₹${expectedAmount.toFixed(2)}`,
+        status: "Pending",
+        proof_url: "Cashfree PG Session Initialized",
+        created_at: new Date().toISOString()
+      })
+
+      orderIdToUse = order.id
+    }
 
     // 2. Call Cashfree Orders API with this UUID as order_id
     const url = sandbox 
@@ -67,7 +97,7 @@ export async function POST(req: Request) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        order_id: orderId,
+        order_id: orderIdToUse,
         order_amount: expectedAmount,
         order_currency: "INR",
         customer_details: {
@@ -91,7 +121,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       payment_session_id: data.payment_session_id,
-      order_id: orderId,
+      order_id: orderIdToUse,
       sandbox: sandbox
     })
 

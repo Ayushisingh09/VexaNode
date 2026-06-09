@@ -21,6 +21,8 @@ export default function DashboardHome() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  const isAdmin = process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').includes(session?.user?.id || "") || false
+
   const fetchData = async () => {
     try {
       const res = await fetch("/api/user/data")
@@ -87,6 +89,15 @@ export default function DashboardHome() {
               Order New Services
               <Plus className="w-4 h-4" />
             </Link>
+            {isAdmin && (
+              <Link 
+                href="/dashboard/admin"
+                className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20"
+              >
+                Admin Panel
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            )}
           </div>
         </div>
 
