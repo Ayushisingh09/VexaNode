@@ -12,6 +12,7 @@ export const replySchema = z.object({
 })
 
 export const orderSchema = z.object({
+  orderId: z.string().uuid().optional(),
   planName: z.string().min(2).max(100).trim().optional(),
   amount: z.string().min(1).max(20).trim(),
   proofUrl: z.string().url().optional(),
