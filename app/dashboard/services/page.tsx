@@ -1,44 +1,29 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   Server, 
-  Search, 
   ExternalLink,
   Plus,
-  Loader2,
-  Cpu,
-  Shield,
-  Zap
 } from "lucide-react"
 import Link from "next/link"
+import { useUserData } from "@/lib/hooks/useUserData"
+import { Skeleton, SkeletonCard } from "@/app/components/Skeleton"
 
 export default function ServicesPage() {
-  const [orders, setOrders] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useUserData()
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch("/api/user/data")
-      const data = await res.json()
-      if (data.orders) setOrders(data.orders)
-    } catch (error) {
-      console.error("Failed to fetch services")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const orders = data?.orders || []
+  const activeServices = orders.filter((o: any) => o.status === "Approved")
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  const activeServices = orders.filter(o => o.status === "Approved")
-
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-       <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+  if (isLoading) return (
+    <div className="space-y-8">
+      <Skeleton className="h-[120px] w-full" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
     </div>
   )
 
@@ -62,7 +47,7 @@ export default function ServicesPage() {
       {/* Services Grid */}
       {activeServices.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeServices.map((service) => (
+          {activeServices.map((service: any) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, scale: 0.95 }}

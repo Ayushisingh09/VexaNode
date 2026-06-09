@@ -1,61 +1,47 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import { 
   ArrowLeft, 
   MessageSquare, 
   Send,
   Loader2,
-  CheckCircle2,
   Clock,
   ShieldCheck,
   User,
   Image as ImageIcon,
   X
 } from "lucide-react"
+import { useTicket } from "@/lib/hooks/useTickets"
+import { useReplyToTicket } from "@/lib/hooks/useTicketMutations"
+import { useAdminAction } from "@/lib/hooks/useAdminMutations"
+import { useToast } from "@/app/components/ToastProvider"
+import { Skeleton, SkeletonConversation } from "@/app/components/Skeleton"
 
 export default function TicketViewPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { data: session } = useSession()
+  const ticketId = typeof id === 'string' ? id : ''
   
-  const [ticket, setTicket] = useState<any>(null)
-  const [replies, setReplies] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useTicket(ticketId)
+  const replyMutation = useReplyToTicket(ticketId)
+  const closeTicket = useAdminAction()
+  const { addToast } = useToast()
+  
   const [replyMessage, setReplyMessage] = useState("")
-  const [submitting, setSubmitting] = useState(false)
   const [image, setImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const fetchTicketData = async () => {
-    try {
-      const res = await fetch(`/api/tickets/${id}`)
-      if (!res.ok) {
-        if (res.status === 403) router.push("/dashboard/tickets")
-        return
-      }
-      const data = await res.json()
-      setTicket(data.ticket)
-      setReplies(data.replies)
-    } catch (error) {
-      console.error("Failed to fetch ticket")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (id) fetchTicketData()
-  }, [id])
+  const ticket = data?.ticket
+  const replies = data?.replies || []
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > 5 * 1024 * 1024) return alert("Image must be less than 5MB")
+      if (file.size > 5 * 1024 * 1024) return addToast("error", "Image must be less than 5MB")
       setImage(file)
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -68,7 +54,7 @@ export default function TicketViewPage() {
   const uploadToImgBB = async (file: File) => {
     const formData = new FormData()
     formData.append("image", file)
-    const API_KEY = "8a6c59cd0cc1a396e95c1840673f8485" 
+    const API_KEY = "8a6c59cd0cc1a396e95c1840673f8485"
     try {
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
         method: "POST",
@@ -87,7 +73,6 @@ export default function TicketViewPage() {
 
   const handleReply = async () => {
     if (!replyMessage.trim() && !image) return
-    setSubmitting(true)
     
     try {
       let finalMessage = replyMessage
@@ -98,33 +83,38 @@ export default function TicketViewPage() {
         }
       }
 
-      const res = await fetch(`/api/tickets/${id}/reply`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: finalMessage || "Attached Image" })
-      })
-      
-      if (res.ok) {
-        setReplyMessage("")
-        setImage(null)
-        setImagePreview(null)
-        fetchTicketData()
-      } else {
-        const data = await res.json()
-        alert(data.error || "Failed to submit reply")
-      }
+      await replyMutation.mutateAsync(finalMessage || "Attached Image")
+      setReplyMessage("")
+      setImage(null)
+      setImagePreview(null)
     } catch (error: any) {
-      console.error("Failed to add reply", error)
-      alert(error.message || "An unexpected error occurred while replying")
-    } finally {
-      setSubmitting(false)
+      addToast("error", error.message || "Failed to submit reply")
     }
   }
 
-  if (loading) {
+  const handleCloseTicket = async () => {
+    try {
+      await closeTicket.mutateAsync({ type: "UPDATE_TICKET_STATUS", id: ticketId, status: "Closed" })
+    } catch (error: any) {
+      addToast("error", error.message || "Failed to close ticket")
+    }
+  }
+
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="flex items-center gap-4">
+          <Skeleton className="w-10 h-10" />
+          <Skeleton className="h-8 w-64" />
+        </div>
+        <SkeletonConversation />
+        <div className="space-y-3">
+          <Skeleton className="h-24 w-full" />
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-10" />
+          </div>
+        </div>
       </div>
     )
   }
@@ -137,10 +127,11 @@ export default function TicketViewPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button 
+            aria-label="Go back to tickets"
             onClick={() => router.push('/dashboard/tickets')}
             className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center border border-white/10 transition-all"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft aria-hidden="true" className="w-5 h-5" />
           </button>
           <div>
             <h2 className="text-2xl font-bold orbitron-font">{ticket.subject}</h2>
@@ -158,14 +149,7 @@ export default function TicketViewPage() {
         
         {ticket.status === 'Open' && (
           <button 
-            onClick={async () => {
-              await fetch("/api/admin/action", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "UPDATE_TICKET_STATUS", id: ticket.id, status: "Closed" })
-              })
-              fetchTicketData()
-            }}
+            onClick={handleCloseTicket}
             className="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 rounded-xl text-xs font-bold transition-all uppercase tracking-widest"
           >
             Close Ticket
@@ -184,9 +168,9 @@ export default function TicketViewPage() {
           <div className="flex items-center gap-4 mb-4">
             <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center overflow-hidden">
               {ticket.users?.image ? (
-                <img src={ticket.users.image} alt="" className="w-full h-full object-cover" />
+                <img src={ticket.users.image} alt={ticket.users?.name || "User avatar"} className="w-full h-full object-cover" />
               ) : (
-                <User className="w-5 h-5 text-blue-500" />
+                <User aria-hidden="true" className="w-5 h-5 text-blue-500" />
               )}
             </div>
             <div>
@@ -200,7 +184,7 @@ export default function TicketViewPage() {
             {ticket.message.split(/(!\[Attachment\]\(.*?\))/g).map((part: string, i: number) => {
               if (part.startsWith('![Attachment](')) {
                 const url = part.slice(14, -1);
-                return <img key={i} src={url} alt="Attachment" className="max-w-sm rounded-xl mt-4 border border-white/10 shadow-lg block" />;
+                return <img key={i} src={url} alt="Ticket attachment" className="max-w-sm rounded-xl mt-4 border border-white/10 shadow-lg block" />;
               }
               return <span key={i}>{part}</span>;
             })}
@@ -208,7 +192,7 @@ export default function TicketViewPage() {
         </motion.div>
 
         {/* Replies */}
-        {replies.map((reply, idx) => (
+        {replies.map((reply: any, idx: number) => (
           <motion.div 
             key={reply.id}
             initial={{ opacity: 0, y: 20 }}
@@ -224,11 +208,11 @@ export default function TicketViewPage() {
                   reply.is_admin ? 'bg-purple-500/20' : 'bg-blue-500/20'
                 }`}>
                   {reply.is_admin ? (
-                    <ShieldCheck className="w-5 h-5 text-purple-500" />
+                    <ShieldCheck aria-hidden="true" className="w-5 h-5 text-purple-500" />
                   ) : reply.users?.image ? (
-                    <img src={reply.users.image} alt="" className="w-full h-full object-cover" />
+                    <img src={reply.users.image} alt={reply.users?.name || "User avatar"} className="w-full h-full object-cover" />
                   ) : (
-                    <User className="w-5 h-5 text-blue-500" />
+                    <User aria-hidden="true" className="w-5 h-5 text-blue-500" />
                   )}
                 </div>
                 <div className={reply.is_admin ? 'text-right' : 'text-left'}>
@@ -244,7 +228,7 @@ export default function TicketViewPage() {
                 {reply.message.split(/(!\[Attachment\]\(.*?\))/g).map((part: string, i: number) => {
                   if (part.startsWith('![Attachment](')) {
                     const url = part.slice(14, -1);
-                    return <img key={i} src={url} alt="Attachment" className={`max-w-sm rounded-xl mt-4 border border-white/10 shadow-lg block ${reply.is_admin ? 'ml-auto' : ''}`} />;
+                    return <img key={i} src={url} alt="Reply attachment" className={`max-w-sm rounded-xl mt-4 border border-white/10 shadow-lg block ${reply.is_admin ? 'ml-auto' : ''}`} />;
                   }
                   return <span key={i}>{part}</span>;
                 })}
@@ -262,6 +246,7 @@ export default function TicketViewPage() {
           className="bg-[#0a0b0f] border border-white/10 rounded-3xl p-6 sticky bottom-6 shadow-2xl shadow-black"
         >
           <textarea
+            aria-label="Type your reply"
             value={replyMessage}
             onChange={(e) => setReplyMessage(e.target.value)}
             placeholder="Type your reply here..."
@@ -270,13 +255,14 @@ export default function TicketViewPage() {
           
           {imagePreview && (
             <div className="relative w-32 h-32 mb-4 rounded-xl overflow-hidden border border-white/10 group">
-              <img src={imagePreview} alt="Preview" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <img src={imagePreview} alt="Image preview for reply attachment" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-black/50 transition-opacity flex items-center justify-center">
                 <button 
+                  aria-label="Remove image"
                   onClick={() => { setImage(null); setImagePreview(null); }}
                   className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X aria-hidden="true" className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -286,23 +272,24 @@ export default function TicketViewPage() {
             <div>
               <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
               <button
+                aria-label="Attach image to reply"
+                type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="w-10 h-10 rounded-xl bg-white/5 hover:bg-blue-500/10 border border-white/10 hover:border-blue-500/30 flex items-center justify-center transition-all group"
-                title="Attach Image"
               >
-                <ImageIcon className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <ImageIcon aria-hidden="true" className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
               </button>
             </div>
             <button 
-              disabled={submitting || (!replyMessage.trim() && !image)}
+              disabled={replyMutation.isPending || (!replyMessage.trim() && !image)}
               onClick={handleReply}
               className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-500/20"
             >
-              {submitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+              {replyMutation.isPending ? (
+                <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  <Send className="w-4 h-4" />
+                  <Send aria-hidden="true" className="w-4 h-4" />
                   Send Reply
                 </>
               )}

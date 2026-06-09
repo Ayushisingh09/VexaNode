@@ -22,6 +22,9 @@ import {
 import Link from "next/link"
 import { useCurrency } from "../../contexts/CurrencyContext"
 import { useRouter } from "next/navigation"
+import { usePaymentsConfig } from "@/lib/hooks/usePaymentsConfig"
+import { useCreateOrder, useCreateCashfreeSession, useVerifyPayment } from "@/lib/hooks/useOrderMutations"
+import { useToast } from "@/app/components/ToastProvider"
 
 export default function CheckoutPage() {
   const { formatPrice, currency } = useCurrency()
@@ -40,9 +43,15 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<any[]>([])
 
   // Cashfree integration states
-  const [cashfreeConfig, setCashfreeConfig] = useState<{ enabled: boolean; appId: string; sandbox: boolean } | null>(null)
   const [isVerifyingCashfree, setIsVerifyingCashfree] = useState(false)
   const [cashfreeVerificationError, setCashfreeVerificationError] = useState<string | null>(null)
+
+  const { data: paymentsConfig, isLoading: configLoading } = usePaymentsConfig()
+  const cashfreeConfig = paymentsConfig?.cashfree ?? null
+  const createCashfreeSession = useCreateCashfreeSession()
+  const verifyPayment = useVerifyPayment()
+  const createOrder = useCreateOrder()
+  const { addToast } = useToast()
 
   useEffect(() => {
     if (step === 2 && paymentMethod === "upi") {
@@ -52,27 +61,12 @@ export default function CheckoutPage() {
     }
   }, [step, paymentMethod])
 
-  // Fetch Cashfree Config on mount
+  // Default to Cashfree if enabled
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await fetch("/api/payments/config")
-        if (res.ok) {
-          const data = await res.json()
-          if (data.cashfree) {
-            setCashfreeConfig(data.cashfree)
-            // Default to Cashfree if enabled
-            if (data.cashfree.enabled) {
-              setPaymentMethod("cashfree")
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch payment config:", error)
-      }
+    if (cashfreeConfig?.enabled) {
+      setPaymentMethod("cashfree")
     }
-    fetchConfig()
-  }, [])
+  }, [cashfreeConfig?.enabled])
 
   // Check URL parameters for Cashfree return redirect
   useEffect(() => {
@@ -112,23 +106,13 @@ export default function CheckoutPage() {
 
   const handleNextStep = async () => {
     if (paymentMethod === "cashfree") {
-      setIsGeneratingQR(true) // Show inline loading
+      setIsGeneratingQR(true)
       try {
-        const res = await fetch("/api/payments/cashfree/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId: existingOrderId,
-            amount: cartTotal.toString(),
-            items: cartItems
-          })
+        const data = await createCashfreeSession.mutateAsync({
+          orderId: existingOrderId ?? undefined,
+          amount: cartTotal.toString(),
+          items: cartItems
         })
-        const data = await res.json()
-        if (!res.ok) {
-          alert(data.error || "Failed to create checkout session. Please try again.")
-          setIsGeneratingQR(false)
-          return
-        }
 
         const { payment_session_id, sandbox } = data
 
@@ -148,7 +132,7 @@ export default function CheckoutPage() {
 
         const loaded = await loadScript()
         if (!loaded) {
-          alert("Failed to load payment gateway script. Please verify your connection.")
+          addToast("error", "Failed to load payment gateway script. Please verify your connection.")
           setIsGeneratingQR(false)
           return
         }
@@ -163,7 +147,7 @@ export default function CheckoutPage() {
         })
 
       } catch (err) {
-        alert("Failed to initialize payment gateway.")
+        addToast("error", "Failed to initialize payment gateway.")
         setIsGeneratingQR(false)
       }
     } else {
@@ -239,21 +223,11 @@ export default function CheckoutPage() {
         console.error("Client-side OCR processing error:", ocrErr)
       }
 
-      const res = await fetch("/api/verify-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          image: imgData, 
-          amount: cartTotal.toString(),
-          ocrText: ocrText
-        })
+      const data = await verifyPayment.mutateAsync({
+        image: imgData,
+        amount: cartTotal.toString(),
+        ocrText: ocrText
       })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || "Verification failed")
-      }
 
       setIsAnalyzing(false)
       
@@ -279,28 +253,17 @@ export default function CheckoutPage() {
 
   const completeOrder = async () => {
     try {
-      const res = await fetch("/api/orders/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId: existingOrderId,
-          amount: formatPrice(cartTotal),
-          proofUrl: screenshot,
-          items: cartItems
-        })
+      await createOrder.mutateAsync({
+        orderId: existingOrderId ?? undefined,
+        amount: formatPrice(cartTotal),
+        proofUrl: screenshot ?? undefined,
+        items: cartItems
       })
-
-      if (res.ok) {
-        setStep(3)
-        // Clear cart
-        localStorage.removeItem('vexa_cart_total')
-        localStorage.removeItem('vexa_cart_items')
-      } else {
-        const data = await res.json()
-        setClassificationError(data.error || "Failed to submit order. Please try again.")
-      }
-    } catch (error) {
-      setClassificationError("Network error. Please try again.")
+      setStep(3)
+      localStorage.removeItem('vexa_cart_total')
+      localStorage.removeItem('vexa_cart_items')
+    } catch (error: any) {
+      setClassificationError(error.message || "Failed to submit order. Please try again.")
     }
   }
 

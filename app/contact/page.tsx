@@ -5,8 +5,10 @@ import { Mail, MessageSquare, Globe, Send, MapPin, Phone, ChevronRight } from "l
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { useState } from "react"
+import { useToast } from "../components/ToastProvider"
 
 export default function ContactPage() {
+  const { addToast } = useToast()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,9 +18,8 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
     console.log(formData)
-    alert("Message sent! (Simulation)")
+    addToast("success", "Message sent! (Simulation)")
   }
 
   const contactMethods = [

@@ -6,8 +6,6 @@ import Image from "next/image"
 import { 
   CreditCard, 
   Search, 
-  Loader2, 
-  Download, 
   Eye, 
   X, 
   FileText, 
@@ -18,48 +16,22 @@ import {
   AlertTriangle,
   HelpCircle
 } from "lucide-react"
+import { useUserData } from "@/lib/hooks/useUserData"
+import { usePaymentsConfig } from "@/lib/hooks/usePaymentsConfig"
+import { Skeleton, SkeletonTable } from "@/app/components/Skeleton"
 import { useCurrency } from "../../contexts/CurrencyContext"
 
 export default function InvoicesPage() {
   const { formatPrice } = useCurrency()
-  const [orders, setOrders] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: userData, isLoading } = useUserData()
+  const { data: paymentConfig } = usePaymentsConfig()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null)
-  const [cashfreeEnabled, setCashfreeEnabled] = useState(false)
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch("/api/user/data")
-      const data = await res.json()
-      if (data.orders) setOrders(data.orders)
-    } catch (error) {
-      console.error("Failed to fetch invoices")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const orders = userData?.orders || []
+  const cashfreeEnabled = paymentConfig?.cashfree?.enabled || false
 
-  const fetchPaymentConfig = async () => {
-    try {
-      const res = await fetch("/api/payments/config")
-      if (res.ok) {
-        const data = await res.json()
-        if (data.cashfree && data.cashfree.enabled) {
-          setCashfreeEnabled(true)
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch payment config:", error)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-    fetchPaymentConfig()
-  }, [])
-
-  const filteredInvoices = orders.filter((order) => {
+  const filteredInvoices = orders.filter((order: any) => {
     const searchLower = searchQuery.toLowerCase()
     const invoiceId = `INV-${order.id.slice(0, 8).toUpperCase()}`
     return (
@@ -102,9 +74,11 @@ export default function InvoicesPage() {
     }
   }
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-       <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+  if (isLoading) return (
+    <div className="space-y-8">
+      <Skeleton className="h-14 w-64" />
+      <Skeleton className="h-12 w-full" />
+      <SkeletonTable rows={5} cols={4} />
     </div>
   )
 
@@ -149,7 +123,7 @@ export default function InvoicesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredInvoices.map((invoice) => (
+                {filteredInvoices.map((invoice: any) => (
                   <tr key={invoice.id} className="hover:bg-white/[0.02] transition-colors group">
                     <td className="px-8 py-6 text-xs font-mono text-blue-500 font-bold">
                       #INV-{invoice.id.slice(0, 8).toUpperCase()}

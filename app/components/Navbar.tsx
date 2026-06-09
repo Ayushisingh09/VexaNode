@@ -10,6 +10,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { useSession } from 'next-auth/react'
 import LanguageSelector from './LanguageSelector'
 import CurrencySelector from './CurrencySelector'
+import { useToast } from './ToastProvider'
 import {
   Cloud,
   Server,
@@ -81,6 +82,7 @@ const SocialIcons: { [key: string]: React.FC } = {
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
+  const { addToast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showBanner, setShowBanner] = useState(config.banner.show);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -161,7 +163,7 @@ const Navbar: React.FC = () => {
           setShowPopup(true);
         })
         .catch(() => {
-          alert('Failed to copy code. Please try again.');
+          addToast('error', 'Failed to copy code. Please try again.');
         });
     } else {
       const textArea = document.createElement('textarea');
@@ -178,11 +180,11 @@ const Navbar: React.FC = () => {
         setShowConfetti(true);
         setShowPopup(true);
       } catch (err) {
-        alert('Failed to copy code. Please try again.');
+        addToast('error', 'Failed to copy code. Please try again.');
       }
       document.body.removeChild(textArea);
     }
-  }, [config.banner.couponCode]);
+  }, [config.banner.couponCode, addToast]);
 
   const handleClosePopup = useCallback(() => {
     setConfettiConfig(prev => ({

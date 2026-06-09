@@ -6,6 +6,8 @@ import { LayoutWrapper } from "./components/layout-wrapper";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { AuthProvider } from "./components/AuthProvider";
+import { QueryProvider } from "./components/QueryProvider";
+import { ToastProvider } from "./components/ToastProvider";
 import CookieConsent from "./components/CookieConsent";
 import SummerSalePopup from "./components/SummerSalePopup";
 import { Analytics } from "@vercel/analytics/next"
@@ -228,11 +230,15 @@ export default function RootLayout({
           <LanguageProvider>
             <CurrencyProvider>
               <AuthProvider>
-                <LayoutWrapper>
-                  {children}
-                  <SummerSalePopup />
-                  <Analytics />
-                </LayoutWrapper>
+                <QueryProvider>
+                  <ToastProvider>
+                    <LayoutWrapper>
+                      {children}
+                      <SummerSalePopup />
+                      <Analytics />
+                    </LayoutWrapper>
+                  </ToastProvider>
+                </QueryProvider>
               </AuthProvider>
               <CookieConsent />
             </CurrencyProvider>

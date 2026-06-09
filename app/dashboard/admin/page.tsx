@@ -34,6 +34,12 @@ import {
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useCurrency } from "../../contexts/CurrencyContext"
+import { useAdminData, useAdminSettings } from "@/lib/hooks/useAdminData"
+import { useAdminAction, useSaveAdminSettings } from "@/lib/hooks/useAdminMutations"
+import { useToast } from "@/app/components/ToastProvider"
+import { Skeleton } from "@/app/components/Skeleton"
+import { useFormValidation } from "@/lib/hooks/useFormValidation"
+import { cashfreeSettingsSchema } from "@/lib/validations/schemas"
 
 type TabType = "overview" | "invoices" | "clients" | "tickets" | "settings"
 
@@ -42,10 +48,6 @@ export default function AdminPage() {
   const router = useRouter()
   const { formatPrice } = useCurrency()
 
-  const [users, setUsers] = useState<any[]>([])
-  const [orders, setOrders] = useState<any[]>([])
-  const [tickets, setTickets] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<TabType>("overview")
 
   // Cashfree Settings States
@@ -54,9 +56,32 @@ export default function AdminPage() {
   const [cashfreeSecretKey, setCashfreeSecretKey] = useState("")
   const [cashfreeSandbox, setCashfreeSandbox] = useState(true)
   const [storageSystem, setStorageSystem] = useState("Database")
-  const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState(false)
   const [showSecret, setShowSecret] = useState(false)
+  const { addToast } = useToast()
+  const settingsValidation = useFormValidation(cashfreeSettingsSchema)
+
+  const { data: adminData, isLoading, refetch } = useAdminData()
+  const { data: adminSettings, isLoading: settingsLoading } = useAdminSettings()
+  const adminAction = useAdminAction()
+  const saveAdminSettings = useSaveAdminSettings()
+
+  // Sync settings from query data into form state
+  useEffect(() => {
+    if (adminSettings?.cashfree) {
+      setCashfreeEnabled(adminSettings.cashfree.enabled)
+      setCashfreeAppId(adminSettings.cashfree.appId)
+      setCashfreeSecretKey(adminSettings.cashfree.secretKey)
+      setCashfreeSandbox(adminSettings.cashfree.sandbox)
+    }
+    if (adminSettings?.storage) {
+      setStorageSystem(adminSettings.storage)
+    }
+  }, [adminSettings])
+
+  const users = (adminData?.users ?? []) as any[]
+  const orders = (adminData?.orders ?? []) as any[]
+  const ticketsAdmin = (adminData?.tickets ?? []) as any[]
 
   // Searching & Filtering states
   const [invoiceSearch, setInvoiceSearch] = useState("")
@@ -68,106 +93,47 @@ export default function AdminPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null)
   const [zoomProof, setZoomProof] = useState(false)
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch("/api/admin/data")
-      const data = await res.json()
-      if (data.users) setUsers(data.users)
-      if (data.orders) setOrders(data.orders)
-      if (data.tickets) setTickets(data.tickets)
-
-      // Fetch admin settings
-      const settingsRes = await fetch("/api/admin/settings")
-      if (settingsRes.ok) {
-        const settingsData = await settingsRes.json()
-        if (settingsData.cashfree) {
-          setCashfreeEnabled(settingsData.cashfree.enabled)
-          setCashfreeAppId(settingsData.cashfree.appId)
-          setCashfreeSecretKey(settingsData.cashfree.secretKey)
-          setCashfreeSandbox(settingsData.cashfree.sandbox)
-        }
-        if (settingsData.storage) {
-          setStorageSystem(settingsData.storage)
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch admin data")
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSettingsSaving(true)
+    if (!settingsValidation.validate({ enabled: cashfreeEnabled, appId: cashfreeAppId, secretKey: cashfreeSecretKey, sandbox: cashfreeSandbox })) return
     setSettingsSuccess(false)
     try {
-      const res = await fetch("/api/admin/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          enabled: cashfreeEnabled,
-          appId: cashfreeAppId,
-          secretKey: cashfreeSecretKey,
-          sandbox: cashfreeSandbox
-        })
+      await saveAdminSettings.mutateAsync({
+        enabled: cashfreeEnabled,
+        appId: cashfreeAppId,
+        secretKey: cashfreeSecretKey,
+        sandbox: cashfreeSandbox,
       })
-      if (res.ok) {
-        setSettingsSuccess(true)
-        setTimeout(() => setSettingsSuccess(false), 3000)
-        // Refresh to get storage updates
-        const settingsRes = await fetch("/api/admin/settings")
-        if (settingsRes.ok) {
-          const settingsData = await settingsRes.json()
-          if (settingsData.storage) setStorageSystem(settingsData.storage)
-        }
-      } else {
-        const data = await res.json()
-        alert(data.error || "Failed to save settings")
-      }
-    } catch (error) {
-      alert("Network error. Failed to save settings.")
-    } finally {
-      setSettingsSaving(false)
+      setSettingsSuccess(true)
+      setTimeout(() => setSettingsSuccess(false), 3000)
+    } catch (error: any) {
+      addToast("error", error.message || "Failed to save settings")
     }
   }
 
-  // Protect Admin route and fetch data
+  // Protect Admin route
   useEffect(() => {
     const isAdmin = session?.user?.isAdmin || process.env.NEXT_PUBLIC_ADMIN_USER_IDS?.split(',').map(id => id.trim()).includes(session?.user?.id || "")
     if (status === "unauthenticated") {
       router.push("/discord")
     } else if (status === "authenticated" && !isAdmin) {
       router.push("/dashboard")
-    } else if (status === "authenticated" && isAdmin) {
-      fetchData()
     }
   }, [session, status, router])
 
   const handleAction = async (type: string, id: string, extra = {}) => {
     try {
-      const res = await fetch("/api/admin/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, id, ...extra })
-      })
-      if (res.ok) {
-        // Automatically close modal if deleted or status updated
-        if (selectedInvoice && selectedInvoice.id === id) {
-          if (type === "DELETE_ORDER") {
-            setSelectedInvoice(null)
-          } else if (type === "UPDATE_ORDER_STATUS") {
-            // Update selected invoice reference locally
-            const nextStatus = (extra as any).status
-            setSelectedInvoice((prev: any) => ({ ...prev, status: nextStatus }))
-          }
+      await adminAction.mutateAsync({ type, id, ...extra } as any)
+      if (selectedInvoice && selectedInvoice.id === id) {
+        if (type === "DELETE_ORDER") {
+          setSelectedInvoice(null)
+        } else if (type === "UPDATE_ORDER_STATUS") {
+          const nextStatus = (extra as any).status
+          setSelectedInvoice((prev: any) => ({ ...prev, status: nextStatus }))
         }
-        fetchData() // Refresh data
-      } else {
-        alert("Action failed")
       }
-    } catch (error) {
-      alert("Action failed")
+    } catch (error: any) {
+      addToast("error", error.message || "Action failed")
     }
   }
 
@@ -207,9 +173,15 @@ export default function AdminPage() {
     return searchMatch && statusMatch
   })
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <Loader2 className="w-10 h-10 text-purple-500 animate-spin" />
+  if (isLoading) return (
+    <div className="space-y-8">
+      <Skeleton className="h-[140px] w-full" />
+      <div className="flex gap-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-10 w-28 rounded-xl" />
+        ))}
+      </div>
+      <Skeleton className="h-80 w-full" />
     </div>
   )
 
@@ -231,7 +203,7 @@ export default function AdminPage() {
 
         <div className="flex items-center gap-3">
           <button 
-            onClick={fetchData} 
+            onClick={() => refetch()} 
             className="bg-white/5 hover:bg-white/10 border border-white/10 px-6 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2"
           >
             <Activity className="w-4 h-4 text-emerald-500" />
@@ -310,11 +282,11 @@ export default function AdminPage() {
                     <Ticket className="w-5 h-5" />
                   </div>
                   <span className="text-[9px] font-black uppercase tracking-widest text-purple-500">
-                    {tickets.filter(t => t.status === "Open").length} Active
+                    {ticketsAdmin.filter(t => t.status === "Open").length} Active
                   </span>
                 </div>
                 <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Total Support Tickets</p>
-                <h4 className="text-2xl font-bold orbitron-font text-white">{tickets.length}</h4>
+                <h4 className="text-2xl font-bold orbitron-font text-white">{ticketsAdmin.length}</h4>
               </div>
             </div>
 
@@ -641,13 +613,13 @@ export default function AdminPage() {
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Manage user support requests</p>
                 </div>
                 <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-[9px] font-black text-purple-500 uppercase tracking-widest">
-                  {tickets.filter(t => t.status === "Open").length} Active Tickets
+                  {ticketsAdmin.filter(t => t.status === "Open").length} Active Tickets
                 </span>
               </div>
 
-              {tickets.length > 0 ? (
+              {ticketsAdmin.length > 0 ? (
                 <div className="divide-y divide-white/5">
-                  {tickets.map((ticket) => (
+                  {ticketsAdmin.map((ticket) => (
                     <div key={ticket.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
                       <div className="flex items-center gap-4">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
@@ -830,11 +802,14 @@ export default function AdminPage() {
                       <input
                         type="text"
                         value={cashfreeAppId}
-                        onChange={(e) => setCashfreeAppId(e.target.value)}
+                        onChange={(e) => { setCashfreeAppId(e.target.value); settingsValidation.clearErrors() }}
                         placeholder="e.g. TEST103829420..."
                         disabled={!cashfreeEnabled}
                         className="w-full bg-black/40 border border-white/5 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl py-3.5 px-4 text-xs font-medium outline-none focus:border-purple-500/30 transition-all font-mono"
                       />
+                      {settingsValidation.getError("appId") && (
+                        <p className="text-[11px] text-red-400 mt-1">{settingsValidation.getError("appId")}</p>
+                      )}
                     </div>
 
                     {/* Secret Key Input */}
@@ -894,10 +869,10 @@ export default function AdminPage() {
 
                     <button
                       type="submit"
-                      disabled={settingsSaving}
+                      disabled={saveAdminSettings.isPending}
                       className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-xl shadow-purple-600/20 flex items-center justify-center gap-2"
                     >
-                      {settingsSaving ? (
+                      {saveAdminSettings.isPending ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
                           Saving...

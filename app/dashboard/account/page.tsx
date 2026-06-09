@@ -2,7 +2,7 @@
 
 import { useSession, signOut, signIn } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 import {
   User,
   Mail,
@@ -31,6 +31,11 @@ import {
 import Image from "next/image"
 import { useCurrency } from "../../contexts/CurrencyContext"
 import { useLanguage } from "../../contexts/LanguageContext"
+import { useUserData } from "@/lib/hooks/useUserData"
+import { useUpdateProfile, useChangePassword, useUnlinkProvider, useDeleteAccount, useUploadAvatar } from "@/lib/hooks/useUserMutations"
+import { useToast } from "@/app/components/ToastProvider"
+import { useFormValidation } from "@/lib/hooks/useFormValidation"
+import { profileNameSchema, passwordSchema } from "@/lib/validations/schemas"
 
 type TabType = "profile" | "security" | "linked" | "preferences" | "notifications" | "danger"
 
@@ -38,16 +43,18 @@ export default function AccountPage() {
   const { data: session, status: sessionStatus } = useSession()
   const { currency, setCurrency, formatPrice } = useCurrency()
   const { language, setLanguage } = useLanguage()
+  const { addToast } = useToast()
+  const profileValidation = useFormValidation(profileNameSchema)
+  const passwordValidation = useFormValidation(passwordSchema)
 
   // State management
   const [activeTab, setActiveTab] = useState<TabType>("profile")
-  const [loading, setLoading] = useState(true)
-  const [userData, setUserData] = useState<any>(null)
+  const { data: userData, isLoading } = useUserData()
 
   // Profile Form States
   const [displayName, setDisplayName] = useState("")
   const [isEditingName, setIsEditingName] = useState(false)
-  const [profileSaving, setProfileSaving] = useState(false)
+  const updateProfile = useUpdateProfile()
   const [profileSuccess, setProfileSuccess] = useState(false)
 
   // Clipboard copied status
@@ -60,7 +67,7 @@ export default function AccountPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [passwordSaving, setPasswordSaving] = useState(false)
+  const changePassword = useChangePassword()
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [passwordSuccess, setPasswordSuccess] = useState(false)
 
@@ -70,11 +77,11 @@ export default function AccountPage() {
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+  const uploadAvatar = useUploadAvatar()
 
   // Danger Zone States
   const [deleteConfirmation, setDeleteConfirmation] = useState("")
-  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const deleteAccount = useDeleteAccount()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   // 2FA Setup Mock States
@@ -93,27 +100,7 @@ export default function AccountPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const previewContainerRef = useRef<HTMLDivElement>(null)
 
-  const fetchUserData = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch("/api/user/data")
-      if (res.ok) {
-        const data = await res.json()
-        setUserData(data)
-        setDisplayName(data.user?.name || "")
-      }
-    } catch (err) {
-      console.error("Failed to fetch account user details", err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (sessionStatus === "authenticated") {
-      fetchUserData()
-    }
-  }, [sessionStatus])
+  const unlinkProvider = useUnlinkProvider()
 
   // Copy to clipboard helper
   const handleCopyId = () => {
@@ -127,26 +114,15 @@ export default function AccountPage() {
   // Edit Profile Name
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault()
-    setProfileSaving(true)
+    if (!profileValidation.validate({ displayName })) return
     setProfileSuccess(false)
     try {
-      const res = await fetch("/api/user/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: displayName })
-      })
-      if (res.ok) {
-        setProfileSuccess(true)
-        setIsEditingName(false)
-        fetchUserData()
-      } else {
-        const data = await res.json()
-        alert(data.error || "Failed to update profile")
-      }
-    } catch (err) {
-      alert("Network error updating profile.")
-    } finally {
-      setProfileSaving(false)
+      await updateProfile.mutateAsync(displayName)
+      setProfileSuccess(true)
+      setIsEditingName(false)
+      profileValidation.clearErrors()
+    } catch (err: any) {
+      addToast("error", err.message || "Failed to update profile")
     }
   }
 
@@ -176,33 +152,21 @@ export default function AccountPage() {
     setPasswordError(null)
     setPasswordSuccess(false)
 
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords do not match.")
+    if (!passwordValidation.validate({ currentPassword, newPassword, confirmPassword })) {
+      const pwErr = passwordValidation.getError("confirmPassword") || passwordValidation.getError("newPassword")
+      if (pwErr) { setPasswordError(pwErr); return }
       return
     }
 
-    setPasswordSaving(true)
     try {
-      const res = await fetch("/api/user/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, newPassword })
-      })
-
-      const data = await res.json()
-      if (res.ok) {
-        setPasswordSuccess(true)
-        setCurrentPassword("")
-        setNewPassword("")
-        setConfirmPassword("")
-        fetchUserData()
-      } else {
-        setPasswordError(data.error || "Failed to update password")
-      }
-    } catch (err) {
-      setPasswordError("Network error. Please try again.")
-    } finally {
-      setPasswordSaving(false)
+      await changePassword.mutateAsync({ currentPassword, newPassword })
+      setPasswordSuccess(true)
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+      passwordValidation.clearErrors()
+    } catch (err: any) {
+      setPasswordError(err.message || "Failed to update password")
     }
   }
 
@@ -210,18 +174,10 @@ export default function AccountPage() {
   const handleUnlink = async (provider: "google" | "discord") => {
     if (confirm(`Are you sure you want to disconnect your ${provider} account?`)) {
       try {
-        const res = await fetch(`/api/user/unlink?provider=${provider}`, {
-          method: "DELETE"
-        })
-        const data = await res.json()
-        if (res.ok) {
-          alert(`${provider} connection unlinked successfully.`)
-          fetchUserData()
-        } else {
-          alert(data.error || "Failed to disconnect account.")
-        }
-      } catch (err) {
-        alert("Failed to connect to the server.")
+        await unlinkProvider.mutateAsync(provider)
+        addToast("success", `${provider} connection unlinked successfully.`)
+      } catch (err: any) {
+        addToast("error", err.message || "Failed to disconnect account.")
       }
     }
   }
@@ -229,26 +185,16 @@ export default function AccountPage() {
   // Delete Account Permanently
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "DELETE") {
-      alert("Please type 'DELETE' to confirm account erasure.")
+      addToast("warning", "Please type DELETE to confirm account erasure.")
       return
     }
 
-    setIsDeletingAccount(true)
     try {
-      const res = await fetch("/api/user/delete-account", {
-        method: "DELETE"
-      })
-      if (res.ok) {
-        alert("Your VexaNode account has been deleted permanently.")
-        signOut({ callbackUrl: "/login" })
-      } else {
-        const data = await res.json()
-        alert(data.error || "Failed to delete account.")
-        setIsDeletingAccount(false)
-      }
-    } catch (err) {
-      alert("Network error deleting account.")
-      setIsDeletingAccount(false)
+      await deleteAccount.mutateAsync()
+      addToast("success", "Your VexaNode account has been deleted permanently.")
+      signOut({ callbackUrl: "/login" })
+    } catch (err: any) {
+      addToast("error", err.message || "Failed to delete account.")
     }
   }
 
@@ -310,7 +256,6 @@ export default function AccountPage() {
 
   const handleSaveCrop = () => {
     if (!selectedFile) return
-    setIsUploadingAvatar(true)
 
     const img = new window.Image()
     img.src = selectedFile
@@ -345,24 +290,11 @@ export default function AccountPage() {
 
           const base64Image = canvas.toDataURL("image/png")
 
-          const res = await fetch("/api/user/avatar", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64Image })
-          })
-
-          if (res.ok) {
-            setSelectedFile(null)
-            fetchUserData()
-          } else {
-            const data = await res.json()
-            alert(data.error || "Failed to upload avatar")
-          }
+          await uploadAvatar.mutateAsync(base64Image)
+          setSelectedFile(null)
         }
       } catch (err) {
-        alert("Error cropping image.")
-      } finally {
-        setIsUploadingAvatar(false)
+        addToast("error", "Error cropping image.")
       }
     }
   }
@@ -377,7 +309,7 @@ export default function AccountPage() {
   ]
 
   // Skeleton Placeholder
-  if (loading || sessionStatus === "loading") {
+  if (isLoading || sessionStatus === "loading") {
     return (
       <div className="max-w-5xl mx-auto space-y-8 animate-pulse">
         <div className="h-10 bg-white/5 rounded-2xl w-48 mb-6" />
@@ -528,10 +460,10 @@ export default function AccountPage() {
                           <div className="flex gap-2">
                             <button
                               type="submit"
-                              disabled={profileSaving}
+                              disabled={updateProfile.isPending}
                               className="px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
                             >
-                              {profileSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-4 h-4" />}
+                              {updateProfile.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-4 h-4" />}
                               Save
                             </button>
                             <button
@@ -748,10 +680,10 @@ export default function AccountPage() {
                       <div className="pt-2 flex justify-end">
                         <button
                           type="submit"
-                          disabled={passwordSaving}
+                          disabled={changePassword.isPending}
                           className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-8 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2"
                         >
-                          {passwordSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          {changePassword.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                           Update Password
                         </button>
                       </div>
@@ -1133,10 +1065,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={handleSaveCrop}
-                  disabled={isUploadingAvatar}
+                  disabled={uploadAvatar.isPending}
                   className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
                 >
-                  {isUploadingAvatar ? (
+                  {uploadAvatar.isPending ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       UPLOADING...
@@ -1198,10 +1130,10 @@ export default function AccountPage() {
                   <button
                     type="button"
                     onClick={handleDeleteAccount}
-                    disabled={isDeletingAccount || deleteConfirmation !== "DELETE"}
+                    disabled={deleteAccount.isPending || deleteConfirmation !== "DELETE"}
                     className="flex-1 py-3.5 bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-red-500/20"
                   >
-                    {isDeletingAccount ? "Deleting..." : "Erase Account"}
+                    {deleteAccount.isPending ? "Deleting..." : "Erase Account"}
                   </button>
                   <button
                     type="button"
