@@ -8,12 +8,12 @@ import Footer from "../components/Footer"
 const refundRules = [
   {
     title: "1. 24-Hour Trial Period",
-    content: "We offer a 24-hour money-back guarantee for first-time customers on select shared hosting services. If you are not satisfied with the performance, you can request a full refund within this window.",
+    content: "We offer a 24-hour money-back guarantee for first-time customers on select shared hosting services. If you are not satisfied with the performance, you can request a full refund within the first 24 hours of activation.",
     icon: Clock
   },
   {
     title: "2. Eligibility Criteria",
-    content: "Refunds are only eligible for new service deployments. Renewals, dedicated servers, domain registrations, and licenses are strictly non-refundable due to the nature of resource allocation and third-party billing.",
+    content: "Refunds are only eligible for new service deployments. Renewals, dedicated servers, domain registrations, and licenses are strictly non-refundable due to the nature of resource allocation and commitment.",
     icon: CheckCircle2
   },
   {
@@ -23,7 +23,7 @@ const refundRules = [
   },
   {
     title: "4. Abuse & Violations",
-    content: "Services suspended or terminated due to violations of our Acceptable Use Policy (AUP) or Terms of Service are not eligible for any refund, regardless of the time remaining in the billing period.",
+    content: "Services suspended or terminated due to violations of our Acceptable Use Policy (AUP) or Terms of Service are not eligible for any refund, regardless of the time remaining in the billing cycle.",
     icon: AlertCircle
   },
   {
@@ -33,7 +33,7 @@ const refundRules = [
   },
   {
     title: "6. Host Closure & Long-Term Accounts",
-    content: "If a hosting account is closed by VexaNode or a service experiences an irrecoverable issue, no refunds will be initiated. Additionally, accounts that have been using our services for more than six months ("permanent clients") are generally not eligible for refunds related to service disclosures, discontinuations, or similar changes. Exceptions may be made at VexaNode's sole discretion.",
+    content: "If a hosting account is closed by VexaNode or a service experiences an irrecoverable issue, no refunds will be initiated. Additionally, accounts that have been using our services for more than six months (permanent clients) are generally not eligible for refunds.",
     icon: ShieldCheck
   }
 ]
@@ -85,7 +85,7 @@ export default function RefundPolicy() {
               className="group bg-[#0c0d12] border border-[#1f2129] hover:border-[#2d303d] rounded-[2.5rem] p-8 md:p-12 transition-all duration-300"
             >
               <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:bg-blue-500 group-hover:border-blue-500 transition-colors duration-500">
+                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-500">
                   <rule.icon className="w-7 h-7 text-blue-500 group-hover:text-white transition-colors duration-500" />
                 </div>
                 <div className="flex-1">
