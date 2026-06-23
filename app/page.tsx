@@ -1,3 +1,4 @@
+// The Main Page
 'use client'
 import HeroSection from "./components/HeroSection"
 import FeaturesSection from "./components/FeaturesSection"
