@@ -8,12 +8,12 @@ import Footer from "../components/Footer"
 const refundRules = [
   {
     title: "1. 24-Hour Trial Period",
-    content: "We offer a 24-hour money-back guarantee for first-time customers on select shared hosting services. If you are not satisfied with the performance, you can request a full refund within the first 24 hours of your initial purchase.",
+    content: "We offer a 24-hour money-back guarantee for first-time customers on select shared hosting services. If you are not satisfied with the performance, you can request a full refund within this window.",
     icon: Clock
   },
   {
     title: "2. Eligibility Criteria",
-    content: "Refunds are only eligible for new service deployments. Renewals, dedicated servers, domain registrations, and licenses are strictly non-refundable due to the nature of resource allocation and third-party costs.",
+    content: "Refunds are only eligible for new service deployments. Renewals, dedicated servers, domain registrations, and licenses are strictly non-refundable due to the nature of resource allocation and third-party billing.",
     icon: CheckCircle2
   },
   {
@@ -23,13 +23,18 @@ const refundRules = [
   },
   {
     title: "4. Abuse & Violations",
-    content: "Services suspended or terminated due to violations of our Acceptable Use Policy (AUP) or Terms of Service are not eligible for any refund, regardless of the time remaining in the billing cycle.",
+    content: "Services suspended or terminated due to violations of our Acceptable Use Policy (AUP) or Terms of Service are not eligible for any refund, regardless of the time remaining in the billing period.",
     icon: AlertCircle
   },
   {
     title: "5. Processing Time",
     content: "Eligible refund requests are processed within 3-5 business days. Depending on your bank or payment provider, it may take up to 10 days for the funds to appear in your account.",
     icon: RotateCcw
+  },
+  {
+    title: "6. Host Closure & Long-Term Accounts",
+    content: "If a hosting account is closed by VexaNode or a service experiences an irrecoverable issue, no refunds will be initiated. Additionally, accounts that have been using our services for more than six months ("permanent clients") are generally not eligible for refunds related to service disclosures, discontinuations, or similar changes. Exceptions may be made at VexaNode's sole discretion.",
+    icon: ShieldCheck
   }
 ]
 
@@ -80,7 +85,7 @@ export default function RefundPolicy() {
               className="group bg-[#0c0d12] border border-[#1f2129] hover:border-[#2d303d] rounded-[2.5rem] p-8 md:p-12 transition-all duration-300"
             >
               <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-500">
+                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:bg-blue-500 group-hover:border-blue-500 transition-colors duration-500">
                   <rule.icon className="w-7 h-7 text-blue-500 group-hover:text-white transition-colors duration-500" />
                 </div>
                 <div className="flex-1">
@@ -118,7 +123,7 @@ export default function RefundPolicy() {
               </a>
               <a
                 href="https://discord.vexanode.cloud"
-                className="w-full sm:w-auto bg-transparent text-black border-2 border-black/10 px-10 py-5 rounded-2xl font-bold hover:bg-black/5 transition-all flex items-center justify-center gap-2 text-base border-2 border-black/20 hover:border-black"
+                className="w-full sm:w-auto bg-transparent text-black border-2 border-black/10 px-10 py-5 rounded-2xl font-bold hover:bg-black/5 transition-all flex items-center justify-center gap-2"
               >
                 Discord Ticket
               </a>
