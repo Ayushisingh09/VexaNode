@@ -10,6 +10,7 @@ import { QueryProvider } from "./components/QueryProvider";
 import { ToastProvider } from "./components/ToastProvider";
 import CookieConsent from "./components/CookieConsent";
 import SummerSalePopup from "./components/SummerSalePopup";
+import SplashScreen from "./components/SplashScreen";
 import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
@@ -123,13 +124,13 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
     other: [
       {
         rel: 'apple-touch-icon-precomposed',
-        url: '/favicon.png',
+        url: '/logo.png',
       },
     ],
   },
@@ -203,14 +204,14 @@ export default function RootLayout({
                 ]
               },
               "sameAs": [
-                "https://discord.vexanode.cloud"
+                "https://discord.gg/syHFbR5yBQ"
               ],
               "contactPoint": {
                 "@type": "ContactPoint",
                 "contactType": "customer service",
                 "availableLanguage": "English",
                 "serviceType": "Technical Support",
-                "url": "https://discord.vexanode.cloud"
+                "url": "https://discord.gg/syHFbR5yBQ"
               },
               "founder": {
                 "@type": "Person",
@@ -233,6 +234,7 @@ export default function RootLayout({
                 <QueryProvider>
                   <ToastProvider>
                     <LayoutWrapper>
+                      <SplashScreen />
                       {children}
                       <SummerSalePopup />
                       <Analytics />

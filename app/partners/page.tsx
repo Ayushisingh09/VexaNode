@@ -192,7 +192,7 @@ export default function PartnersPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
-                href="https://discord.vexanode.cloud"
+                href="https://discord.gg/syHFbR5yBQ"
                 className="bg-black text-white px-10 py-4 rounded-xl font-bold hover:bg-gray-900 transition-all flex items-center gap-2 text-sm"
               >
                 Apply Now

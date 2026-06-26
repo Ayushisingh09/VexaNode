@@ -4,6 +4,7 @@ import Image from "next/image";
 import { memo, useMemo, useState, useEffect } from "react";
 import { Globe } from "@/components/ui/globe";
 
+
 const locations = [
     {
         name: "Mumbai, IN",
@@ -128,7 +129,7 @@ const LocationItem = memo(({ location, index }: { location: typeof locations[0],
 
     return (
         <motion.div
-            className="flex items-center justify-between gap-4 py-3.5 px-4 bg-[#0c0e1a]/40 border border-white/5 rounded-xl hover:border-[#228dbd]/40 hover:bg-[#0c0e1a]/60 transition-all duration-300 group"
+            className="flex items-center justify-between gap-4 py-3.5 px-4 bg-[#0c0e1a]/40 border border-white/5 rounded-xl hover:border-[#00a3ff]/40 hover:bg-[#0c0e1a]/60 transition-all duration-300 group"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -144,7 +145,7 @@ const LocationItem = memo(({ location, index }: { location: typeof locations[0],
                     loading="lazy"
                 />
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-white font-bold text-sm sm:text-base truncate group-hover:text-[#228dbd] transition-colors">
+                    <h3 className="text-white font-bold text-sm sm:text-base truncate group-hover:text-[#00a3ff] transition-colors">
                         {location.name}
                     </h3>
                     <p className="text-gray-500 text-xs mt-0.5 truncate uppercase tracking-wider font-semibold">
@@ -182,7 +183,7 @@ export default function LocationsSection() {
         mapSamples: 16000,
         mapBrightness: 3.5,
         baseColor: [0.03, 0.05, 0.15] as [number, number, number], 
-        markerColor: [0.133, 0.553, 0.741] as [number, number, number], // #228dbd brand blue markers
+        markerColor: [0.133, 0.553, 0.741] as [number, number, number], // #00a3ff brand blue markers
         glowColor: [0.08, 0.12, 0.25] as [number, number, number], 
         markers: locations.map(location => ({
             location: [location.lat, location.lng] as [number, number],
@@ -194,8 +195,8 @@ export default function LocationsSection() {
     return (
         <div className="bg-[#030408] relative px-4 sm:px-6 lg:px-8 overflow-hidden py-32 border-t border-b border-white/5">
             {/* Ambient gradients */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[#228dbd]/5 rounded-full blur-[140px] pointer-events-none will-change-transform" />
-            <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#228dbd]/5 rounded-full blur-[140px] pointer-events-none will-change-transform" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[#00a3ff]/5 rounded-full blur-[140px] pointer-events-none will-change-transform" />
+            <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#00a3ff]/5 rounded-full blur-[140px] pointer-events-none will-change-transform" />
 
             <div className="relative z-10 max-w-7xl mx-auto">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -208,7 +209,7 @@ export default function LocationsSection() {
                     >
                         <h2 className="text-4xl sm:text-6xl font-black text-white orbitron-font mb-6 leading-none uppercase tracking-tight">
                             Global Node <br />
-                            <span className="text-[#228dbd] text-neon-glow-brand">Distribution</span>
+                            <span className="text-[#00a3ff] text-neon-glow-brand">Distribution</span>
                         </h2>
 
                         <p className="text-gray-400 text-lg mb-10 leading-relaxed max-w-xl quicksand-font">
@@ -223,17 +224,16 @@ export default function LocationsSection() {
                     </motion.div>
 
                     <motion.div
-                        className="relative hidden lg:flex lg:h-[600px] items-center justify-center"
+                        className="relative flex h-[400px] lg:h-[600px] items-center justify-center w-full mt-12 lg:mt-0"
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.3 }}
                     >
                         <div className="absolute inset-0 flex items-center justify-center [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_70%)]">
-                            <Globe config={globeConfig} />
+                            <Globe />
                         </div>
                     </motion.div>
-                </div>
+            </div>
             </div>
         </div>
     );

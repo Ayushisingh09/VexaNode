@@ -122,7 +122,7 @@ export default function RefundPolicy() {
                 <MessageSquare className="w-5 h-5" />
               </a>
               <a
-                href="https://discord.vexanode.cloud"
+                href="https://discord.gg/syHFbR5yBQ"
                 className="w-full sm:w-auto bg-transparent text-black border-2 border-black/10 px-10 py-5 rounded-2xl font-bold hover:bg-black/5 transition-all flex items-center justify-center gap-2"
               >
                 Discord Ticket

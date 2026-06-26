@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
-import { Server, Shield, Cpu, HardDrive, MemoryStick } from "lucide-react"
+import { Server, Shield, Cpu, HardDrive, MemoryStick, Sparkles, ArrowRight } from "lucide-react"
 import gamesConfig from "../../config/sections/games.json"
 import type { GamesConfig, Game, GamePlan, GameLocation } from "../../types/games"
 import { CurrencySelector, useCurrency } from "../ui/CurrencySelector"
@@ -79,24 +79,17 @@ export default function GameServerList() {
 
   if (!currentGame || !currentLocation) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-[#0a0b0f] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-500"></div>
+      <div className="min-h-screen bg-[#0a0b0f] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#00a3ff]"></div>
       </div>
     )
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-[#0a0b0f] relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('${currentGame?.banner}')`,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-gray-50/40 to-transparent dark:from-[#0a0b0f] dark:via-[#0a0b0f]/60 dark:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-gray-50/80 to-gray-50/40 dark:from-[#0a0b0f] dark:via-[#0a0b0f]/95 dark:to-[#0a0b0f]/60" />
-      </div>
+    <div className="bg-[#0a0b0f] relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-[var(--game-color)]/10 blur-[160px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[var(--game-color)]/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 mt-16 max-w-7xl mx-auto">
         <motion.div
@@ -113,14 +106,18 @@ export default function GameServerList() {
         >
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
             <div className="flex-1">
-              <div className="inline-flex items-left gap-2 bg-[var(--game-color)]/10 px-4 py-2 rounded-tl-xl rounded-br-xl mb-4">
-                <span className="text-[var(--game-color)] text-sm">{t('gameServerList.badge')}</span>
+              <div className="inline-flex items-center gap-2 bg-[var(--game-color)]/10 text-[var(--game-color)] text-[10px] font-bold px-3 py-1.5 rounded-full border border-[var(--game-color)]/20 mb-6 tracking-widest uppercase">
+                <Sparkles className="w-3 h-3" />
+                {t('gameServerList.badge')}
               </div>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 orbitron-font">
+              <h2 className="text-4xl font-bold text-white mb-4 orbitron-font">
                 {t('gameServerList.title').split(' ').slice(0, -2).join(' ')}{' '}
-                <span className="text-[var(--game-color)]">{t('gameServerList.title').split(' ').slice(-2).join(' ')}</span>
+                <span className="relative">
+                  <span className="text-[var(--game-color)]">{t('gameServerList.title').split(' ').slice(-2).join(' ')}</span>
+                  <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-gradient-to-r from-[var(--game-color)]/0 via-[var(--game-color)]/50 to-[var(--game-color)]/0 rounded-full" />
+                </span>
               </h2>
-              <p className="text-md text-gray-600 max-w-3xl dark:text-gray-300">
+              <p className="text-md text-gray-400 max-w-3xl">
                 {t('gameServerList.description')}
               </p>
             </div>
@@ -145,7 +142,7 @@ export default function GameServerList() {
         >
           <div className="flex flex-col lg:flex-row gap-6 justify-left items-left">
             <div className="flex flex-col items-left">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('gameServerList.step1')}</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-3">{t('gameServerList.step1')}</h3>
               <div className="flex flex-wrap gap-2">
                 {config.planTypes.map((type) => {
                   const isAvailable = availablePlanTypes.includes(type.id)
@@ -156,12 +153,13 @@ export default function GameServerList() {
                       key={type.id}
                       onClick={() => handlePlanTypeSelection(type.id as "budget" | "premium")}
                       disabled={!isAvailable}
-                      className={`flex items-center gap-3 px-6 py-2  rounded-tl-xl rounded-br-xl font-medium transition-all duration-300 backdrop-blur-sm ${isSelected
-                          ? "bg-[var(--game-color)]/10 border border-[var(--game-color)]/30 text-[var(--game-color)] shadow-lg backdrop-blur-sm"
+                      className={`flex items-center gap-3 px-6 py-2 rounded-xl font-medium transition-all duration-300 ${
+                        isSelected
+                          ? "bg-gradient-to-r from-[var(--game-color)]/20 to-[var(--game-color)]/5 border border-[var(--game-color)]/40 text-[var(--game-color)] shadow-lg shadow-[var(--game-color)]/10"
                           : isAvailable
-                            ? "bg-white/5 dark:bg-gray-800/20 border border-[var(--game-color)]/30 dark:border-white/10 text-gray-700 dark:text-gray-400 hover:bg-[radial-gradient(50%_50%_at_50%_100%,rgba(255,255,255,0.05)_0%,transparent_100%)] hover:border-[var(--game-color)]/30"
-                            : "bg-white/5 dark:bg-gray-800/10 border border-gray-300/40 dark:border-gray-600/20 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50"
-                        }`}
+                          ? "bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-300 hover:bg-[#0b0c16]/50 hover:border-white/[0.12]"
+                          : "bg-[#0b0c16]/20 border border-white/[0.03] text-gray-600 cursor-not-allowed opacity-50"
+                      }`}
                     >
                       <Image
                         src={type.image || "/placeholder.svg"}
@@ -178,7 +176,7 @@ export default function GameServerList() {
             </div>
 
             <div className="flex flex-col items-left">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3.5">{t('gameServerList.step2')}</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-3.5">{t('gameServerList.step2')}</h3>
               <div className="flex flex-wrap gap-2">
                 {config.locations.map((location: GameLocation) => {
                   const hasAvailablePlanTypes = location.availablePlanTypes.length > 0
@@ -189,12 +187,13 @@ export default function GameServerList() {
                       key={location.id}
                       onClick={() => handleLocationSelection(location.id)}
                       disabled={!hasAvailablePlanTypes}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-tl-xl rounded-br-xl font-medium transition-all duration-300 backdrop-blur-sm ${isSelected
-                          ? "bg-[var(--game-color)]/10 border border-[var(--game-color)]/30 text-[var(--game-color)] shadow-lg backdrop-blur-sm"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                        isSelected
+                          ? "bg-gradient-to-r from-[var(--game-color)]/20 to-[var(--game-color)]/5 border border-[var(--game-color)]/40 text-[var(--game-color)] shadow-lg shadow-[var(--game-color)]/10"
                           : hasAvailablePlanTypes
-                            ? "bg-white/5 dark:bg-gray-800/20 border border-[var(--game-color)]/30 dark:border-white/10 text-gray-700 dark:text-gray-400 hover:bg-[radial-gradient(50%_50%_at_50%_100%,rgba(255,255,255,0.05)_0%,transparent_100%)] hover:border-[var(--game-color)]/30"
-                            : "bg-white/5 dark:bg-gray-800/10 border border-gray-300/40 dark:border-gray-600/20 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50"
-                        }`}
+                          ? "bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-300 hover:bg-[#0b0c16]/50 hover:border-white/[0.12]"
+                          : "bg-[#0b0c16]/20 border border-white/[0.03] text-gray-600 cursor-not-allowed opacity-50"
+                      }`}
                     >
                       <Image
                         src={location.flag || "/placeholder.svg"}
@@ -218,7 +217,7 @@ export default function GameServerList() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mb-4"
         >
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('gameServerList.step3')}</h3>
+          <h3 className="text-sm font-medium text-gray-400 mb-3">{t('gameServerList.step3')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
             {config.games.map((game: Game, index: number) => {
               const firstFeaturedGame = config.games.find((g: Game) => g.featured)
@@ -229,13 +228,14 @@ export default function GameServerList() {
                   <button
                     onClick={() => setSelectedGame(game.id)}
                     style={{ "--game-color": game.primaryColor } as React.CSSProperties}
-                    className={`relative w-full group rounded-tl-xl rounded-br-xl transition-all duration-300 p-3 text-left backdrop-blur-sm ${selectedGame === game.id
-                        ? "bg-[var(--game-color)]/30 text-white shadow-lg backdrop-blur-sm border border-[var(--game-color)]/40"
-                        : "bg-white/20 dark:bg-gray-800/10 border border-[var(--game-color)]/40 hover:border-[var(--game-color)]/30 text-gray-700 dark:text-gray-300 hover:bg-[radial-gradient(50%_50%_at_50%_100%,rgba(255,255,255,0.05)_0%,transparent_100%)] dark:hover:bg-[radial-gradient(50%_50%_at_50%_100%,rgba(255,255,255,0.03)_0%,transparent_100%)]"
-                      }`}
+                    className={`relative w-full group rounded-xl transition-all duration-300 p-3 text-left ${
+                      selectedGame === game.id
+                        ? "bg-[#0b0c16]/50 backdrop-blur-xl border border-[var(--game-color)]/40 text-white shadow-lg shadow-[var(--game-color)]/10"
+                        : "bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-300 hover:bg-[#0b0c16]/50 hover:border-white/[0.12]"
+                    }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="relative w-8 h-8 rounded-lg  flex-shrink-0">
+                      <div className="relative w-8 h-8 rounded-lg flex-shrink-0">
                         <Image
                           src={game.icon || "/placeholder.svg"}
                           alt={game.name}
@@ -245,15 +245,15 @@ export default function GameServerList() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 ">
+                        <div className="flex items-center gap-2">
                           <h4 className="font-bold text-sm truncate">{game.name}</h4>
                           {game.featured && (
-                            <div className="px-2 py-0.5 text-xs  rounded-tl-xl rounded-br-xl bg-white/20 dark:bg-[var(--game-color)] backdrop-blur-sm text-white">
+                            <div className="px-2 py-0.5 text-xs rounded-full bg-[var(--game-color)]/20 text-[var(--game-color)] border border-[var(--game-color)]/30">
                               {t('gameServerList.featured')}
                             </div>
                           )}
                         </div>
-                        <p className="text-xs opacity-80 line-clamp-2 ">{game.description}</p>
+                        <p className="text-xs opacity-80 line-clamp-2">{game.description}</p>
                       </div>
                     </div>
                   </button>
@@ -271,7 +271,7 @@ export default function GameServerList() {
             })}
           </div>
         </motion.div>
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('gameServerList.step4')}</h3>
+        <h3 className="text-sm font-medium text-gray-400 mb-3">{t('gameServerList.step4')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
           {currentGame?.plans[selectedPlanType].map((plan: GamePlan, index: number) => (
@@ -282,11 +282,11 @@ export default function GameServerList() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               style={{ "--game-color": currentGame?.primaryColor } as React.CSSProperties}
-              className="relative overflow-hidden rounded-xl bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm border border-[var(--game-color)]/30 hover:border-[var(--game-color)]/30 dark:hover:border-[var(--game-color)]/40 transition-all duration-300 hover:bg-[radial-gradient(50%_50%_at_50%_100%,rgba(255,255,255,0.05)_0%,transparent_100%)] dark:hover:bg-[radial-gradient(50%_50%_at_50%_100%,rgba(255,255,255,0.03)_0%,transparent_100%)]"
+              className="relative overflow-hidden rounded-xl bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] hover:border-[var(--game-color)]/30 transition-all duration-300 group hover:bg-[#0b0c16]/50"
             >
               {plan.type === "premium" && (
                 <div className="absolute top-4 right-4">
-                  <div className="px-2 py-1 text-xs font-medium rounded-full bg-white/20 dark:bg-[var(--game-color)]/10 backdrop-blur-sm text-[var(--game-color)]">
+                  <div className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--game-color)]/10 text-[var(--game-color)] border border-[var(--game-color)]/20">
                     {t('gameServerList.premium')}
                   </div>
                 </div>
@@ -302,43 +302,41 @@ export default function GameServerList() {
                       className="object-contain rounded-md"
                     />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+                  <h3 className="text-xl font-bold text-white">{plan.name}</h3>
                 </div>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center gap-3">
                     <MemoryStick className="w-5 h-5 text-[var(--game-color)]" />
-                    <span className="text-gray-600 dark:text-gray-300">{plan.ram} RAM</span>
+                    <span className="text-gray-300">{plan.ram} RAM</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Cpu className="w-5 h-5 text-[var(--game-color)]" />
-                    <span className="text-gray-600 dark:text-gray-300">{plan.cpu} CPU</span>
+                    <span className="text-gray-300">{plan.cpu} CPU</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <HardDrive className="w-5 h-5 text-[var(--game-color)]" />
-                    <span className="text-gray-600 dark:text-gray-300">{plan.storage}</span>
+                    <span className="text-gray-300">{plan.storage}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Shield className="w-5 h-5 text-[var(--game-color)]" />
-                    <span className="text-gray-600 dark:text-gray-300">{t('gameServerList.ddosProtection')}</span>
+                    <span className="text-gray-300">{t('gameServerList.ddosProtection')}</span>
                   </div>
                 </div>
 
                 <div className="flex items-baseline gap-1 mb-6">
                   <span className="text-3xl font-bold text-[var(--game-color)]">{convertPrice(`$${plan.price}`)}</span>
-                  <span className="text-gray-500 dark:text-gray-400">/mo</span>
+                  <span className="text-gray-500">/mo</span>
                 </div>
 
                 <a
                   href={plan.orderLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="orbitron-font w-full bg-[var(--game-color)] hover:opacity-90 dark:bg-[var(--game-color)]/30 text-white dark:text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
+                  className="orbitron-font w-full bg-gradient-to-r from-[var(--game-color)] to-[var(--game-color)]/70 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[var(--game-color)]/25 group/btn"
                 >
                   {t('gameServerList.orderNow')}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                 </a>
               </div>
             </motion.div>
