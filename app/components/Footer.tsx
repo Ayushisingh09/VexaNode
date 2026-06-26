@@ -54,7 +54,7 @@ export default function Footer() {
   return (
     <footer className="relative bg-[#030408] pt-32 pb-12 overflow-hidden border-t border-white/5">
       {/* Background brand glow blob */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[#228dbd]/5 rounded-full blur-[120px] pointer-events-none will-change-transform" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[#00a3ff]/5 rounded-full blur-[120px] pointer-events-none will-change-transform" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
@@ -65,7 +65,7 @@ export default function Footer() {
               <div className="flex items-center gap-3">
                 <Image src="/logo.png" alt="VexaNode" width={40} height={40} className="h-10 w-auto" />
                 <span className="text-2xl font-black text-white orbitron-font tracking-tight uppercase">
-                  Vexa<span className="text-[#228dbd]">Node</span>
+                  Vexa<span className="text-[#00a3ff]">Node</span>
                 </span>
               </div>
             </Link>
@@ -94,7 +94,7 @@ export default function Footer() {
                 {section.links.map((link, lIdx) => (
                   <li key={lIdx}>
                     <Link href={link.href} className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2 group">
-                      <div className="w-1 h-1 bg-[#228dbd] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="w-1 h-1 bg-[#00a3ff] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                       {link.name}
                     </Link>
                   </li>
@@ -107,7 +107,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-gray-500 text-xs">
-            © {new Date().getFullYear()} VexaNode. Built for the hosting community.
+            Â© {new Date().getFullYear()} VexaNode. Built for the hosting community.
           </div>
           
           <div className="flex items-center gap-8">

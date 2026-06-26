@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Server, Cpu, MemoryStick, HardDrive, ChevronLeft, ChevronRight, Activity, Globe } from "lucide-react"
+import { Server, Cpu, MemoryStick, HardDrive, ChevronLeft, ChevronRight, Activity, Globe, Sparkles, ArrowRight } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
 import vpsConfig from "../../config/sections/vps.json"
@@ -61,17 +61,10 @@ export default function VPSPricingSection() {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-[#0a0b0f] relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
-          style={{
-            backgroundImage: `url('/vps/vps-hero-2.webp')`,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-gray-50/40 to-transparent dark:from-[#0a0b0f] dark:via-[#0a0b0f]/60 dark:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-gray-50/80 to-gray-50/40 dark:from-[#0a0b0f] dark:via-[#0a0b0f]/60 dark:to-[#0a0b0f]/60" />
-      </div>
+    <div className="bg-[#0a0b0f] relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-[#00a3ff]/10 blur-[160px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#00a3ff]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="relative z-10 mt-16 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -81,29 +74,18 @@ export default function VPSPricingSection() {
         >
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
             <div className="flex-1">
-              <div className="inline-flex items-left gap-2 card-primary px-4 py-1 rounded-tl-2xl rounded-br-2xl mb-4 border border-secondary">
-                <span className="icon-text-primary text-sm">{t('vps.badge')}</span>
+              <div className="inline-flex items-center gap-2 bg-[#00a3ff]/10 text-[#00a3ff] text-[10px] font-bold px-3 py-1.5 rounded-full border border-[#00a3ff]/20 mb-6 tracking-widest uppercase">
+                <Sparkles className="w-3 h-3" />
+                {t('vps.badge')}
               </div>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 orbitron-font">
+              <h2 className="text-4xl font-bold text-white mb-4 orbitron-font">
                 {t('vps.title').split(" ").slice(0, -1).join(" ")}{" "}
-                <span className="icon-text-primary relative">
-                  {t('vps.title').split(" ").slice(-1)[0]}
-                  <motion.svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1418 125"
-                    className="absolute left-0 w-full text-icon-text-primary"
-                    initial={{ opacity: 0, pathLength: 0 }}
-                    animate={{ opacity: 1, pathLength: 1 }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                  >
-                    <path
-                      d="M1412.29 72.17c-11.04-5.78-20.07-14.33-85.46-25.24-22.37-3.63-44.69-7.56-67.07-11.04-167.11-22.06-181.65-21.24-304.94-30.56C888.78 1.39 822.57 1.1 756.44 0c-46.63-.11-93.27 1.56-139.89 2.5C365.5 13.55 452.86 7.68 277.94 23.15 202.57 33.32 127.38 45.01 52.07 55.69c-11.23 2.41-22.63 4.17-33.71 7.22C6.1 66.33 5.64 66.19 3.89 67.79c-7.99 5.78-2.98 20.14 8.72 17.5 33.99-9.47 32.28-8.57 178.06-29.66 4.26 4.48 7.29 3.38 18.42 3.11 13.19-.32 26.38-.53 39.56-1.12 53.51-3.81 106.88-9.62 160.36-13.95 18.41-1.3 36.8-3.12 55.21-4.7 23.21-1.16 46.43-2.29 69.65-3.4 120.28-2.16 85.46-3.13 234.65-1.52 23.42.99 1.57-.18 125.72 6.9 96.61 8.88 200.92 27.94 295.42 46.12 40.87 7.91 116.67 23.2 156.31 36.78 3.81 1.05 8.28-.27 10.51-3.58 3.17-3.72 2.66-9.7-.78-13.13-17.89-5.85-44.19-12.09-63.67-16.56l26.16 3.28c23.02 3.13 46.28 3.92 69.34 6.75 10.8.96 25.43 1.81 34.34-4.39 2.26-1.54 4.86-2.75 6.21-5.27 2.76-4.59 1.13-11.06-3.59-13.68ZM925.4 23.77c37.64 1.4 153.99 10.85 196.64 14.94 45.95 5.51 91.89 11.03 137.76 17.19 24.25 4.77 74.13 11.21 101.72 18.14-11.87-1.15-23.77-1.97-35.65-3.06-133.46-15.9-266.8-33.02-400.47-47.21Z"
-                      fill="currentColor"
-                    />
-                  </motion.svg>
+                <span className="relative">
+                  <span className="text-[#00a3ff]">{t('vps.title').split(" ").slice(-1)[0]}</span>
+                  <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-gradient-to-r from-[#00a3ff]/0 via-[#00a3ff]/50 to-[#00a3ff]/0 rounded-full" />
                 </span>
               </h2>
-              <p className="text-md text-gray-600 max-w-3xl dark:text-gray-300">{t('vps.description')}</p>
+              <p className="text-md text-gray-400 max-w-3xl">{t('vps.description')}</p>
             </div>
             <CurrencySelector
               selectedCurrency={selectedCurrency}
@@ -121,19 +103,18 @@ export default function VPSPricingSection() {
         >
           <div className="flex flex-col lg:flex-row gap-6 justify-left items-start">
             <div className="flex flex-col items-left w-full lg:w-72">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3.5">{t('vps.step1')}</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-3.5">{t('vps.step1')}</h3>
               
-              {/* Location Dropdown */}
               <div className="relative">
                 <select
                   value={selectedLocation}
                   onChange={(e) => handleLocationSelection(e.target.value)}
-                  className="w-full appearance-none bg-gray-50 dark:bg-[#0d0f1a] border border-secondary text-gray-900 dark:text-gray-100 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent transition-all shadow-sm font-medium"
+                  className="w-full appearance-none bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-100 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00a3ff]/50 focus:border-transparent transition-all font-medium"
                 >
                   {config.locations.map((location) => {
                     const hasAvailableCpus = location.availableCpus.length > 0;
                     return (
-                      <option key={location.id} value={location.id} disabled={!hasAvailableCpus}>
+                      <option key={location.id} value={location.id} disabled={!hasAvailableCpus} className="bg-[#0a0b0f]">
                         {location.displayName} {!hasAvailableCpus ? "(Unavailable)" : ""}
                       </option>
                     );
@@ -155,7 +136,7 @@ export default function VPSPricingSection() {
                     height={20}
                     className="object-cover rounded-sm"
                   />
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <span className="text-sm font-medium text-gray-500">
                     Selected: {currentLocation.name}
                   </span>
                 </div>
@@ -163,7 +144,7 @@ export default function VPSPricingSection() {
             </div>
 
             <div className="flex flex-col items-left flex-1">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('vps.step2')}</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-3">{t('vps.step2')}</h3>
               <div className="flex flex-wrap gap-2">
                 {config.planTypes.map((cpu) => {
                   const isAvailable = availableCPUs.includes(cpu.id)
@@ -174,12 +155,12 @@ export default function VPSPricingSection() {
                       key={cpu.id}
                       onClick={() => handleCPUSelection(cpu.id)}
                       disabled={!isAvailable}
-                      className={`flex items-center gap-3 px-4 py-2.5 rounded-tl-2xl rounded-br-2xl font-medium transition-all duration-300 ${
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 ${
                         isSelected
-                          ? "button-primary border-primary text-button-primary shadow-lg"
+                          ? "bg-gradient-to-r from-[#00a3ff]/20 to-[#00a3ff]/5 border border-[#00a3ff]/40 text-[#00a3ff] shadow-lg shadow-[#00a3ff]/10"
                           : isAvailable
-                          ? "bg-gray-200 dark:bg-gray-800/20 border border-secondary text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700/30 hover:border-secondary"
-                          : "bg-gray-100 dark:bg-gray-800/10 border border-primary text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50"
+                          ? "bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-300 hover:bg-[#0b0c16]/50 hover:border-white/[0.12]"
+                          : "bg-[#0b0c16]/20 border border-white/[0.03] text-gray-600 cursor-not-allowed opacity-50"
                       }`}
                     >
                       <Image
@@ -205,7 +186,7 @@ export default function VPSPricingSection() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mb-8"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 py-6 rounded-2xl bg-gray-50 dark:bg-gray-900/30 border border-secondary">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 py-6 rounded-2xl bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06]">
             {[
               "Full Root Access",
               "NVMe SSD Storage",
@@ -216,15 +197,15 @@ export default function VPSPricingSection() {
               "99.9% Uptime SLA"
             ].map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#00a3ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{feature}</span>
+                <span className="text-sm font-medium text-gray-300">{feature}</span>
               </div>
             ))}
           </div>
         </motion.div>
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('vps.step3')}</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-3">{t('vps.step3')}</h3>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -238,7 +219,7 @@ export default function VPSPricingSection() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
-              className="bg-white dark:bg-gray-950/20 backdrop-blur-xl border border-secondary hover:border-secondary dark:hover:border-secondary rounded-lg p-4 hover:hover-gradient dark:hover:hover-gradient transition-all duration-300"
+              className="bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] hover:border-[#00a3ff]/30 rounded-xl p-4 transition-all duration-300 group hover:bg-[#0b0c16]/50"
             >
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
                 <div className="flex items-center gap-4">
@@ -247,59 +228,59 @@ export default function VPSPricingSection() {
                       src={plan.image || "/placeholder.svg"}
                       alt="CPU"
                       fill
-                      className="rounded-xl object-contain "
+                      className="rounded-xl object-contain"
                     />
                   </div>
                   <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+                    <h3 className="text-xl font-bold text-white">{plan.name}</h3>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 flex-1">
-                  <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30 col-span-2 lg:col-span-1">
+                  <div className="border border-white/[0.06] flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b0c16]/50 col-span-2 lg:col-span-1">
                     <div className="flex items-center gap-2">
-                      <Cpu className="w-4 h-4 icon-primary" />
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{plan.cpuDetail}</div>
+                      <Cpu className="w-4 h-4 text-[#00a3ff]" />
+                      <div className="text-xs text-gray-500">{plan.cpuDetail}</div>
                     </div>
-                    <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                    <div className="text-sm font-medium bg-[#00a3ff]/10 text-[#00a3ff] rounded-xl px-2 py-1">
                       {plan.cpu}
                     </div>
                   </div>
-                  <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                  <div className="border border-white/[0.06] flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b0c16]/50">
                     <div className="flex items-center gap-2">
-                      <MemoryStick className="w-4 h-4 icon-primary" />
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{plan.ramDetail}</div>
+                      <MemoryStick className="w-4 h-4 text-[#00a3ff]" />
+                      <div className="text-xs text-gray-500">{plan.ramDetail}</div>
                     </div>
-                    <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                    <div className="text-sm font-medium bg-[#00a3ff]/10 text-[#00a3ff] rounded-xl px-2 py-1">
                       {plan.ram}
                     </div>
                   </div>
-                  <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                  <div className="border border-white/[0.06] flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b0c16]/50">
                     <div className="flex items-center gap-2">
-                      <HardDrive className="w-4 h-4 icon-primary" />
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{plan.storageDetail}</div>
+                      <HardDrive className="w-4 h-4 text-[#00a3ff]" />
+                      <div className="text-xs text-gray-500">{plan.storageDetail}</div>
                     </div>
-                    <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                    <div className="text-sm font-medium bg-[#00a3ff]/10 text-[#00a3ff] rounded-xl px-2 py-1">
                       {plan.storage}
                     </div>
                   </div>
                   {plan.bandwidth && (
-                    <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                    <div className="border border-white/[0.06] flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b0c16]/50">
                       <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4 icon-primary" />
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{plan.bandwidthDetail || "Bandwidth"}</div>
+                        <Activity className="w-4 h-4 text-[#00a3ff]" />
+                        <div className="text-xs text-gray-500">{plan.bandwidthDetail || "Bandwidth"}</div>
                       </div>
-                      <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                      <div className="text-sm font-medium bg-[#00a3ff]/10 text-[#00a3ff] rounded-xl px-2 py-1">
                         {plan.bandwidth}
                       </div>
                     </div>
                   )}
                   {plan.ipv4 && (
-                    <div className="border border-secondary flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/30">
+                    <div className="border border-white/[0.06] flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b0c16]/50">
                       <div className="flex items-center gap-2">
-                        <Globe className="w-4 h-4 icon-primary" />
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{plan.ipv4Detail || "IPv4"}</div>
+                        <Globe className="w-4 h-4 text-[#00a3ff]" />
+                        <div className="text-xs text-gray-500">{plan.ipv4Detail || "IPv4"}</div>
                       </div>
-                      <div className="text-sm font-medium bg-gray-50 dark:bg-gray-900/80 rounded-xl px-2 py-1 icon-text-primary">
+                      <div className="text-sm font-medium bg-[#00a3ff]/10 text-[#00a3ff] rounded-xl px-2 py-1">
                         {plan.ipv4}
                       </div>
                     </div>
@@ -308,19 +289,17 @@ export default function VPSPricingSection() {
 
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="text-center sm:text-right">
-                    <div className="text-lg font-bold icon-text-primary">
+                    <div className="text-lg font-bold text-[#00a3ff]">
                       {convertPrice(plan.price)}
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{plan.period}</span>
+                      <span className="text-sm text-gray-500">{plan.period}</span>
                     </div>
                   </div>
                   <a 
                     href={plan.orderLink}
-                    className="orbitron-font w-full sm:w-auto button-primary text-button-primary px-6 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center gap-2 border border-transparent hover:bg-[var(--hover-gradient)] hover:text-[var(--icon-text-primary)] hover:border-[var(--border-secondary)] no-underline"
+                    className="orbitron-font w-full sm:w-auto bg-gradient-to-r from-[#00a3ff] to-[#007acc] text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[#00a3ff]/25 no-underline group/btn"
                   >
                     {t('common.orderNow')}
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                   </a>
                 </div>
               </div>
@@ -338,7 +317,7 @@ export default function VPSPricingSection() {
             <button
               onClick={goToPrevPage}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg border border-secondary bg-white dark:bg-gray-900/20 icon-text-primary hover:bg-gray-50 dark:hover:bg-gray-800/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
+              className="p-2 rounded-lg bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-400 hover:bg-[#0b0c16]/50 hover:text-[#00a3ff] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -347,10 +326,10 @@ export default function VPSPricingSection() {
               <button
                 key={page}
                 onClick={() => goToPage(page)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                   currentPage === page
-                    ? "button-primary text-button-primary"
-                    : "border border-secondary bg-white dark:bg-gray-900/20 icon-text-primary hover:bg-gray-50 dark:hover:bg-gray-800/30"
+                    ? "bg-gradient-to-r from-[#00a3ff] to-[#007acc] text-white shadow-lg shadow-[#00a3ff]/20"
+                    : "bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-400 hover:bg-[#0b0c16]/50 hover:text-[#00a3ff]"
                 }`}
               >
                 {page}
@@ -360,7 +339,7 @@ export default function VPSPricingSection() {
             <button
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-lg border border-secondary bg-white dark:bg-gray-900/20 icon-text-primary hover:bg-gray-50 dark:hover:bg-gray-800/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
+              className="p-2 rounded-lg bg-[#0b0c16]/30 backdrop-blur-xl border border-white/[0.06] text-gray-400 hover:bg-[#0b0c16]/50 hover:text-[#00a3ff] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

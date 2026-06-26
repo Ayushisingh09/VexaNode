@@ -139,7 +139,7 @@ export default function TermsOfService() {
                 <MessageSquare className="w-4 h-4" />
               </a>
               <a
-                href="https://discord.vexanode.cloud"
+                href="https://discord.gg/syHFbR5yBQ"
                 className="bg-transparent text-black border-2 border-black/10 px-10 py-4 rounded-xl font-bold hover:bg-black/5 transition-all flex items-center gap-2 text-sm uppercase tracking-widest"
               >
                 Join Discord

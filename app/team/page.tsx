@@ -149,7 +149,7 @@ export default function TeamPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <a
-                href="https://discord.vexanode.cloud"
+                href="https://discord.gg/syHFbR5yBQ"
                 className="w-full sm:w-auto bg-white text-blue-600 px-10 py-5 rounded-2xl font-black hover:bg-blue-50 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-base shadow-2xl"
               >
                 Careers on Discord

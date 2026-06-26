@@ -122,10 +122,10 @@ function LoginFormContent() {
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
-      className="w-full bg-[#0d0e14]/40 border border-white/[0.06] rounded-3xl p-6 md:p-8 backdrop-blur-2xl shadow-[0_30px_70px_rgba(0,0,0,0.8),0_0_50px_rgba(34,141,189,0.03)] relative overflow-hidden"
+      className="w-full bg-[#0d0e14]/40 border border-white/[0.06] rounded-3xl p-6 md:p-8 backdrop-blur-2xl shadow-[0_30px_70px_rgba(0,0,0,0.8),0_0_50px_rgba(0,163,255,0.03)] relative overflow-hidden"
     >
       {/* Light border beam running along the top */}
-      <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#228dbd]/40 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#00a3ff]/40 to-transparent" />
 
       <div className="text-center mb-6 relative z-10 flex flex-col items-center">
         <Link href="/" className="inline-flex items-center gap-2.5 mb-4 group/logo">
@@ -134,10 +134,10 @@ function LoginFormContent() {
             alt="VexaNode Logo"
             width={36}
             height={36}
-            className="w-9 h-9 drop-shadow-[0_0_12px_rgba(34,141,189,0.4)] group-hover/logo:scale-105 transition-transform duration-300"
+            className="w-9 h-9 drop-shadow-[0_0_12px_rgba(0,163,255,0.4)] group-hover/logo:scale-105 transition-transform duration-300"
           />
           <span className="text-xl font-black orbitron-font tracking-tighter text-white uppercase transition-colors">
-            Vexa<span className="text-[#228dbd]">Node</span>
+            Vexa<span className="text-[#00a3ff]">Node</span>
           </span>
         </Link>
         <h2 className="text-lg font-bold orbitron-font text-white mb-1">Welcome Back</h2>
@@ -169,12 +169,12 @@ function LoginFormContent() {
       {/* Email & Password Form */}
       <form onSubmit={handleCredentialsSubmit} className="space-y-3 mb-4 relative z-10">
         <div className="relative group/input">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within/input:text-[#228dbd] transition-colors" />
+          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within/input:text-[#00a3ff] transition-colors" />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl py-3 pl-11 pr-4 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#228dbd]/40 focus:ring-1 focus:ring-[#228dbd]/20 hover:bg-white/[0.05] transition-all duration-200"
+            className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl py-3 pl-11 pr-4 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#00a3ff]/40 focus:ring-1 focus:ring-[#00a3ff]/20 hover:bg-white/[0.05] transition-all duration-200"
             placeholder="Email Address"
             disabled={loading}
             required
@@ -182,12 +182,12 @@ function LoginFormContent() {
         </div>
 
         <div className="relative group/input">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within/input:text-[#228dbd] transition-colors" />
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within/input:text-[#00a3ff] transition-colors" />
           <input
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl py-3 pl-11 pr-11 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#228dbd]/40 focus:ring-1 focus:ring-[#228dbd]/20 hover:bg-white/[0.05] transition-all duration-200"
+            className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl py-3 pl-11 pr-11 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#00a3ff]/40 focus:ring-1 focus:ring-[#00a3ff]/20 hover:bg-white/[0.05] transition-all duration-200"
             placeholder="Password"
             disabled={loading}
             required
@@ -209,13 +209,13 @@ function LoginFormContent() {
             className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors focus:outline-none cursor-pointer"
           >
             {rememberMe ? (
-              <span className="w-3.5 h-3.5 rounded bg-[#228dbd] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
+              <span className="w-3.5 h-3.5 rounded bg-[#00a3ff] text-white flex items-center justify-center text-[9px] font-bold">âœ“</span>
             ) : (
               <span className="w-3.5 h-3.5 rounded border border-white/20 bg-white/5" />
             )}
             Remember me
           </button>
-          <Link href="/contact" className="text-[#228dbd] hover:underline font-medium">
+          <Link href="/contact" className="text-[#00a3ff] hover:underline font-medium">
             Forgot?
           </Link>
         </div>
@@ -223,7 +223,7 @@ function LoginFormContent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#228dbd] hover:bg-[#1c78a2] disabled:opacity-50 text-white py-3 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(34,141,189,0.25)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          className="w-full bg-[#00a3ff] hover:bg-[#1c78a2] disabled:opacity-50 text-white py-3 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(0,163,255,0.25)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
         >
           {loading && authType === "credentials" ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -270,7 +270,7 @@ function LoginFormContent() {
 
       <div className="text-center text-[11px] text-gray-400 relative z-10">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-[#228dbd] font-semibold hover:underline">
+        <Link href="/register" className="text-[#00a3ff] font-semibold hover:underline">
           Register
         </Link>
       </div>
@@ -295,7 +295,7 @@ export default function LoginPage() {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute top-1/4 left-1/4 w-[450px] h-[450px] bg-[#228dbd]/5 blur-[150px] rounded-full"
+          className="absolute top-1/4 left-1/4 w-[450px] h-[450px] bg-[#00a3ff]/5 blur-[150px] rounded-full"
         />
         <motion.div
           animate={{
@@ -316,7 +316,7 @@ export default function LoginPage() {
         <Suspense
           fallback={
             <div className="bg-[#0d0e14]/50 border border-white/10 rounded-[32px] p-8 backdrop-blur-xl flex flex-col items-center justify-center min-h-[350px] w-full">
-              <Loader2 className="w-8 h-8 text-[#228dbd] animate-spin" />
+              <Loader2 className="w-8 h-8 text-[#00a3ff] animate-spin" />
             </div>
           }
         >
@@ -324,7 +324,7 @@ export default function LoginPage() {
         </Suspense>
 
         <p className="text-[10px] text-center text-gray-600 font-medium leading-relaxed px-4 mt-6">
-          By signing in, you agree to our <Link href="/terms-of-services" className="text-[#228dbd]/80 hover:underline">Terms of Service</Link> &amp; <Link href="/privacy-policy" className="text-[#228dbd]/80 hover:underline">Privacy Policy</Link>
+          By signing in, you agree to our <Link href="/terms-of-services" className="text-[#00a3ff]/80 hover:underline">Terms of Service</Link> &amp; <Link href="/privacy-policy" className="text-[#00a3ff]/80 hover:underline">Privacy Policy</Link>
         </p>
 
         <Link

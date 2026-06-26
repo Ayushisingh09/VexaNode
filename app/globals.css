@@ -6,6 +6,52 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -91,27 +137,27 @@
   --background: #030408;
   --foreground: rgba(251, 251, 251, 1);
 
-  /* Primary Colors - VexaNode Brand Blue (#228dbd) */
-  --icon-primary: rgba(34, 141, 189, 1);
+  /* Primary Colors - VexaNode Brand Blue (#00a3ff) */
+  --icon-primary: rgba(0, 163, 255, 1);
   --color-primary: rgba(235, 235, 235, 1);
   --color-secondary: rgba(69, 69, 69, 1);
-  --button-primary: rgba(34, 141, 189, 1);
+  --button-primary: rgba(0, 163, 255, 1);
   --text-button-primary: rgba(251, 251, 251, 1);
-  --card-primary: rgba(34, 141, 189, 0.2);
+  --card-primary: rgba(0, 163, 255, 0.2);
   --text-card-primary: rgba(251, 251, 251, 1);
   --border-primary: rgba(68, 68, 68, 0.486);
-  --border-secondary: rgba(34, 141, 189, 0.3);
-  --text-secondary: rgba(34, 141, 189, 1);
-  --icon-text-primary: rgba(34, 141, 189, 1);
-  --hover-gradient: radial-gradient(50% 50% at 50% 100%, rgba(34, 141, 189, 0.2) 0%, transparent 100%);
+  --border-secondary: rgba(0, 163, 255, 0.3);
+  --text-secondary: rgba(0, 163, 255, 1);
+  --icon-text-primary: rgba(0, 163, 255, 1);
+  --hover-gradient: radial-gradient(50% 50% at 50% 100%, rgba(0, 163, 255, 0.2) 0%, transparent 100%);
 
   /* Globe Configuration - Dark Mode */
   --globe-base-color-r: 0.05;
   --globe-base-color-g: 0.08;
   --globe-base-color-b: 0.15;
-  --globe-marker-color-r: 0.133; /* 34 / 255 */
-  --globe-marker-color-g: 0.553; /* 141 / 255 */
-  --globe-marker-color-b: 0.741; /* 189 / 255 */
+  --globe-marker-color-r: 0.000; /* 0 / 255 */
+  --globe-marker-color-g: 0.639; /* 163 / 255 */
+  --globe-marker-color-b: 1.000; /* 255 / 255 */
   --globe-glow-color-r: 0.08;
   --globe-glow-color-g: 0.12;
   --globe-glow-color-b: 0.25;
@@ -124,7 +170,9 @@
   
   html {
     scroll-behavior: smooth;
-    scrollbar-color: var(--button-primary) transparent;
+    /* Hide scrollbar for Firefox and IE/Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   
   body {
@@ -137,23 +185,9 @@
     transition: --icon-primary 0.3s ease, --button-primary 0.3s ease, --text-secondary 0.3s ease, --icon-text-primary 0.3s ease, --hover-gradient 0.3s ease, --border-secondary 0.3s ease, --card-primary 0.3s ease;
   }
 
+  /* Hide scrollbar for Chrome, Safari and Opera */
   ::-webkit-scrollbar {
-    width: 8px;
-    background: transparent;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--button-primary);
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--button-primary);
-    opacity: 0.8;
+    display: none;
   }
 
   /* CSS Classes for easy usage */
@@ -294,22 +328,22 @@
   }
 
   .text-neon-glow-brand {
-    text-shadow: 0 0 10px rgba(34, 141, 189, 0.4), 0 0 20px rgba(34, 141, 189, 0.2);
+    text-shadow: 0 0 10px rgba(0, 163, 255, 0.4), 0 0 20px rgba(0, 163, 255, 0.2);
   }
 
   .border-cyber-glow-brand {
-    border: 1px solid rgba(34, 141, 189, 0.15);
-    box-shadow: 0 0 10px rgba(34, 141, 189, 0.03);
+    border: 1px solid rgba(0, 163, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 163, 255, 0.03);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .border-cyber-glow-brand:hover {
-    border-color: rgba(34, 141, 189, 0.45);
-    box-shadow: 0 0 20px rgba(34, 141, 189, 0.15);
+    border-color: rgba(0, 163, 255, 0.45);
+    box-shadow: 0 0 20px rgba(0, 163, 255, 0.15);
   }
 
   .glow-brand-blob {
-    background: radial-gradient(circle, rgba(34, 141, 189, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 163, 255, 0.08) 0%, transparent 70%);
     will-change: transform;
   }
 }
