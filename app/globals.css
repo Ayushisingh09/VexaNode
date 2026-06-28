@@ -6,6 +6,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   Keyframes & motion helpers
+   ============================================================ */
 @keyframes shine {
   to {
     background-position: 200% center;
@@ -127,67 +130,92 @@
 }
 
 .loading-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
   background-size: 200px 100%;
   animation: shimmer 1.5s infinite;
 }
 
+/* ============================================================
+   Design tokens — clean, professional dark theme
+   (flat surfaces, subtle borders, neutral shadows — no glass)
+   ============================================================ */
 :root {
   --radius: 0.625rem;
-  --background: #030408;
-  --foreground: rgba(251, 251, 251, 1);
 
-  /* Primary Colors - VexaNode Brand Blue (#00a3ff) */
-  --icon-primary: rgba(0, 163, 255, 1);
-  --color-primary: rgba(235, 235, 235, 1);
-  --color-secondary: rgba(69, 69, 69, 1);
-  --button-primary: rgba(0, 163, 255, 1);
-  --text-button-primary: rgba(251, 251, 251, 1);
-  --card-primary: rgba(0, 163, 255, 0.2);
-  --text-card-primary: rgba(251, 251, 251, 1);
-  --border-primary: rgba(68, 68, 68, 0.486);
-  --border-secondary: rgba(0, 163, 255, 0.3);
-  --text-secondary: rgba(0, 163, 255, 1);
-  --icon-text-primary: rgba(0, 163, 255, 1);
-  --hover-gradient: radial-gradient(50% 50% at 50% 100%, rgba(0, 163, 255, 0.2) 0%, transparent 100%);
+  /* Base palette */
+  --background: #07090e;
+  --surface-0: #0c0f16; /* navbar, footer, section bases */
+  --surface-1: #11151d; /* cards / panels */
+  --surface-2: #161b25; /* raised / hover */
+  --surface-3: #1d2330; /* active / strong */
+
+  /* Text */
+  --foreground: #e8eaef;
+  --muted: #99a2b2;
+  --subtle: #6b7484;
+
+  /* Borders */
+  --border: #1a212e;
+  --border-strong: #283040;
+
+  /* Accent — VexaNode brand blue */
+  --accent: #00a3ff;
+  --accent-hover: #1f93e6;
+  --accent-surface: #0c1a26;
+  --accent-surface-strong: #122a3e;
+  --accent-border: rgba(0, 163, 255, 0.3);
+
+  /* Neutral elevation (replaces neon glow) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 18px -6px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 18px 44px -14px rgba(0, 0, 0, 0.65);
+
+  /* ---- Legacy token aliases (kept so existing components work) ---- */
+  --icon-primary: var(--accent);
+  --color-primary: #ededed;
+  --color-secondary: #8a92a0;
+  --button-primary: var(--accent);
+  --text-button-primary: #ffffff;
+  --card-primary: var(--surface-1);
+  --text-card-primary: #ffffff;
+  --border-primary: var(--border);
+  --border-secondary: var(--accent-border);
+  --text-secondary: var(--accent);
+  --icon-text-primary: var(--accent);
+  --hover-gradient: var(--surface-2);
 
   /* Globe Configuration - Dark Mode */
   --globe-base-color-r: 0.05;
   --globe-base-color-g: 0.08;
   --globe-base-color-b: 0.15;
-  --globe-marker-color-r: 0.000; /* 0 / 255 */
-  --globe-marker-color-g: 0.639; /* 163 / 255 */
-  --globe-marker-color-b: 1.000; /* 255 / 255 */
+  --globe-marker-color-r: 0.000;
+  --globe-marker-color-g: 0.639;
+  --globe-marker-color-b: 1.000;
   --globe-glow-color-r: 0.08;
   --globe-glow-color-g: 0.12;
   --globe-glow-color-b: 0.25;
 }
 
 @layer base {
-  * {
-    outline: none;
-  }
-  
   html {
     scroll-behavior: smooth;
-    /* Hide scrollbar for Firefox and IE/Edge */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    /* Clear the fixed navbar when jumping to in-page anchors */
+    scroll-padding-top: 6rem;
   }
-  
+
   body {
     background-color: var(--background);
     color: var(--foreground);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+      "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Smooth transitions for theme changes */
-  :root {
-    transition: --icon-primary 0.3s ease, --button-primary 0.3s ease, --text-secondary 0.3s ease, --icon-text-primary 0.3s ease, --hover-gradient 0.3s ease, --border-secondary 0.3s ease, --card-primary 0.3s ease;
-  }
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  ::-webkit-scrollbar {
-    display: none;
+  ::selection {
+    background-color: var(--accent);
+    color: #ffffff;
   }
 
   /* CSS Classes for easy usage */
@@ -221,7 +249,6 @@
   }
   .border-top-nav {
     border-color: var(--button-primary);
-
   }
   .text-button-primary {
     color: var(--text-button-primary);
@@ -243,7 +270,7 @@
     border-color: var(--border-secondary);
   }
 
-   .after\:border-secondary:after {
+  .after\:border-secondary:after {
     border-color: var(--border-secondary);
   }
 
@@ -273,18 +300,15 @@
   .hover\:border-secondary:hover {
     border-color: var(--border-secondary) !important;
   }
-  .hover\:border-secondary:hover {
-    border-color: var(--border-secondary) !important;
-  }
 
   .blob-primary {
     background-color: var(--icon-primary);
-    opacity: 0.1;
+    opacity: 0.08;
   }
 
   .blob-secondary {
     background-color: var(--icon-primary);
-    opacity: 0.1;
+    opacity: 0.08;
   }
 
   .svg-gradient-fill {
@@ -293,7 +317,7 @@
 
   .bottom-border-gradient {
     background: linear-gradient(to right, transparent, var(--icon-primary), transparent);
-    opacity: 0.3;
+    opacity: 0.25;
   }
 }
 
@@ -317,34 +341,173 @@
     animation-direction: reverse;
   }
 
-  
   .dottedfeatures {
     @apply w-full h-full bg-cover bg-center bg-repeat;
     background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 2000 1400%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cmask id=%22b%22 x=%220%22 y=%220%22 width=%222000%22 height=%221400%22%3E%3Cpath fill=%22url(%23a)%22 d=%22M0 0h2000v1400H0z%22%2F%3E%3C%2Fmask%3E%3Cpath fill=%22%230e0f11%22 d=%22M0 0h2000v1400H0z%22%2F%3E%3Cg mask=%22url(%23b)%22%3E%3Cg style=%22transform-origin:center center%22%3E%3Ccircle cx=%2226.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc81%22%2F%3E%3Ccircle cx=%2279.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccdf%22%2F%3E%3Ccircle cx=%22132.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc1a%22%2F%3E%3Ccircle cx=%22238.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc7d%22%2F%3E%3Ccircle cx=%22344.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc99%22%2F%3E%3Ccircle cx=%22450.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc19%22%2F%3E%3Ccircle cx=%22609.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccee%22%2F%3E%3Ccircle cx=%22662.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc4e%22%2F%3E%3Ccircle cx%22715.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc81%22%2F%3E%3Ccircle cx=%22768.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc78%22%2F%3E%3Ccircle cx=%22821.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc24%22%2F%3E%3Ccircle cx=%22874.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cca8%22%2F%3E%3Ccircle cx=%22927.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccbf%22%2F%3E%3Ccircle cx=%221033.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc43%22%2F%3E%3Ccircle cx=%221086.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc9c%22%2F%3E%3Ccircle cx=%221139.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccf5%22%2F%3E%3Ccircle cx=%221404.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc2a%22%2F%3E%3Ccircle cx=%221563.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc61%22%2F%3E%3Ccircle cx=%221616.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccb6%22%2F%3E%3Ccircle cx=%221669.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccd7%22%2F%3E%3Ccircle cx=%221722.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc2a%22%2F%3E%3Ccircle cx=%221881.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cce4%22%2F%3E%3Ccircle cx=%221987.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578ccf9%22%2F%3E%3Ccircle cx=%222040.5%22 cy=%2226.5%22 r=%224%22 fill=%22%233578cc5d%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3Cdefs%3E%3CradialGradient id=%22a%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22%2F%3E%3Cstop offset=%22100%25%22 stop-color=%22%23fff%22 stop-opacity=%220%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3C%2Fsvg%3E");
   }
 
   .bg-cyber-dark {
-    background-color: #030408;
+    background-color: var(--background);
   }
 
+  /* Neon glow helpers neutralized for a clean, professional look */
   .text-neon-glow-brand {
-    text-shadow: 0 0 10px rgba(0, 163, 255, 0.4), 0 0 20px rgba(0, 163, 255, 0.2);
+    text-shadow: none;
   }
 
   .border-cyber-glow-brand {
-    border: 1px solid rgba(0, 163, 255, 0.15);
-    box-shadow: 0 0 10px rgba(0, 163, 255, 0.03);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border);
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .border-cyber-glow-brand:hover {
-    border-color: rgba(0, 163, 255, 0.45);
-    box-shadow: 0 0 20px rgba(0, 163, 255, 0.15);
+    border-color: var(--accent-border);
+    box-shadow: var(--shadow-md);
   }
 
   .glow-brand-blob {
-    background: radial-gradient(circle, rgba(0, 163, 255, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 163, 255, 0.05) 0%, transparent 70%);
     will-change: transform;
   }
 }
 
+/* ============================================================
+   Professional normalization (UNLAYERED — wins the cascade)
+   Strips glassmorphism + neon glow and flattens translucent
+   surfaces into solid, professional ones across the whole app.
+   ============================================================ */
+
+/* 1. Remove glass blur everywhere */
+[class*="backdrop-blur"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 2. Replace neon glow shadows with subtle neutral elevation */
+[class*="shadow-[0_0_"] {
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* 3. Remove colored glow drop-shadow filters */
+[class*="drop-shadow-[0_0_"] {
+  filter: none !important;
+}
+
+/* 4. Flatten translucent white surfaces into solid panels */
+.bg-white\/3,
+.bg-white\/5 {
+  background-color: var(--surface-1) !important;
+}
+.bg-white\/10 {
+  background-color: var(--surface-2) !important;
+}
+.bg-white\/20 {
+  background-color: var(--surface-3) !important;
+}
+.hover\:bg-white\/3:hover,
+.hover\:bg-white\/5:hover {
+  background-color: var(--surface-2) !important;
+}
+.hover\:bg-white\/10:hover,
+.hover\:bg-white\/20:hover {
+  background-color: var(--surface-3) !important;
+}
+.group:hover .group-hover\:bg-white\/5,
+.group:hover .group-hover\:bg-white\/10 {
+  background-color: var(--surface-2) !important;
+}
+
+/* 5. Solidify translucent white borders */
+.border-white\/3,
+.border-white\/5,
+.border-white\/8,
+.border-white\/10 {
+  border-color: var(--border) !important;
+}
+.border-white\/15,
+.border-white\/20,
+.border-white\/30 {
+  border-color: var(--border-strong) !important;
+}
+.hover\:border-white\/10:hover,
+.hover\:border-white\/15:hover,
+.hover\:border-white\/20:hover,
+.hover\:border-white\/30:hover {
+  border-color: var(--border-strong) !important;
+}
+.group:hover .group-hover\:border-white\/10,
+.group:hover .group-hover\:border-white\/20 {
+  border-color: var(--border-strong) !important;
+}
+
+/* 6. Flatten subtle accent tints into clean blue-tinted surfaces */
+.bg-\[\#00a3ff\]\/5,
+.bg-\[\#00a3ff\]\/8 {
+  background-color: var(--accent-surface) !important;
+}
+.bg-\[\#00a3ff\]\/10,
+.bg-\[\#00a3ff\]\/15 {
+  background-color: var(--accent-surface-strong) !important;
+}
+.hover\:bg-\[\#00a3ff\]\/5:hover,
+.hover\:bg-\[\#00a3ff\]\/10:hover {
+  background-color: var(--accent-surface-strong) !important;
+}
+
+/* 7. Make dark panels / section backgrounds solid & consistent */
+.bg-\[\#030408\],
+.bg-\[\#050505\],
+.bg-cyber-dark {
+  background-color: var(--background) !important;
+}
+.bg-\[\#030408\]\/90,
+.bg-\[\#030408\]\/60,
+.bg-\[\#06070c\],
+.bg-\[\#06070c\]\/90,
+.bg-\[\#0a0b10\],
+.bg-\[\#0d0f1a\],
+.bg-\[\#0d0f1a\]\/95 {
+  background-color: var(--surface-0) !important;
+}
+
+/* 8. Slim, professional scrollbar (replaces the hidden one) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  display: block;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 9999px;
+  border: 2px solid var(--background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #36405180;
+}
+
+/* 9. Accessible focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 10. Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
