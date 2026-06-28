@@ -183,7 +183,7 @@ export default function LocationsSection() {
         mapSamples: 16000,
         mapBrightness: 3.5,
         baseColor: [0.03, 0.05, 0.15] as [number, number, number], 
-        markerColor: [0.133, 0.553, 0.741] as [number, number, number], // #00a3ff brand blue markers
+        markerColor: [0, 0.639, 1] as [number, number, number], // #00a3ff brand blue markers
         glowColor: [0.08, 0.12, 0.25] as [number, number, number], 
         markers: locations.map(location => ({
             location: [location.lat, location.lng] as [number, number],
