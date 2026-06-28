@@ -136,7 +136,7 @@ export function Globe({ className, config = GLOBE_CONFIG }: { className?: string
             ...config,
             dark: isDark ? 1 : 0,
             baseColor: [0.03, 0.05, 0.15] as [number, number, number],
-            markerColor: [0.133, 0.553, 0.741] as [number, number, number], // #1E6BFF VexaNode brand
+            markerColor: [0, 0.639, 1] as [number, number, number], // #00a3ff VexaNode brand
             glowColor: [0.08, 0.12, 0.25] as [number, number, number],
         }
 
@@ -206,14 +206,14 @@ export function Globe({ className, config = GLOBE_CONFIG }: { className?: string
             {/* VexaNode Custom Network SVG Overlay */}
             <svg
                 ref={svgRef}
-                className="absolute inset-0 size-full pointer-events-none drop-shadow-[0_0_10px_rgba(30,107,255,0.8)]"
+                className="absolute inset-0 size-full pointer-events-none drop-shadow-[0_0_10px_rgba(0,163,255,0.8)]"
             >
                 {arcs.map((_, i) => (
                     <g key={i}>
                         <path 
                             ref={el => { pathsRef.current[i] = el }} 
                             fill="none" 
-                            stroke="#1E6BFF" 
+                            stroke="#00a3ff"
                             strokeWidth="1.5" 
                             style={{ transition: 'opacity 0.2s' }}
                         />
