@@ -18,9 +18,9 @@ const GLOBE_CONFIG: COBEOptions = {
     diffuse: 0.4,
     mapSamples: 16000,
     mapBrightness: 3,
-    baseColor: [0.1, 0.2, 0.3],
-    markerColor: [1.0, 0.95, 0.6],
-    glowColor: [1.0, 0.95, 0.6],
+    baseColor: [0.03, 0.05, 0.15],
+    markerColor: [0, 0.639, 1],
+    glowColor: [0.08, 0.12, 0.25],
 
     // Using exact VexaNode datacenters as markers
     markers: [
@@ -44,44 +44,86 @@ const arcs = [
     { from: [50.1109, 8.6821], to: [19.076, 72.8777] }      // Frankfurt -> Mumbai
 ];
 
-const projectPoint = (lat: number, lng: number, phi: number, theta: number, width: number) => {
-    const latRad = lat * Math.PI / 180;
-    const lngRad = lng * Math.PI / 180;
-    
-    // Cobe uses specific rotation offset and scale
-    const phiRot = 1.5 * Math.PI - lngRad;
-    const x0 = Math.cos(latRad) * Math.sin(phiRot - phi); 
-    const y0 = Math.sin(latRad);
-    const z0 = Math.cos(latRad) * Math.cos(phiRot - phi);
-    
-    const y1 = y0 * Math.cos(theta) - z0 * Math.sin(theta);
-    const z1 = y0 * Math.sin(theta) + z0 * Math.cos(theta);
-    
-    // Cobe sphere radius is exactly 40% of the container width to leave room for the glow
-    const r = width * 0.4;
-    
-    return {
-        x: (width / 2) + (x0 * r),
-        y: (width / 2) - (y1 * r),
-        visible: z1 > -0.1
-    };
-};
+// ---- Geometry for the network arcs drawn over the globe ----
+// If the arc endpoints don't sit exactly on the city markers, nudge
+// GLOBE_RADIUS_FACTOR — it must match cobe's on-screen sphere radius.
+const GLOBE_RADIUS_FACTOR = 0.4
+const ARC_ALTITUDE = 0.16   // how high each arc bows above the surface
+const ARC_SEGMENTS = 44     // arc smoothness (points per arc)
+const ARC_VISIBLE_Z = -0.12 // hide arc points that rotate behind the globe
 
-const drawArc = (from: any, to: any, width: number) => {
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    const cx = width / 2, cy = width / 2;
-    const midX = (from.x + to.x) / 2;
-    const midY = (from.y + to.y) / 2;
-    const vecX = midX - cx;
-    const vecY = midY - cy;
-    const vecLen = Math.sqrt(vecX*vecX + vecY*vecY) || 1;
-    const offset = dist * 0.3; // Arc bend
-    const cpX = midX + (vecX / vecLen) * offset;
-    const cpY = midY + (vecY / vecLen) * offset;
-    return `M ${from.x} ${from.y} Q ${cpX} ${cpY} ${to.x} ${to.y}`;
-};
+type Vec3 = { x: number; y: number; z: number }
+
+// lat/lng -> unit vector on the globe in cobe's orientation (phi/theta = 0)
+const toVec = (lat: number, lng: number): Vec3 => {
+    const latRad = (lat * Math.PI) / 180
+    const lngRad = (lng * Math.PI) / 180
+    const phiRot = 1.5 * Math.PI - lngRad
+    return {
+        x: Math.cos(latRad) * Math.sin(phiRot),
+        y: Math.sin(latRad),
+        z: Math.cos(latRad) * Math.cos(phiRot),
+    }
+}
+
+// spherical interpolation between two unit vectors -> follows the great circle
+const slerp = (a: Vec3, b: Vec3, t: number): Vec3 => {
+    const dot = Math.max(-1, Math.min(1, a.x * b.x + a.y * b.y + a.z * b.z))
+    const omega = Math.acos(dot)
+    if (omega < 1e-4) return a
+    const s = Math.sin(omega)
+    const s1 = Math.sin((1 - t) * omega) / s
+    const s2 = Math.sin(t * omega) / s
+    return { x: a.x * s1 + b.x * s2, y: a.y * s1 + b.y * s2, z: a.z * s1 + b.z * s2 }
+}
+
+// rotate a direction by the globe's current phi (Y axis) + theta (X tilt) and
+// project to 2D; `alt` lifts the point above the surface for the arc bow.
+const projectVec = (dir: Vec3, alt: number, phi: number, theta: number, width: number) => {
+    const cph = Math.cos(phi)
+    const sph = Math.sin(phi)
+    const x1 = dir.x * cph - dir.z * sph
+    const z1 = dir.z * cph + dir.x * sph
+    const y1 = dir.y
+
+    const cth = Math.cos(theta)
+    const sth = Math.sin(theta)
+    const y2 = y1 * cth - z1 * sth
+    const z2 = y1 * sth + z1 * cth
+
+    const r = width * GLOBE_RADIUS_FACTOR * (1 + alt)
+    return {
+        x: width / 2 + x1 * r,
+        y: width / 2 - y2 * r,
+        visible: z2 > ARC_VISIBLE_Z, // front hemisphere only
+    }
+}
+
+// build an SVG path along the great circle, splitting it wherever the wire
+// passes behind the globe so it is correctly occluded.
+const buildArcPath = (a: Vec3, b: Vec3, phi: number, theta: number, width: number) => {
+    let d = ''
+    let drawing = false
+    for (let i = 0; i <= ARC_SEGMENTS; i++) {
+        const t = i / ARC_SEGMENTS
+        const dir = slerp(a, b, t)
+        const alt = ARC_ALTITUDE * Math.sin(Math.PI * t)
+        const p = projectVec(dir, alt, phi, theta, width)
+        if (p.visible) {
+            d += `${drawing ? 'L' : 'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)} `
+            drawing = true
+        } else {
+            drawing = false
+        }
+    }
+    return d
+}
+
+// pre-compute endpoint vectors once (arcs never change)
+const arcVecs = arcs.map((a) => ({
+    from: toVec(a.from[0], a.from[1]),
+    to: toVec(a.to[0], a.to[1]),
+}))
 
 export function Globe({ className, config = GLOBE_CONFIG }: { className?: string, config?: COBEOptions }) {
     let phi = 0
@@ -151,32 +193,27 @@ export function Globe({ className, config = GLOBE_CONFIG }: { className?: string
                 state.width = width * 2
                 state.height = width * 2
                 
-                // SVG Overlay Animation
-                t.current += 1.5;
+                // SVG network-arc overlay
+                t.current += 1.5
                 if (svgRef.current) {
                     svgRef.current.setAttribute('viewBox', `0 0 ${width} ${width}`)
-                    arcs.forEach((arc, i) => {
-                        const fromP = projectPoint(arc.from[0], arc.from[1], currentPhi, themeConfig.theta, width);
-                        const toP = projectPoint(arc.to[0], arc.to[1], currentPhi, themeConfig.theta, width);
-                        
-                        const isVisible = fromP.visible || toP.visible;
-                        
-                        if (pathsRef.current[i] && cometsRef.current[i]) {
-                            if (isVisible) {
-                                const d = drawArc(fromP, toP, width);
-                                pathsRef.current[i]!.setAttribute('d', d);
-                                pathsRef.current[i]!.style.opacity = (fromP.visible && toP.visible) ? '0.3' : '0.1';
-                                
-                                cometsRef.current[i]!.setAttribute('d', d);
-                                cometsRef.current[i]!.style.opacity = (fromP.visible && toP.visible) ? '1' : '0';
-                                // Reverse dash offset to make comet fly forward
-                                cometsRef.current[i]!.style.strokeDashoffset = String(1000 - ((t.current + i * 150) % 1000));
-                            } else {
-                                pathsRef.current[i]!.style.opacity = '0';
-                                cometsRef.current[i]!.style.opacity = '0';
-                            }
+                    arcVecs.forEach((arc, i) => {
+                        const path = pathsRef.current[i]
+                        const comet = cometsRef.current[i]
+                        if (!path || !comet) return
+
+                        const d = buildArcPath(arc.from, arc.to, currentPhi, themeConfig.theta, width)
+                        if (d) {
+                            path.setAttribute('d', d)
+                            comet.setAttribute('d', d)
+                            path.style.opacity = '0.4'
+                            comet.style.opacity = '1'
+                            comet.style.strokeDashoffset = String(1000 - ((t.current + i * 140) % 1000))
+                        } else {
+                            path.style.opacity = '0'
+                            comet.style.opacity = '0'
                         }
-                    });
+                    })
                 }
             },
         })
@@ -203,30 +240,33 @@ export function Globe({ className, config = GLOBE_CONFIG }: { className?: string
                 onTouchMove={(e) => e.touches[0] && updateMovement(e.touches[0].clientX)}
             />
             
-            {/* VexaNode Custom Network SVG Overlay */}
+            {/* Network arc overlay — true great-circle wires */}
             <svg
                 ref={svgRef}
-                className="absolute inset-0 size-full pointer-events-none drop-shadow-[0_0_10px_rgba(0,163,255,0.8)]"
+                className="absolute inset-0 size-full pointer-events-none overflow-visible"
             >
-                {arcs.map((_, i) => (
+                {arcVecs.map((_, i) => (
                     <g key={i}>
-                        <path 
-                            ref={el => { pathsRef.current[i] = el }} 
-                            fill="none" 
+                        <path
+                            ref={(el) => { pathsRef.current[i] = el }}
+                            fill="none"
                             stroke="#00a3ff"
-                            strokeWidth="1.5" 
-                            style={{ transition: 'opacity 0.2s' }}
+                            strokeWidth="1.2"
+                            strokeLinecap="round"
+                            style={{ opacity: 0, transition: 'opacity 0.3s' }}
                         />
-                        <path 
-                           ref={el => { cometsRef.current[i] = el }} 
-                           fill="none" 
-                           stroke="#4da2ff" 
-                           strokeWidth="3.5" 
-                           strokeLinecap="round"
-                           style={{ 
-                               strokeDasharray: '15 1000',
-                               transition: 'opacity 0.2s' 
-                           }}
+                        <path
+                            ref={(el) => { cometsRef.current[i] = el }}
+                            fill="none"
+                            stroke="#7cc4ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            style={{
+                                strokeDasharray: '16 1000',
+                                opacity: 0,
+                                filter: 'drop-shadow(0 0 5px rgba(0,163,255,0.65))',
+                                transition: 'opacity 0.3s',
+                            }}
                         />
                     </g>
                 ))}
