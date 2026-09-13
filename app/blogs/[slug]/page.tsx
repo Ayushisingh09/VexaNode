@@ -1,111 +1,292 @@
-'use client'
-
-import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { Calendar, User, ArrowLeft, Share2, Bookmark } from "lucide-react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Calendar, ArrowLeft, ArrowRight, ChevronRight, Clock, CheckCircle2, Zap, Server, Shield, Sparkles } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import Image from "next/image";
-import Link from "next/link";
 import { blogs } from "../data";
-import { useEffect, useState } from "react";
+import { constructMetadata, generateArticleSchema, generateBreadcrumbSchema } from "@/lib/seo";
 
-export default function BlogDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const blog = blogs.find(b => b.slug === params.slug);
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
-  if (!blog) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-[#0a0b0f] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
-          <Link href="/blogs" className="text-blue-500 hover:underline">Return to Blogs</Link>
-        </div>
-      </div>
-    );
+export async function generateStaticParams() {
+  return blogs.map((post) => ({
+    slug: post.slug,
+  }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = blogs.find((b) => b.slug === slug);
+
+  if (!post) {
+    return constructMetadata({
+      title: "Post Not Found | VexaNode Blog",
+      description: "The requested article could not be found.",
+      noIndex: true,
+    });
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0b0f] transition-colors duration-300">
-      <Navbar />
-      
-      <div className="pt-32 pb-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="mb-8"
-          >
-            <Link href="/blogs" className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors group">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              Back to Articles
-            </Link>
-          </motion.div>
+  return constructMetadata({
+    title: `${post.title} | VexaNode Engineering Guides`,
+    description: post.excerpt,
+    canonical: `/blogs/${post.slug}`,
+    image: post.image,
+    type: "article",
+    publishedTime: post.date,
+    authors: [post.author],
+    keywords: [
+      post.category,
+      "hosting guide",
+      "server setup",
+      "VexaNode tutorial",
+      post.title,
+    ],
+  });
+}
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="mb-6">
-              <span className="bg-blue-600/10 text-blue-500 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-blue-500/20">
-                {blog.category}
+export default async function BlogDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const post = blogs.find((b) => b.slug === slug);
+
+  if (!post) {
+    notFound();
+  }
+
+  const relatedPosts = blogs
+    .filter((b) => b.slug !== post.slug)
+    .slice(0, 4);
+
+  const articleJsonLd = generateArticleSchema({
+    title: post.title,
+    description: post.excerpt,
+    url: `/blogs/${post.slug}`,
+    image: post.image,
+    author: post.author,
+  });
+
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blogs" },
+    { name: post.title, url: `/blogs/${post.slug}` },
+  ]);
+
+  return (
+    <div className="min-h-screen bg-[#06080d] text-white selection:bg-[#10b981]/30 relative overflow-hidden font-sans">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* Atmospheric Glowing Background */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(16,185,129,0.08),transparent_100%)] pointer-events-none" />
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+
+      <Navbar />
+
+      <main className="pt-32 pb-28 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumbs Navigation */}
+          <nav className="flex items-center gap-2 text-xs text-gray-400 mb-6 font-medium overflow-x-auto no-scrollbar py-1">
+            <Link href="/" className="hover:text-[#10b981] transition-colors whitespace-nowrap">
+              Home
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
+            <Link href="/blogs" className="hover:text-[#10b981] transition-colors whitespace-nowrap">
+              Guides & Tutorials
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
+            <span className="text-gray-300 truncate font-semibold">{post.title}</span>
+          </nav>
+
+          {/* Top Return Button */}
+          <div className="mb-6">
+            <Link
+              href="/blogs"
+              className="inline-flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-[#10b981] transition-colors group"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#10b981]" />
+              <span>Back to all guides</span>
+            </Link>
+          </div>
+
+          {/* Article Header Banner */}
+          <div className="mb-8">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <span className="bg-[#10b981] text-black text-xs font-black px-3.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+                {post.category}
+              </span>
+              <span className="text-xs text-[#34d399] font-bold flex items-center gap-1.5 bg-[#10b981]/10 px-3 py-1 rounded-lg border border-[#10b981]/20">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" /> Verified Production Guide
               </span>
             </div>
-            
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6 orbitron-font leading-tight">
-              {blog.title}
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 orbitron-font leading-tight tracking-tight">
+              {post.title}
             </h1>
 
-            <div className="flex flex-wrap items-center justify-between gap-6 mb-12 py-6 border-y border-secondary">
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <User className="w-5 h-5 text-blue-500" />
-                  <span className="font-medium">{blog.author}</span>
+            {/* Author / Date / Time bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 py-4 px-6 rounded-2xl bg-[#0a0d14]/80 border border-white/[0.08] backdrop-blur-md">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#10b981] to-[#059669] flex items-center justify-center font-black text-black text-sm shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                  VN
                 </div>
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <Calendar className="w-5 h-5 text-blue-500" />
-                  <span>{blog.date}</span>
+                <div>
+                  <div className="text-xs sm:text-sm font-bold text-white leading-tight">{post.author}</div>
+                  <div className="text-[11px] text-gray-400">VexaNode Cloud Infrastructure Team</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                  <Share2 className="w-5 h-5 text-gray-500" />
-                </button>
-                <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                  <Bookmark className="w-5 h-5 text-gray-500" />
-                </button>
+
+              <div className="flex items-center gap-5 text-xs text-gray-400 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-[#10b981]" />
+                  <span>{post.date}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-[#10b981]" />
+                  <span>{post.readTime}</span>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="relative h-[400px] rounded-3xl overflow-hidden mb-12 border border-secondary shadow-2xl">
-              <Image 
-                src={blog.image} 
-                alt={blog.title} 
-                fill 
-                className="object-cover" 
-                priority
-              />
-            </div>
+          {/* 2-Column Layout for Desktop (Main Article + Sidebar) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Main Content Area (Col 8) */}
+            <article className="lg:col-span-8 flex flex-col gap-8">
+              {/* Styled Article Body (No image) */}
+              <div className="bg-[#0a0d14]/90 border border-white/[0.08] rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+                <div
+                  className="article-body max-w-none"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              </div>
 
-            <div 
-              className="prose prose-lg dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: blog.content }} 
-            />
+              {/* Bottom In-Article CTA Banner */}
+              <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-[#0c121d] via-[#090e17] to-[#070b10] border border-[#10b981]/40 text-center relative overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.15)]">
+                <div className="relative z-10">
+                  <div className="inline-flex items-center gap-2 bg-[#10b981]/15 text-[#10b981] text-xs font-bold px-3.5 py-1.5 rounded-full border border-[#10b981]/30 mb-4">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>Instant Cloud Deployment</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold mb-3 orbitron-font text-white">
+                    Need High-Speed Hardware For This Setup?
+                  </h3>
+                  <p className="text-gray-300 text-xs sm:text-sm mb-6 max-w-xl mx-auto leading-relaxed">
+                    Deploy your high-frequency AMD nodes in India, Germany, or USA with NVMe storage, 3Gbps unmetered network, and 24/7 DDoS mitigation.
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href="/games"
+                      className="bg-[#10b981] hover:bg-[#059669] text-black font-extrabold px-6 py-3 rounded-xl text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                    >
+                      Minecraft Server Plans
+                    </Link>
+                    <Link
+                      href="/discord"
+                      className="bg-white/[0.05] hover:bg-white/[0.1] text-white font-bold px-6 py-3 rounded-xl text-xs border border-white/[0.1] transition-all"
+                    >
+                      Discord Bot Hosting
+                    </Link>
+                    <Link
+                      href="/vps"
+                      className="bg-white/[0.05] hover:bg-white/[0.1] text-white font-bold px-6 py-3 rounded-xl text-xs border border-white/[0.1] transition-all"
+                    >
+                      Cloud VPS
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </article>
 
-            <div className="mt-16 p-8 rounded-3xl bg-blue-600/5 border border-blue-500/20 text-center">
-              <h3 className="text-2xl font-bold mb-4 orbitron-font">Ready to deploy?</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-xl mx-auto">
-                Join thousands of satisfied users and experience the VexaNode difference today.
-              </p>
-              <Link href="/" className="inline-block bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20">
-                View Plans
-              </Link>
-            </div>
-          </motion.div>
+            {/* Sidebar (Col 4) */}
+            <aside className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-28">
+              {/* Quick Deploy Card */}
+              <div className="bg-[#0a0d14]/90 border border-white/[0.08] rounded-3xl p-6 shadow-xl backdrop-blur-md">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#10b981] uppercase tracking-wider mb-4">
+                  <Server className="w-4 h-4" />
+                  <span>VexaNode Cloud Infrastructure</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2 orbitron-font">
+                  Ready to deploy?
+                </h4>
+                <p className="text-xs text-gray-400 mb-6 leading-relaxed">
+                  Start with enterprise AMD hardware, instant setup, NVMe speed, and automated backups.
+                </p>
+                <div className="space-y-2.5">
+                  <Link
+                    href="/games"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.03] hover:bg-[#10b981]/10 border border-white/[0.06] hover:border-[#10b981]/30 transition-all text-xs font-bold group"
+                  >
+                    <span className="text-white group-hover:text-[#10b981]">Minecraft Hosting</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-[#10b981] group-hover:translate-x-0.5 transition-all" />
+                  </Link>
+                  <Link
+                    href="/discord"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.03] hover:bg-[#10b981]/10 border border-white/[0.06] hover:border-[#10b981]/30 transition-all text-xs font-bold group"
+                  >
+                    <span className="text-white group-hover:text-[#10b981]">Discord Bot Nodes</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-[#10b981] group-hover:translate-x-0.5 transition-all" />
+                  </Link>
+                  <Link
+                    href="/lavalink"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.03] hover:bg-[#10b981]/10 border border-white/[0.06] hover:border-[#10b981]/30 transition-all text-xs font-bold group"
+                  >
+                    <span className="text-white group-hover:text-[#10b981]">Lavalink Audio Hosting</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-[#10b981] group-hover:translate-x-0.5 transition-all" />
+                  </Link>
+                  <Link
+                    href="/vps"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.03] hover:bg-[#10b981]/10 border border-white/[0.06] hover:border-[#10b981]/30 transition-all text-xs font-bold group"
+                  >
+                    <span className="text-white group-hover:text-[#10b981]">Cloud VPS (India/DE/US)</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-[#10b981] group-hover:translate-x-0.5 transition-all" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Related Articles List */}
+              {relatedPosts.length > 0 && (
+                <div className="bg-[#0a0d14]/90 border border-white/[0.08] rounded-3xl p-6 shadow-xl backdrop-blur-md">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-xs font-extrabold text-[#10b981] uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      More Technical Guides
+                    </h4>
+                  </div>
+                  <div className="space-y-3.5">
+                    {relatedPosts.map((related) => (
+                      <Link
+                        key={related.slug}
+                        href={`/blogs/${related.slug}`}
+                        className="block p-3.5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#10b981]/40 transition-all group"
+                      >
+                        <span className="text-[10px] font-bold text-[#10b981] uppercase tracking-wider mb-1 block">
+                          {related.category}
+                        </span>
+                        <h5 className="text-xs font-bold text-white group-hover:text-[#10b981] transition-colors leading-snug line-clamp-2 mb-2">
+                          {related.title}
+                        </h5>
+                        <div className="flex items-center justify-between text-[10px] text-gray-500 font-medium">
+                          <span>{related.readTime}</span>
+                          <span className="text-[#10b981] group-hover:translate-x-0.5 transition-transform">Read &rarr;</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </aside>
+          </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>
